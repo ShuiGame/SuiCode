@@ -1,0 +1,22 @@
+[package]
+name = 'SuiFrameTest'
+version = '1.0.0'
+[dependencies]
+Sui = { git = "https://github.com/MystenLabs/sui.git",  rev = "framework/testnet", subdir = "crates/sui-framework/packages/sui-framework"}
+
+[addresses]
+shui_module = "0x0"
+account = "0xbe379359ac6e9d0fc0b867f147f248f1c2d9fc019a9a708adfcbe15fc3130c18"
+user = "0xce379359ac6e9d0fc0b867f147f248f1c2d9fc019a9a708adfcbe15fc3130c19"
+user2 = "0xce379359ac6e9d0fc0b867f147f248f1c2d9fc019a9a708adfcbe15fc3130c11"
+std= "0x1"
+sui = "0x2"
+
+game_reserve_wallet = "0xbe379359ac6e9d0fc0b867f147f248f1c2d9fc019a9a708adfcbe15fc3130c18"
+foundation_reserve_wallet = "0xbe379359ac6e9d0fc0b867f147f248f1c2d9fc019a9a708adfcbe15fc3130c18"
+dao_reserve_wallet = "0xbe379359ac6e9d0fc0b867f147f248f1c2d9fc019a9a708adfcbe15fc3130c18"
+
+meta_manager = "0xbe379359ac6e9d0fc0b867f147f248f1c2d9fc019a9a708adfcbe15fc3130c18"
+register_manager = "0xbe379359ac6e9d0fc0b867f147f248f1c2d9fc019a9a708adfcbe15fc3130c18"
+founder = "0xbe379359ac6e9d0fc0b867f147f248f1c2d9fc019a9a708adfcbe15fc3130c18"
+crypto = "fbbea5cd4a5039652c5e565b22551fc9253f5df9b415ca269689c1c32f4a1cfc"

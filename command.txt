@@ -1,0 +1,2 @@
+sui client publish --gas-budget 208960120 --skip-dependency-verification --skip-fetch-latest-git-deps > publish.txt
+sui move build --skip-fetch-latest-git-deps
