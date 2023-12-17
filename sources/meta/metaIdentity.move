@@ -381,7 +381,7 @@ module shui_module::metaIdentity {
     }
 
     public entry fun query_invited_num(global:&MetaInfoGlobal, metaId: u64) : u64 {
-        if (linked_table::contains(&global.inviteMap, metaId)) {
+        if (linked_table::contains(&global.invitedMap, metaId)) {
             let addr_vec = linked_table::borrow(&global.invitedMap, metaId);
             vector::length(addr_vec)
         } else {
