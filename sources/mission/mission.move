@@ -211,7 +211,7 @@ module shui_module::mission {
         } else {
             vector::append(&mut vec_out, fail_num);
         };
-        if (num >= 5 && !has_clamied_invite(global, metaId, 5)) {
+        if (num >= 5) {
             if (!has_clamied_invite(global, metaId, 5)) {
                 vector::append(&mut vec_out, ok_num);
             } else {
@@ -220,7 +220,7 @@ module shui_module::mission {
         } else {
             vector::append(&mut vec_out, fail_num);
         };
-        if (num >= 10 && !has_clamied_invite(global, metaId, 10)) {
+        if (num >= 10) {
             if (!has_clamied_invite(global, metaId, 10)) {
                 vector::append(&mut vec_out, ok_num);
             } else {
@@ -229,7 +229,7 @@ module shui_module::mission {
         } else {
             vector::append(&mut vec_out, fail_num);
         };
-        if (num >= 20 && !has_clamied_invite(global, metaId, 20)) {
+        if (num >= 20) {
             if (!has_clamied_invite(global, metaId, 20)) {
                 vector::append(&mut vec_out, ok_num);
             } else {
@@ -238,7 +238,7 @@ module shui_module::mission {
         } else {
             vector::append(&mut vec_out, fail_num);
         };
-        if (num >= 50 && !has_clamied_invite(global, metaId, 50)) {
+        if (num >= 50) {
             if (!has_clamied_invite(global, metaId, 50)) {
                 vector::append(&mut vec_out, ok_num);
             } else {
@@ -247,7 +247,7 @@ module shui_module::mission {
         } else {
             vector::append(&mut vec_out, fail_num);
         };
-        if (num >= 75 && !has_clamied_invite(global, metaId, 75)) {
+        if (num >= 75) {
             if (!has_clamied_invite(global, metaId, 75)) {
                 vector::append(&mut vec_out, ok_num);
             } else {
@@ -256,7 +256,7 @@ module shui_module::mission {
         } else {
             vector::append(&mut vec_out, fail_num);
         };
-        if (num >= 99 && !has_clamied_invite(global, metaId, 99)) {
+        if (num >= 99) {
             if (!has_clamied_invite(global, metaId, 99)) {
                 vector::append(&mut vec_out, ok_num);
             } else {
