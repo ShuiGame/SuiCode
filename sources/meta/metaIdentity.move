@@ -172,7 +172,7 @@ module shui_module::metaIdentity {
         };
         assert!(linked_table::contains(&global.inviteMap, inviteMetaId), ERR_HE_NOT_INVITE_ANYONE);
         let inviteVec = linked_table::borrow(&global.inviteMap, inviteMetaId);
-        assert!(vector::contains(inviteVec, &sender), ERR_NOT_BEEN_INVITED);
+        assert!(vector::contains(inviteVec, &user_addr), ERR_NOT_BEEN_INVITED);
         if (!linked_table::contains(&global.invitedMap, inviteMetaId)) {
             let newVec = vector::empty<address>();
             vector::push_back(&mut newVec, sender);

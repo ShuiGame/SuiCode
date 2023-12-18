@@ -155,7 +155,7 @@ module shui_module::boat_ticket {
         ticket.whitelist_claimed = true;
     }
 
-    public(friend) fun is_claimed(ticket:&BoatTicket) : bool{
+    public entry fun is_claimed(ticket:&BoatTicket) : bool{
         ticket.whitelist_claimed
     }
 }
