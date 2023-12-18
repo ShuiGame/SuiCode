@@ -129,6 +129,10 @@ module shui_module::airdrop {
         info.white_list_claim_amount = info.white_list_claim_amount + 1;
     }
 
+    public entry fun get_white_list_claim_amount(airdropGlobal: &AirdropGlobal) : u64 {
+        airdropGlobal.white_list_claim_amount
+    }
+
     public entry fun claim_airdrop(mission_global:&mut mission::MissionGlobal, info:&mut AirdropGlobal, meta: &metaIdentity::MetaIdentity, clock:&Clock, ctx: &mut TxContext) {
         assert!(metaIdentity::is_active(meta), ERR_INACTIVE_META);
         assert!(info.start > 0, ERR_AIRDROP_NOT_START);
