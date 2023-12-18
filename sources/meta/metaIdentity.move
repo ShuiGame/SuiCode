@@ -175,12 +175,12 @@ module shui_module::metaIdentity {
         assert!(vector::contains(inviteVec, &user_addr), ERR_NOT_BEEN_INVITED);
         if (!linked_table::contains(&global.invitedMap, inviteMetaId)) {
             let newVec = vector::empty<address>();
-            vector::push_back(&mut newVec, sender);
+            vector::push_back(&mut newVec, user_addr);
             linked_table::push_back(&mut global.invitedMap, inviteMetaId, newVec);
         } else {
             let oldVec = linked_table::borrow_mut(&mut global.invitedMap, inviteMetaId);
-            assert!(!vector::contains(oldVec, &sender), ERR_ALREADY_BEEN_INVITED);
-            vector::push_back(oldVec, sender);
+            assert!(!vector::contains(oldVec, &user_addr), ERR_ALREADY_BEEN_INVITED);
+            vector::push_back(oldVec, user_addr);
         };
         assert!(!table::contains(&global.wallet_meta_map, user_addr), ERR_ADDRESS_HAS_BEEN_BINDED);
         table::add(&mut global.wallet_meta_map, user_addr, meta_addr);
