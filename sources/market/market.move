@@ -1,4 +1,4 @@
-module shui_module::market {
+module SuiFrameTest::market {
     use std::ascii;
     use std::string::{Self, String, utf8};
     use std::vector;
@@ -15,9 +15,9 @@ module shui_module::market {
     use sui::tx_context::{Self, TxContext};
     use std::option::{Self};
     use sui::clock::{Self, Clock};
-    use shui_module::metaIdentity::{Self, MetaIdentity};
-    use shui_module::tree_of_life::Self;
-    use shui_module::shui;
+    use SuiFrameTest::metaIdentity::{Self, MetaIdentity};
+    use SuiFrameTest::tree_of_life::Self;
+    use SuiFrameTest::shui;
     use sui::event;
 
     const ERR_SALES_NOT_EXIST: u64 = 0x02;

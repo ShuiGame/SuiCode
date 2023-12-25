@@ -1,4 +1,4 @@
-module shui_module::level {
+module SuiFrameTest::level {
     struct Level has store, copy, drop {
         level:u8,
     }

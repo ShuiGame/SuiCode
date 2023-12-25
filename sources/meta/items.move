@@ -1,5 +1,5 @@
 
-module shui_module::items {
+module SuiFrameTest::items {
     use sui::bag::{Self};
     use sui::linked_table::{Self, LinkedTable};
     use std::vector::{Self};
@@ -11,8 +11,8 @@ module shui_module::items {
     use sui::table::{Self};
     use sui::object::{Self, UID};
 
-    friend shui_module::metaIdentity;
-    friend shui_module::tree_of_life;
+    friend SuiFrameTest::metaIdentity;
+    friend SuiFrameTest::tree_of_life;
 
     const ERR_ITEMS_VEC_NOT_EXIST:u64 = 0x001;
     const ERR_ITEMS_NOT_EXIST:u64 = 0x002;

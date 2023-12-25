@@ -1,4 +1,4 @@
-module shui_module::items_credential {
+module SuiFrameTest::items_credential {
     use std::string::{Self, utf8, String};
     use sui::object;
     use sui::display;
@@ -7,7 +7,7 @@ module shui_module::items_credential {
     use sui::transfer;
     use sui::tx_context::{Self, TxContext};
 
-    friend shui_module::market;
+    friend SuiFrameTest::market;
 
     const DEFAULT_LINK: vector<u8> = b"https://shui.one";
     const DEFAULT_IMAGE_URL: vector<u8> = b"https://bafybeibzoi4kzr4gg75zhso5jespxnwespyfyakemrwibqorjczkn23vpi.ipfs.nftstorage.link/NFT-CARD1.png";

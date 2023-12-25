@@ -1,4 +1,4 @@
-module shui_module::tree_of_life_record {
+module SuiFrameTest::tree_of_life_record {
     use sui::tx_context::{Self, TxContext};
     use std::vector::{Self};
     use sui::transfer;

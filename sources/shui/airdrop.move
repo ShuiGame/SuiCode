@@ -1,16 +1,16 @@
-module shui_module::airdrop {
+module SuiFrameTest::airdrop {
     use sui::transfer;
     use sui::object::{Self, UID};
     use sui::tx_context::{Self, TxContext};
-    use shui_module::shui::{Self};
-    use shui_module::metaIdentity::{Self};
-    use shui_module::mission::{Self};
+    use SuiFrameTest::shui::{Self};
+    use SuiFrameTest::metaIdentity::{Self};
+    use SuiFrameTest::mission::{Self};
     use std::string::{utf8};
     use sui::clock::{Self, Clock};
     use sui::coin::{Self};
     use sui::balance::{Self, Balance};
     use sui::table::{Self};
-    use shui_module::boat_ticket::{Self, BoatTicket};
+    use SuiFrameTest::boat_ticket::{Self, BoatTicket};
 
     const ERR_INVALID_PHASE:u64 = 0x001;
     const ERR_NO_PERMISSION:u64 = 0x002;

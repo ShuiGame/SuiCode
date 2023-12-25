@@ -1,11 +1,11 @@
 // Copyright 2023 ComingChat Authors. Licensed under Apache-2.0 License.
 #[test_only]
-module shui_module::airdrop_test {
+module SuiFrameTest::airdrop_test {
     use std::vector;
     use std::string::{Self, utf8};
     use sui::clock::{Self, Clock};
     use std::debug::print;
-    use shui_module::items_credential;
+    use SuiFrameTest::items_credential;
     use sui::coin::{Self, Coin};
     use sui::test_scenario::{
         Scenario, next_tx, begin, end, ctx, take_shared, return_shared, take_from_sender,return_to_sender,take_from_address,
@@ -15,17 +15,17 @@ module shui_module::airdrop_test {
     use sui::sui::SUI;
     use sui::tx_context;
     use sui::pay;
-    use shui_module::items::{Self};
-    use shui_module::shui::{Self};
-    use shui_module::metaIdentity::{Self};
-    use shui_module::airdrop::{Self};
-    use shui_module::founder_team_reserve::{Self};
-    use shui_module::swap::{Self};
-    use shui_module::tree_of_life::{Self};
-    use shui_module::crypto::{Self};
-    use shui_module::market;
-    use shui_module::boat_ticket::{Self};
-    use shui_module::mission;
+    use SuiFrameTest::items::{Self};
+    use SuiFrameTest::shui::{Self};
+    use SuiFrameTest::metaIdentity::{Self};
+    use SuiFrameTest::airdrop::{Self};
+    use SuiFrameTest::founder_team_reserve::{Self};
+    use SuiFrameTest::swap::{Self};
+    use SuiFrameTest::tree_of_life::{Self};
+    use SuiFrameTest::crypto::{Self};
+    use SuiFrameTest::market;
+    use SuiFrameTest::boat_ticket::{Self};
+    use SuiFrameTest::mission;
     use sui::kiosk::{Self};
 
     const DAY_IN_MS: u64 = 86_400_000;

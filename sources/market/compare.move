@@ -1,5 +1,5 @@
 /// Provides a framework for comparing two elements
-module shui_module::comparator {
+module SuiFrameTest::comparator {
     use std::bcs;
     use std::vector;
 

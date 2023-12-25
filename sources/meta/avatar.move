@@ -1,4 +1,4 @@
-module shui_module::avatar {
+module SuiFrameTest::avatar {
     use std::string;
     struct Avatar has store, copy, drop {
         url:string::String,

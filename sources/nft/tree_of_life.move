@@ -1,24 +1,24 @@
-module shui_module::tree_of_life {
+module SuiFrameTest::tree_of_life {
     use sui::object::{Self, UID};
     use sui::tx_context::{Self, TxContext};
     use sui::transfer;
     use sui::pay;
     use sui::coin::{Self, Coin, destroy_zero};
     use std::vector::{Self};
-    use shui_module::shui::{SHUI};
+    use SuiFrameTest::shui::{SHUI};
     use sui::hash;
     use sui::balance::{Self, Balance};
     use sui::table::{Self, Table};
     use sui::bcs;
     use sui::clock::{Self, Clock};
-    use shui_module::items;
-    use shui_module::mission;
-    use shui_module::metaIdentity::{Self, MetaIdentity, get_items};
-    use shui_module::shui_ticket::{Self};
+    use SuiFrameTest::items;
+    use SuiFrameTest::mission;
+    use SuiFrameTest::metaIdentity::{Self, MetaIdentity, get_items};
+    use SuiFrameTest::shui_ticket::{Self};
     use std::string::{Self, String, utf8};
     use sui::event;
 
-    friend shui_module::market;
+    friend SuiFrameTest::market;
     const SECONDS_IN_MILLS: u64 = 1_000;
     const AMOUNT_DECIMAL: u64 = 1_000_000_000;
     const ERR_INTERVAL_TIME_ONE_DAY:u64 = 0x001;

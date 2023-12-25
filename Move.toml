@@ -1,11 +1,13 @@
 [package]
 name = 'SuiFrameTest'
-version = '1.0.0'
+version = '1.1.0'
+published-at = "0x153684d677e6d2af47e0d97b76e6bb86f9acdf21c9fea8090ae09f05f3833d7d"
+
 [dependencies]
 Sui = { git = "https://github.com/MystenLabs/sui.git",  rev = "framework/testnet", subdir = "crates/sui-framework/packages/sui-framework"}
 
 [addresses]
-shui_module = "0x0"
+SuiFrameTest = "0x0"
 account = "0xbe379359ac6e9d0fc0b867f147f248f1c2d9fc019a9a708adfcbe15fc3130c18"
 user = "0xce379359ac6e9d0fc0b867f147f248f1c2d9fc019a9a708adfcbe15fc3130c19"
 user2 = "0xce379359ac6e9d0fc0b867f147f248f1c2d9fc019a9a708adfcbe15fc3130c11"

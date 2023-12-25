@@ -1,4 +1,4 @@
-module shui_module::crypto {
+module SuiFrameTest::crypto {
     use sui::ed25519;
 
     public fun test_ecds(): bool {

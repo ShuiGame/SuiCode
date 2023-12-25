@@ -1,4 +1,4 @@
-module shui_module::mission {
+module SuiFrameTest::mission {
     use sui::object::{UID};
     use sui::table::{Self, Table};
     use sui::tx_context::{Self, TxContext};
@@ -10,14 +10,14 @@ module shui_module::mission {
     use sui::balance::{Self, Balance};
     use std::vector;
     use std::ascii;
-    use shui_module::metaIdentity::{Self, MetaIdentity};
+    use SuiFrameTest::metaIdentity::{Self, MetaIdentity};
     use std::debug::print;
-    use shui_module::shui;
+    use SuiFrameTest::shui;
     use sui::linked_table::{Self, LinkedTable};
     use sui::coin::{Self};
     use std::option::{Self};
-    friend shui_module::tree_of_life;
-    friend shui_module::airdrop;
+    friend SuiFrameTest::tree_of_life;
+    friend SuiFrameTest::airdrop;
 
     const ERR_MISSION_EXIST:u64 = 0x01;
     const ERR_NO_PERMISSION:u64 = 0x02;

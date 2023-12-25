@@ -1,4 +1,4 @@
-module shui_module::gift {
+module SuiFrameTest::gift {
     use std::string;
 
     struct Gift has store, copy, drop {

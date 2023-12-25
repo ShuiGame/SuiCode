@@ -1,8 +1,8 @@
-module shui_module::shui_ticket {
+module SuiFrameTest::shui_ticket {
     use sui::object::{Self, UID};
     use sui::tx_context::{Self, TxContext};
     use sui::transfer;
-    friend shui_module::tree_of_life;
+    friend SuiFrameTest::tree_of_life;
 
     struct ShuiTicket has key, store {
         id:UID,

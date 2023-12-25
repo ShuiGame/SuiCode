@@ -1,4 +1,4 @@
-module shui_module::race {
+module SuiFrameTest::race {
     use std::string;
     struct Race has store, copy, drop {
         category:string::String,

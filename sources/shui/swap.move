@@ -1,9 +1,9 @@
-module shui_module::swap {
+module SuiFrameTest::swap {
     use sui::transfer;
     use sui::object::{Self, UID};
     use sui::tx_context::{Self, TxContext};
-    use shui_module::shui::{Self};
-    use shui_module::boat_ticket::{Self};
+    use SuiFrameTest::shui::{Self};
+    use SuiFrameTest::boat_ticket::{Self};
     use sui::balance::{Self, Balance};
     use sui::sui::SUI;
     use std::vector::{Self};
