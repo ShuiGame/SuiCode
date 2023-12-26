@@ -1,4 +1,4 @@
-module SuiFrameTest::market {
+module MetaGame::market {
     use std::ascii;
     use std::string::{Self, String, utf8};
     use std::vector;
@@ -15,9 +15,9 @@ module SuiFrameTest::market {
     use sui::tx_context::{Self, TxContext};
     use std::option::{Self};
     use sui::clock::{Self, Clock};
-    use SuiFrameTest::metaIdentity::{Self, MetaIdentity};
-    use SuiFrameTest::tree_of_life::Self;
-    use SuiFrameTest::shui;
+    use MetaGame::metaIdentity::{Self, MetaIdentity};
+    use MetaGame::tree_of_life::Self;
+    use MetaGame::shui;
     use sui::event;
 
     const ERR_SALES_NOT_EXIST: u64 = 0x02;

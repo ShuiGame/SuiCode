@@ -1,4 +1,4 @@
-module SuiFrameTest::mission {
+module MetaGame::mission {
     use sui::object::{UID};
     use sui::table::{Self, Table};
     use sui::tx_context::{Self, TxContext};
@@ -10,14 +10,14 @@ module SuiFrameTest::mission {
     use sui::balance::{Self, Balance};
     use std::vector;
     use std::ascii;
-    use SuiFrameTest::metaIdentity::{Self, MetaIdentity};
+    use MetaGame::metaIdentity::{Self, MetaIdentity};
     use std::debug::print;
-    use SuiFrameTest::shui;
+    use MetaGame::shui;
     use sui::linked_table::{Self, LinkedTable};
     use sui::coin::{Self};
     use std::option::{Self};
-    friend SuiFrameTest::tree_of_life;
-    friend SuiFrameTest::airdrop;
+    friend MetaGame::tree_of_life;
+    friend MetaGame::airdrop;
 
     const ERR_MISSION_EXIST:u64 = 0x01;
     const ERR_NO_PERMISSION:u64 = 0x02;

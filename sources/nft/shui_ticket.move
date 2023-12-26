@@ -1,8 +1,8 @@
-module SuiFrameTest::shui_ticket {
+module MetaGame::shui_ticket {
     use sui::object::{Self, UID};
     use sui::tx_context::{Self, TxContext};
     use sui::transfer;
-    friend SuiFrameTest::tree_of_life;
+    friend MetaGame::tree_of_life;
 
     struct ShuiTicket has key, store {
         id:UID,

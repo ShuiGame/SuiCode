@@ -1,4 +1,4 @@
-module SuiFrameTest::crypto {
+module MetaGame::crypto {
     use sui::ed25519;
 
     public fun test_ecds(): bool {

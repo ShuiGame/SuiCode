@@ -1,5 +1,5 @@
 /// Provides a framework for comparing two elements
-module SuiFrameTest::comparator {
+module MetaGame::comparator {
     use std::bcs;
     use std::vector;
 

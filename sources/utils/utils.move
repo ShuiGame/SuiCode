@@ -1,4 +1,4 @@
-module SuiFrameTest::utils {
+module MetaGame::utils {
     use std::vector;
 
     public entry fun numbers_to_ascii_vector(val: u16): vector<u8> {

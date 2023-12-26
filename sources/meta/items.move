@@ -1,5 +1,5 @@
 
-module SuiFrameTest::items {
+module MetaGame::items {
     use sui::bag::{Self};
     use sui::linked_table::{Self, LinkedTable};
     use std::vector::{Self};
@@ -11,8 +11,8 @@ module SuiFrameTest::items {
     use sui::table::{Self};
     use sui::object::{Self, UID};
 
-    friend SuiFrameTest::metaIdentity;
-    friend SuiFrameTest::tree_of_life;
+    friend MetaGame::metaIdentity;
+    friend MetaGame::tree_of_life;
 
     const ERR_ITEMS_VEC_NOT_EXIST:u64 = 0x001;
     const ERR_ITEMS_NOT_EXIST:u64 = 0x002;

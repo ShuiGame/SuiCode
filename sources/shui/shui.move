@@ -1,4 +1,4 @@
-module SuiFrameTest::shui {
+module MetaGame::shui {
     use std::option::{Self};
     use sui::coin::{Self, Coin, TreasuryCap};
     use sui::transfer;
@@ -8,20 +8,20 @@ module SuiFrameTest::shui {
     use sui::balance::{Self, Balance};
     use sui::sui::SUI;
     use sui::url;
-    use SuiFrameTest::race::{Self};
-    use SuiFrameTest::level::{Self};
-    use SuiFrameTest::gift::{Self};
-    use SuiFrameTest::avatar::{Self};
+    use MetaGame::race::{Self};
+    use MetaGame::level::{Self};
+    use MetaGame::gift::{Self};
+    use MetaGame::avatar::{Self};
 
     #[test_only]
     use sui::test_scenario::{
         Scenario, ctx
     };
 
-    friend SuiFrameTest::airdrop;   
-    friend SuiFrameTest::swap;
-    friend SuiFrameTest::founder_team_reserve;
-    friend SuiFrameTest::mission;
+    friend MetaGame::airdrop;   
+    friend MetaGame::swap;
+    friend MetaGame::founder_team_reserve;
+    friend MetaGame::mission;
     const SHUI_ICON_URL:vector<u8> = b"https://nftstorage.link/ipfs/bafybeieqqos2upvmmxzmauv6cf53ddegpjc5zkrvbpriz7iajamcxikv4y";
     const ERR_NO_PERMISSION:u64 = 0x004;
     const TOTAL_SUPPLY: u64 = 2_100_000_000;

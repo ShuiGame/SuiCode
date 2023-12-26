@@ -1,24 +1,24 @@
-module SuiFrameTest::tree_of_life {
+module MetaGame::tree_of_life {
     use sui::object::{Self, UID};
     use sui::tx_context::{Self, TxContext};
     use sui::transfer;
     use sui::pay;
     use sui::coin::{Self, Coin, destroy_zero};
     use std::vector::{Self};
-    use SuiFrameTest::shui::{SHUI};
+    use MetaGame::shui::{SHUI};
     use sui::hash;
     use sui::balance::{Self, Balance};
     use sui::table::{Self, Table};
     use sui::bcs;
     use sui::clock::{Self, Clock};
-    use SuiFrameTest::items;
-    use SuiFrameTest::mission;
-    use SuiFrameTest::metaIdentity::{Self, MetaIdentity, get_items};
-    use SuiFrameTest::shui_ticket::{Self};
+    use MetaGame::items;
+    use MetaGame::mission;
+    use MetaGame::metaIdentity::{Self, MetaIdentity, get_items};
+    use MetaGame::shui_ticket::{Self};
     use std::string::{Self, String, utf8};
     use sui::event;
 
-    friend SuiFrameTest::market;
+    friend MetaGame::market;
     const SECONDS_IN_MILLS: u64 = 1_000;
     const AMOUNT_DECIMAL: u64 = 1_000_000_000;
     const ERR_INTERVAL_TIME_ONE_DAY:u64 = 0x001;

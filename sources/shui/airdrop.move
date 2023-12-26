@@ -1,16 +1,16 @@
-module SuiFrameTest::airdrop {
+module MetaGame::airdrop {
     use sui::transfer;
     use sui::object::{Self, UID};
     use sui::tx_context::{Self, TxContext};
-    use SuiFrameTest::shui::{Self};
-    use SuiFrameTest::metaIdentity::{Self};
-    use SuiFrameTest::mission::{Self};
+    use MetaGame::shui::{Self};
+    use MetaGame::metaIdentity::{Self};
+    use MetaGame::mission::{Self};
     use std::string::{utf8};
     use sui::clock::{Self, Clock};
     use sui::coin::{Self};
     use sui::balance::{Self, Balance};
     use sui::table::{Self};
-    use SuiFrameTest::boat_ticket::{Self, BoatTicket};
+    use MetaGame::boat_ticket::{Self, BoatTicket};
 
     const ERR_INVALID_PHASE:u64 = 0x001;
     const ERR_NO_PERMISSION:u64 = 0x002;

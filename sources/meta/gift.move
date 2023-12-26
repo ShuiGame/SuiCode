@@ -1,4 +1,4 @@
-module SuiFrameTest::gift {
+module MetaGame::gift {
     use std::string;
 
     struct Gift has store, copy, drop {

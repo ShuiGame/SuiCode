@@ -1,4 +1,4 @@
-module SuiFrameTest::dragon_egg {
+module MetaGame::dragon_egg {
     use sui::object::{Self, UID};
     use sui::tx_context::{Self, TxContext, sender};
     use sui::transfer;
@@ -6,12 +6,13 @@ module SuiFrameTest::dragon_egg {
     use sui::sui::{Self, SUI};
     use sui::package;
     use sui::balance::{Self, Balance};
+    use std::ascii;
     use std::string::{Self, String, utf8, bytes};
     use sui::display;
     use std::vector;
     use sui::pay;
-    use SuiFrameTest::shui::{SHUI};
-    use SuiFrameTest::utils;
+    use MetaGame::shui::{SHUI};
+    use MetaGame::utils;
 
     const DEFAULT_LINK: vector<u8> = b"https://shui.one";
     const DEFAULT_IMAGE_URL_FIRE: vector<u8> = b"https://bafybeifgrwsodbehvvahrqvtql3d7ta6ztjovjfmsbk7wslyswsymrnpzi.ipfs.nftstorage.link/dragoneggfire.jpg";
@@ -163,7 +164,9 @@ module SuiFrameTest::dragon_egg {
         let fire = utils::numbers_to_ascii_vector((global.egg_fire_bought_num as u16));
         let ice = utils::numbers_to_ascii_vector((global.egg_ice_bought_num as u16));
         let vec_out:vector<u8> = *string::bytes(&string::utf8(b""));
+        let byte_comma = ascii::byte(ascii::char(44));
         vector::append(&mut vec_out, fire);
+        vector::push_back(&mut vec_out, byte_comma);
         vector::append(&mut vec_out, ice);
         string::utf8(vec_out)
     }

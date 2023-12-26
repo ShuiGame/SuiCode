@@ -1,4 +1,4 @@
-module SuiFrameTest::avatar {
+module MetaGame::avatar {
     use std::string;
     struct Avatar has store, copy, drop {
         url:string::String,

@@ -1,8 +1,8 @@
-module SuiFrameTest::founder_team_reserve {
+module MetaGame::founder_team_reserve {
     use sui::transfer;
     use sui::object::{Self, UID};
     use sui::tx_context::{Self, TxContext};
-    use SuiFrameTest::shui::{Self};
+    use MetaGame::shui::{Self};
     use sui::clock::{Self, Clock};
     use sui::coin::{Self};
     use sui::balance::{Self, Balance};

@@ -1,4 +1,4 @@
-module SuiFrameTest::race {
+module MetaGame::race {
     use std::string;
     struct Race has store, copy, drop {
         category:string::String,

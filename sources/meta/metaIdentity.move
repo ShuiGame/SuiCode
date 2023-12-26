@@ -1,4 +1,4 @@
-module SuiFrameTest::metaIdentity {
+module MetaGame::metaIdentity {
     use std::string;
     use sui::object::{Self, UID};
     use sui::linked_table::{Self, LinkedTable};
@@ -8,7 +8,7 @@ module SuiFrameTest::metaIdentity {
     use sui::sui::SUI;
     use std::vector::{Self};
     use sui::event;
-    use SuiFrameTest::items;
+    use MetaGame::items;
     use sui::coin::{Self, Coin, value, destroy_zero};
     use sui::pay;
     

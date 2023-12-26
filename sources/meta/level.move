@@ -1,4 +1,4 @@
-module SuiFrameTest::level {
+module MetaGame::level {
     struct Level has store, copy, drop {
         level:u8,
     }

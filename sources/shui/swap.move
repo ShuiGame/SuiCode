@@ -1,9 +1,9 @@
-module SuiFrameTest::swap {
+module MetaGame::swap {
     use sui::transfer;
     use sui::object::{Self, UID};
     use sui::tx_context::{Self, TxContext};
-    use SuiFrameTest::shui::{Self};
-    use SuiFrameTest::boat_ticket::{Self};
+    use MetaGame::shui::{Self};
+    use MetaGame::boat_ticket::{Self};
     use sui::balance::{Self, Balance};
     use sui::sui::SUI;
     use std::vector::{Self};

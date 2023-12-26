@@ -1,4 +1,4 @@
-module SuiFrameTest::boat_ticket {
+module MetaGame::boat_ticket {
     use sui::object::{Self, UID};
     use sui::tx_context::{Self, TxContext, sender};
     use sui::transfer;
@@ -10,7 +10,7 @@ module SuiFrameTest::boat_ticket {
     use sui::display;
     use std::vector;
     use sui::pay;
-    friend SuiFrameTest::airdrop;
+    friend MetaGame::airdrop;
 
     const DEFAULT_LINK: vector<u8> = b"https://shui.one";
     const DEFAULT_IMAGE_URL: vector<u8> = b"https://bafybeibzoi4kzr4gg75zhso5jespxnwespyfyakemrwibqorjczkn23vpi.ipfs.nftstorage.link/NFT-CARD1.png";

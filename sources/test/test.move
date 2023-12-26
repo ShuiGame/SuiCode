@@ -1,11 +1,11 @@
 // Copyright 2023 ComingChat Authors. Licensed under Apache-2.0 License.
 #[test_only]
-module SuiFrameTest::airdrop_test {
+module MetaGame::airdrop_test {
     use std::vector;
     use std::string::{Self, utf8};
     use sui::clock::{Self, Clock};
     use std::debug::print;
-    use SuiFrameTest::items_credential;
+    use MetaGame::items_credential;
     use sui::coin::{Self, Coin};
     use sui::test_scenario::{
         Scenario, next_tx, begin, end, ctx, take_shared, return_shared, take_from_sender,return_to_sender,take_from_address,
@@ -15,17 +15,17 @@ module SuiFrameTest::airdrop_test {
     use sui::sui::SUI;
     use sui::tx_context;
     use sui::pay;
-    use SuiFrameTest::items::{Self};
-    use SuiFrameTest::shui::{Self};
-    use SuiFrameTest::metaIdentity::{Self};
-    use SuiFrameTest::airdrop::{Self};
-    use SuiFrameTest::founder_team_reserve::{Self};
-    use SuiFrameTest::swap::{Self};
-    use SuiFrameTest::tree_of_life::{Self};
-    use SuiFrameTest::crypto::{Self};
-    use SuiFrameTest::market;
-    use SuiFrameTest::boat_ticket::{Self};
-    use SuiFrameTest::mission;
+    use MetaGame::items::{Self};
+    use MetaGame::shui::{Self};
+    use MetaGame::metaIdentity::{Self};
+    use MetaGame::airdrop::{Self};
+    use MetaGame::founder_team_reserve::{Self};
+    use MetaGame::swap::{Self};
+    use MetaGame::tree_of_life::{Self};
+    use MetaGame::crypto::{Self};
+    use MetaGame::market;
+    use MetaGame::boat_ticket::{Self};
+    use MetaGame::mission;
     use sui::kiosk::{Self};
 
     const DAY_IN_MS: u64 = 86_400_000;
