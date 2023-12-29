@@ -54,21 +54,21 @@ module MetaGame::items {
 
     fun init_items_desc(global:&mut ItemGlobal) {
         // fruit
-        table::add(&mut global.desc_table, string::utf8(b"fruit"), string::utf8(b"fruit desc"));
+        table::add(&mut global.desc_table, string::utf8(b"Fruit"), string::utf8(b"Fruit desc"));
 
         // water element
-        table::add(&mut global.desc_table, string::utf8(b"water_element_holy"), string::utf8(b"holy water element desc"));
-        table::add(&mut global.desc_table, string::utf8(b"water_element_blood"), string::utf8(b"blood water element desc"));
-        table::add(&mut global.desc_table, string::utf8(b"water_element_resurrect"), string::utf8(b"resurrect water element desc"));
-        table::add(&mut global.desc_table, string::utf8(b"water_element_life"), string::utf8(b"life water element desc"));
-        table::add(&mut global.desc_table, string::utf8(b"water_element_memory"), string::utf8(b"memory water element desc"));
+        table::add(&mut global.desc_table, string::utf8(b"Water element Holy"), string::utf8(b"holy water element desc"));
+        table::add(&mut global.desc_table, string::utf8(b"Water element Blood"), string::utf8(b"blood water element desc"));
+        table::add(&mut global.desc_table, string::utf8(b"Water element Resurrect"), string::utf8(b"resurrect water element desc"));
+        table::add(&mut global.desc_table, string::utf8(b"Water element Life"), string::utf8(b"life water element desc"));
+        table::add(&mut global.desc_table, string::utf8(b"Water element Memory"), string::utf8(b"memory water element desc"));
 
         // fragment
-        table::add(&mut global.desc_table, string::utf8(b"fragment_holy"), string::utf8(b"holy water element fragment desc"));
-        table::add(&mut global.desc_table, string::utf8(b"fragment_blood"), string::utf8(b"holy water element fragment desc"));
-        table::add(&mut global.desc_table, string::utf8(b"fragment_resurrect"), string::utf8(b"holy water element fragment desc"));
-        table::add(&mut global.desc_table, string::utf8(b"fragment_life"), string::utf8(b"holy water element fragment desc"));
-        table::add(&mut global.desc_table, string::utf8(b"fragment_memory"), string::utf8(b"holy water element fragment desc"));
+        table::add(&mut global.desc_table, string::utf8(b"Fragment Holy"), string::utf8(b"holy water element fragment desc"));
+        table::add(&mut global.desc_table, string::utf8(b"Fragment Blood"), string::utf8(b"holy water element fragment desc"));
+        table::add(&mut global.desc_table, string::utf8(b"Fragment Resurrect"), string::utf8(b"holy water element fragment desc"));
+        table::add(&mut global.desc_table, string::utf8(b"Fragment Life"), string::utf8(b"holy water element fragment desc"));
+        table::add(&mut global.desc_table, string::utf8(b"Fragment Memory"), string::utf8(b"holy water element fragment desc"));
     }
 
     public(friend) fun new(ctx:&mut TxContext): Items {

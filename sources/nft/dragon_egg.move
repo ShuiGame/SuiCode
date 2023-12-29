@@ -5,6 +5,7 @@ module MetaGame::dragon_egg {
     use sui::coin::{Self, Coin, destroy_zero};
     use sui::sui::{Self, SUI};
     use sui::package;
+    use sui::table;
     use sui::balance::{Self, Balance};
     use std::ascii;
     use std::string::{Self, String, utf8, bytes};
@@ -23,6 +24,7 @@ module MetaGame::dragon_egg {
     const ERR_NO_PERMISSION:u64 = 0x02;
     const AMOUNT_DECIMAL:u64 = 1_000_000_000;   
     const ERR_PAY_AMOUNT_ERROR:u64 = 0x04;
+    const ERR_HAS_BEEN_BOUGHT:u64 = 0x05;
 
     struct DRAGON_EGG has drop {}
     struct DragonEggFire has key, store {
@@ -42,13 +44,16 @@ module MetaGame::dragon_egg {
         balance_SHUI: Balance<SHUI>,
         creator: address,
         egg_ice_bought_num: u64,
-        egg_fire_bought_num: u64
+        ice_bought_list: table::Table<address, bool>,
+        egg_fire_bought_num: u64,
+        fire_bought_list: table::Table<address, bool>
     }
 
     public entry fun buy_dragon_egg_ice(global:&mut DragonEggGlobal, coins:vector<Coin<SHUI>>, ctx:&mut TxContext) {
         let recepient = tx_context::sender(ctx);
         let price = 10000;
         let merged_coin = vector::pop_back(&mut coins);
+        assert!(!table::contains(&global.ice_bought_list, recepient), ERR_HAS_BEEN_BOUGHT);
         pay::join_vec(&mut merged_coin, coins);
         assert!(coin::value(&merged_coin) >= price * AMOUNT_DECIMAL, ERR_PAY_AMOUNT_ERROR);
         let balance = coin::into_balance<SHUI>(
@@ -66,6 +71,7 @@ module MetaGame::dragon_egg {
             power:0
         };
         global.egg_ice_bought_num = global.egg_ice_bought_num + 1;
+        table::add(&mut global.ice_bought_list, recepient, true);
         transfer::transfer(egg, tx_context::sender(ctx));
     }
 
@@ -73,6 +79,7 @@ module MetaGame::dragon_egg {
         let recepient = tx_context::sender(ctx);
         let price = 10000;
         let merged_coin = vector::pop_back(&mut coins);
+        assert!(!table::contains(&global.fire_bought_list, recepient), ERR_HAS_BEEN_BOUGHT);
         pay::join_vec(&mut merged_coin, coins);
         assert!(coin::value(&merged_coin) >= price * AMOUNT_DECIMAL, ERR_PAY_AMOUNT_ERROR);
         let balance = coin::into_balance<SHUI>(
@@ -90,6 +97,7 @@ module MetaGame::dragon_egg {
             power:0
         };
         global.egg_fire_bought_num = global.egg_fire_bought_num + 1;
+        table::add(&mut global.fire_bought_list, recepient, true);
         transfer::transfer(egg, tx_context::sender(ctx));
     }
 
@@ -148,7 +156,9 @@ module MetaGame::dragon_egg {
             balance_SHUI: balance::zero(), 
             creator: tx_context::sender(ctx),
             egg_ice_bought_num:0,
-            egg_fire_bought_num:0
+            ice_bought_list: table::new<address, bool>(ctx),
+            egg_fire_bought_num:0,
+            fire_bought_list: table::new<address, bool>(ctx)
         };
         transfer::share_object(global);
     }

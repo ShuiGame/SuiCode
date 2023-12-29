@@ -309,8 +309,6 @@ module MetaGame::airdrop_test {
             let itemGlobal = take_shared<items::ItemGlobal>(test);
             let ticket = take_from_sender<boat_ticket::BoatTicket>(test);
             let meta = take_from_sender<metaIdentity::MetaIdentity>(test);
-            // market::list_game_item(&mut market_global, &mut meta, utf8(b"fruit"), 1,  1, utf8(b"SUI"), &clock, ctx(test));
-            // market::list_game_item(&mut market_global, &mut meta, utf8(b"water_element_memory"), 1,  1, utf8(b"SUI"), &clock, ctx(test));
             market::list_nft_item<boat_ticket::BoatTicket>(&mut market_global, &mut meta, utf8(b"boat_ticket"), 1132, utf8(b"SUI"), &clock, ticket, ctx(test));
             return_to_sender(test, meta);
             let res = market::get_game_sales(&market_global, &clock);
@@ -330,7 +328,7 @@ module MetaGame::airdrop_test {
             let itemGlobal = take_shared<items::ItemGlobal>(test);
             let meta = take_from_sender<metaIdentity::MetaIdentity>(test);
             let ticket = take_from_sender<boat_ticket::BoatTicket>(test);
-            market::list_game_item(&mut market_global, &mut meta, utf8(b"fruit"), 1,  1, utf8(b"SUI"), &clock, ctx(test));
+            market::list_game_item(&mut market_global, &mut meta, utf8(b"Fruit"), 1,  1, utf8(b"SUI"), &clock, ctx(test));
             market::list_nft_item<boat_ticket::BoatTicket>(&mut market_global, &mut meta, utf8(b"boat_ticket"), 12, utf8(b"SUI"), &clock, ticket, ctx(test));
             return_to_sender(test, meta);
             let res = market::get_game_sales(&market_global, &clock);
@@ -350,7 +348,7 @@ module MetaGame::airdrop_test {
         //     let itemGlobal = take_shared<items::ItemGlobal>(test);
         //     let meta = take_from_sender<metaIdentity::MetaIdentity>(test);
         //     print(&metaIdentity::getMetaId(&meta));
-        //     market::unlist_game_item(&mut market_global, &mut meta, utf8(b"water_element_memory"), 1,  1, &clock, ctx(test));
+        //     market::unlist_game_item(&mut market_global, &mut meta, utf8(b"Water Element Memory"), 1,  1, &clock, ctx(test));
         //     market::unlist_nft_item<boat_ticket::BoatTicket>(&mut market_global, &mut meta, utf8(b"boat_ticket"), 1, 1132, &clock, ctx(test));
         //     return_to_sender(test, meta);
         //     return_shared(market_global);
@@ -377,7 +375,6 @@ module MetaGame::airdrop_test {
             let coins2 = vector::empty<Coin<SUI>>();
             // vector::push_back(&mut coins, coin);
             vector::push_back(&mut coins2, coin2);
-            // market::purchase_game_item(&mut market_global, &mut meta, 20001, utf8(b"fruit"), 1, coins, &clock, ctx(test));
             market::purchase_nft_item<SUI, boat_ticket::BoatTicket>(&mut market_global, &mut meta, 20001, utf8(b"boat_ticket"), 1, coins2, &clock, ctx(test));
             return_to_sender(test, meta);
             let res = market::get_game_sales(&market_global, &clock);
@@ -524,7 +521,7 @@ module MetaGame::airdrop_test {
         // next_tx(test, test_user);
         // {
             // let meta = take_from_sender<metaIdentity::MetaIdentity>(test);
-            // tree_of_life::swap_fragment<tree_of_life::Fragment>(&mut meta, string::utf8(b"holy"));
+            // tree_of_life::swap_fragment<tree_of_life::Fragment>(&mut meta, string::utf8(b"Holy"));
             // return_to_sender(test, meta);
             // next_epoch(test, test_user);
             // print_items(test);

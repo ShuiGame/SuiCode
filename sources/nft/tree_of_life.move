@@ -138,13 +138,13 @@ module MetaGame::tree_of_life {
         if (table::contains(&global.water_down_person_exp_records, metaIdentity::get_meta_id(meta))) {
             let last_exp = *table::borrow(&global.water_down_person_exp_records, metaIdentity::get_meta_id(meta));
             if (last_exp == 2) {
-                items::store_item(get_items(meta), string::utf8(b"fruit"), Fruit{});
+                items::store_item(get_items(meta), string::utf8(b"Fruit"), Fruit{});
                 let exp:&mut u64 = table::borrow_mut(&mut global.water_down_person_exp_records, metaIdentity::get_meta_id(meta));
                 *exp = 0;
                 event::emit(
                     GetFruit {
                         meta_id: metaIdentity::get_meta_id(meta),
-                        element_reward: string::utf8(b"fruit;"),
+                        element_reward: string::utf8(b"Fruit;"),
                     }
                 );
             } else {
@@ -159,13 +159,13 @@ module MetaGame::tree_of_life {
     public(friend) fun fill_items(meta:&mut MetaIdentity, name:string::String, num:u64) {
         let type = get_element_type_by_name(name);
         let item_type = get_item_type_by_name(name);
-        if (item_type == string::utf8(b"fragment")) {
+        if (item_type == string::utf8(b"Fragment")) {
             let array = create_fragments_by_class(5, type, name, *&get_desc_by_type(type, true));
             items::store_items<Fragment>(get_items(meta), name, array);
-        } else if (item_type == string::utf8(b"water_element")) {
+        } else if (item_type == string::utf8(b"Water Element")) {
             let array = create_water_elements_by_class(5, type, name, *&get_desc_by_type(type, false));
             items::store_items<WaterElement>(get_items(meta), name, array);
-        } else if (item_type == string::utf8(b"fruit")) {
+        } else if (item_type == string::utf8(b"Fruit")) {
             let array = create_fruits(num);
             items::store_items<Fruit>(get_items(meta), name, array);
         } else {
@@ -177,13 +177,13 @@ module MetaGame::tree_of_life {
         let _type = get_element_type_by_name(name);
         let item_type = get_item_type_by_name(name);
         let items = get_items(meta);
-        if (item_type == string::utf8(b"fragment")) {
+        if (item_type == string::utf8(b"Fragment")) {
             let vec = items::extract_items<Fragment>(items, name, num);
             clear_vec<Fragment>(vec);
-        } else if (item_type == string::utf8(b"water_element")) {
+        } else if (item_type == string::utf8(b"Water Element")) {
             let vec = items::extract_items<WaterElement>(items, name, num);
             clear_vec<WaterElement>(vec);
-        } else if (item_type == string::utf8(b"fruit")) {
+        } else if (item_type == string::utf8(b"Fruit")) {
             let vec = items::extract_items<Fruit>(items, name, num);
             clear_vec<Fruit>(vec);
         } else {
@@ -204,7 +204,7 @@ module MetaGame::tree_of_life {
     public entry fun swap_fragment<T:store + drop>(mission_global:&mut mission::MissionGlobal, meta:&mut MetaIdentity, fragment_type:string::String) {
         assert!(check_class(&fragment_type), ERR_INVALID_TYPE);
         let items = get_items(meta);
-        let fragment_name = string::utf8(b"fragment_");
+        let fragment_name = string::utf8(b"Fragment ");
         string::append(&mut fragment_name, fragment_type);
         let vec:vector<T> = items::extract_items(items, fragment_name, 10);
         let (i, len) = (0u64, vector::length(&vec));
@@ -214,7 +214,7 @@ module MetaGame::tree_of_life {
             i = i + 1;
         };
         vector::destroy_empty(vec);
-        let water_element_name = string::utf8(b"water_element_");
+        let water_element_name = string::utf8(b"Water Element_");
         string::append(&mut water_element_name, *&fragment_type);
         items::store_item(get_items(meta), water_element_name, WaterElement {
             class:fragment_type,
@@ -232,11 +232,11 @@ module MetaGame::tree_of_life {
 
     fun check_class(class: &string::String) : bool {
         let array = vector::empty<string::String>();
-        vector::push_back(&mut array, string::utf8(b"life"));
-        vector::push_back(&mut array, string::utf8(b"holy"));
-        vector::push_back(&mut array, string::utf8(b"memory"));
-        vector::push_back(&mut array, string::utf8(b"resurrect"));
-        vector::push_back(&mut array, string::utf8(b"blood"));
+        vector::push_back(&mut array, string::utf8(b"Life"));
+        vector::push_back(&mut array, string::utf8(b"Holy"));
+        vector::push_back(&mut array, string::utf8(b"Memory"));
+        vector::push_back(&mut array, string::utf8(b"Resurrect"));
+        vector::push_back(&mut array, string::utf8(b"Blood"));
         vector::contains(&array, class)
     }
 
@@ -302,29 +302,29 @@ module MetaGame::tree_of_life {
     }
 
     public fun get_item_type_by_name(name:string::String):string::String {
-        let frag_index = string::index_of(&name, &string::utf8(b"fragment_"));
+        let frag_index = string::index_of(&name, &string::utf8(b"Fragment "));
         if (frag_index < string::length(&name)) {
-            return string::utf8(b"fragment")
+            return string::utf8(b"Fragment")
         };
-        let water_ele_index = string::index_of(&name, &string::utf8(b"water_element_"));
+        let water_ele_index = string::index_of(&name, &string::utf8(b"Water Element "));
         if (water_ele_index < string::length(&name)) {
-            return string::utf8(b"water_element")
+            return string::utf8(b"Water Element")
         };
-        let fruit_index = string::index_of(&name, &string::utf8(b"fruit"));
+        let fruit_index = string::index_of(&name, &string::utf8(b"Fruit"));
         if (fruit_index < string::length(&name)) {
-            return string::utf8(b"fruit")
+            return string::utf8(b"Fruit")
         };
         return string::utf8(b"none")
     }
 
     public fun get_element_type_by_name(name:string::String):string::String {
         let len = string::length(&name);
-        let frag_tag = string::utf8(b"fragment_");
+        let frag_tag = string::utf8(b"Fragment ");
         let frag_index = string::index_of(&name, &frag_tag);
         if (frag_index < len) {
             return string::sub_string(&name, frag_index + string::length(&frag_tag), len)
         };
-        let ele_tag = string::utf8(b"water_element_");
+        let ele_tag = string::utf8(b"Water Element ");
         let water_ele_index = string::index_of(&name, &ele_tag);
         if (water_ele_index < len) {
             return string::sub_string(&name, water_ele_index + string::length(&ele_tag), len)
@@ -335,9 +335,9 @@ module MetaGame::tree_of_life {
     fun get_name_by_type(type:string::String, is_fragment:bool):string::String {
         let name = *&type;
         if (is_fragment) {
-            string::append(&mut name, string::utf8(b"_fragment"))
+            string::append(&mut name, string::utf8(b" Fragment"))
         } else {
-            string::append(&mut name, string::utf8(b"_water_element"))
+            string::append(&mut name, string::utf8(b" Water Element"))
         };
         name
     }
@@ -345,29 +345,29 @@ module MetaGame::tree_of_life {
     fun get_desc_by_type(type:String, is_fragment:bool) : string::String {
         let desc;
         if (is_fragment) {
-            if (type == string::utf8(b"holy")) {
+            if (type == string::utf8(b"Holy")) {
                 desc = string::utf8(b"holy water element fragment desc");
-            } else if (type == string::utf8(b"memory")) {
+            } else if (type == string::utf8(b"Memory")) {
                 desc = string::utf8(b"memory water element fragment desc");
-            } else if (type == string::utf8(b"blood")) {
+            } else if (type == string::utf8(b"Blood")) {
                 desc = string::utf8(b"blood water element fragment desc");
-            } else if (type == string::utf8(b"resurrect")) {
+            } else if (type == string::utf8(b"Resurrect")) {
                 desc = string::utf8(b"resurrect water element fragment desc");
-            } else if (type == string::utf8(b"memory")) {
+            } else if (type == string::utf8(b"Memory")) {
                 desc = string::utf8(b"memory water element fragment desc");
             } else {
                 desc = string::utf8(b"None");
             }
         } else {
-            if (type == string::utf8(b"holy")) {
+            if (type == string::utf8(b"Holy")) {
                 desc = string::utf8(b"holy water element desc");
-            } else if (type == string::utf8(b"memory")) {
+            } else if (type == string::utf8(b"Memory")) {
                 desc = string::utf8(b"memory water element fragment desc");
-            } else if (type == string::utf8(b"blood")) {
+            } else if (type == string::utf8(b"Blood")) {
                 desc = string::utf8(b"blood water element fragment desc");
-            } else if (type == string::utf8(b"resurrect")) {
+            } else if (type == string::utf8(b"Resurrect")) {
                 desc = string::utf8(b"resurrect water element fragment desc");
-            } else if (type == string::utf8(b"memory")) {
+            } else if (type == string::utf8(b"Memory")) {
                 desc = string::utf8(b"memory water element fragment desc");
             } else {
                 desc = string::utf8(b"None");
@@ -380,34 +380,34 @@ module MetaGame::tree_of_life {
         let reward_string;
         let is_fragment = true;
         if (random == 0) {
-            reward_string = string::utf8(b"life");
+            reward_string = string::utf8(b"Life");
             is_fragment = false;
         } else if (random <= 11) {
-            reward_string = string::utf8(b"memory");
+            reward_string = string::utf8(b"Memory");
             is_fragment = false;
         } else if (random <= 111) {
-            reward_string = string::utf8(b"blood");
+            reward_string = string::utf8(b"Blood");
             is_fragment = false;
         } else if (random <= 611) {
-            reward_string = string::utf8(b"holy");
+            reward_string = string::utf8(b"Holy");
         } else if (random <= 1611) {
-            reward_string = string::utf8(b"resurrect");  
+            reward_string = string::utf8(b"Resurrect");  
             is_fragment = false;
         } else if (random <= 4111) {
-            reward_string = string::utf8(b"memory");
+            reward_string = string::utf8(b"Memory");
             is_fragment = false;
         } else if (random <= 9111) {
-            reward_string = string::utf8(b"life");
+            reward_string = string::utf8(b"Life");
         } else if (random <= 14611) {
-            reward_string = string::utf8(b"blood");
+            reward_string = string::utf8(b"Blood");
         } else if (random <= 21611) {
-            reward_string = string::utf8(b"resurrect");
+            reward_string = string::utf8(b"Resurrect");
         } else {
-            reward_string = string::utf8(b"holy");
+            reward_string = string::utf8(b"Holy");
         };
         if (is_fragment) {
-            let name = string::utf8(b"fragment_");
-            let res = string::utf8(b"fragment_");
+            let name = string::utf8(b"Fragment ");
+            let res = string::utf8(b"Fragment ");
             string::append(&mut res, *&reward_string);
             string::append(&mut res, string::utf8(b":5"));
             string::append(&mut name, *&reward_string);
@@ -415,8 +415,8 @@ module MetaGame::tree_of_life {
             items::store_items(get_items(meta), name, array);
             res
         } else {
-            let name = string::utf8(b"water_element_");
-            let res = string::utf8(b"fragment_");
+            let name = string::utf8(b"Water Element ");
+            let res = string::utf8(b"Fragment ");
             string::append(&mut name, *&reward_string);
             string::append(&mut res, *&reward_string);
             items::store_item(get_items(meta), name, WaterElement {
@@ -429,7 +429,7 @@ module MetaGame::tree_of_life {
     }
 
     public entry fun open_fruit(meta:&mut MetaIdentity, ctx:&mut TxContext) : string::String {
-        let Fruit {} = items::extract_item(get_items(meta), string::utf8(b"fruit"));
+        let Fruit {} = items::extract_item(get_items(meta), string::utf8(b"Fruit"));
         let num = get_random_num(0, 30610, 0, ctx);
         let num_u8 = num % 255;
         let reword_element : string::String = receive_random_element(num, meta);
