@@ -28,6 +28,7 @@ module MetaGame::tree_of_life {
 
     struct Tree_of_life has key, store {
         id:UID,
+        name: String,
         level:u16,
         exp:u16,
     }
@@ -102,6 +103,7 @@ module MetaGame::tree_of_life {
     public entry fun mint(ctx:&mut TxContext) {
         let tree = Tree_of_life {
             id:object::new(ctx),
+            name: utf8(b"LifeTree1"),
             level:1,
             exp:0
         };
@@ -138,7 +140,7 @@ module MetaGame::tree_of_life {
         if (table::contains(&global.water_down_person_exp_records, metaIdentity::get_meta_id(meta))) {
             let last_exp = *table::borrow(&global.water_down_person_exp_records, metaIdentity::get_meta_id(meta));
             if (last_exp == 2) {
-                items::store_item(get_items(meta), string::utf8(b"Fruit"), Fruit{});
+                items::store_item(get_items(meta), string::utf8(b"LuckyBox"), Fruit{});
                 let exp:&mut u64 = table::borrow_mut(&mut global.water_down_person_exp_records, metaIdentity::get_meta_id(meta));
                 *exp = 0;
                 event::emit(
@@ -165,7 +167,7 @@ module MetaGame::tree_of_life {
         } else if (item_type == string::utf8(b"Water Element")) {
             let array = create_water_elements_by_class(5, type, name, *&get_desc_by_type(type, false));
             items::store_items<WaterElement>(get_items(meta), name, array);
-        } else if (item_type == string::utf8(b"Fruit")) {
+        } else if (item_type == string::utf8(b"LuckyBox")) {
             let array = create_fruits(num);
             items::store_items<Fruit>(get_items(meta), name, array);
         } else {
@@ -183,7 +185,7 @@ module MetaGame::tree_of_life {
         } else if (item_type == string::utf8(b"Water Element")) {
             let vec = items::extract_items<WaterElement>(items, name, num);
             clear_vec<WaterElement>(vec);
-        } else if (item_type == string::utf8(b"Fruit")) {
+        } else if (item_type == string::utf8(b"LuckyBox")) {
             let vec = items::extract_items<Fruit>(items, name, num);
             clear_vec<Fruit>(vec);
         } else {
@@ -244,16 +246,16 @@ module MetaGame::tree_of_life {
         let num = get_random_num(0, 10000, 0, ctx);
         let reward_string;
         if (num == 0) {
-            reward_string = string::utf8(b"shui_5000");
+            reward_string = string::utf8(b"SHUI5000");
             shui_ticket::mint(5000, ctx)
         } else if (num <= 49) {
-            reward_string = string::utf8(b"shui_1000");
+            reward_string = string::utf8(b"SHUI1000");
             shui_ticket::mint(1000, ctx)
         } else if (num <= 250) {
-            reward_string = string::utf8(b"shui_100");
+            reward_string = string::utf8(b"SHUI100");
             shui_ticket::mint(100, ctx)
         } else if (num <= 1700) {
-            reward_string = string::utf8(b"shui_10");
+            reward_string = string::utf8(b"SHUI10");
             shui_ticket::mint(10, ctx)
         } else {
             reward_string = string::utf8(b"");
@@ -310,9 +312,9 @@ module MetaGame::tree_of_life {
         if (water_ele_index < string::length(&name)) {
             return string::utf8(b"Water Element")
         };
-        let fruit_index = string::index_of(&name, &string::utf8(b"Fruit"));
+        let fruit_index = string::index_of(&name, &string::utf8(b"LuckyBox"));
         if (fruit_index < string::length(&name)) {
-            return string::utf8(b"Fruit")
+            return string::utf8(b"LuckyBox")
         };
         return string::utf8(b"none")
     }
@@ -429,7 +431,7 @@ module MetaGame::tree_of_life {
     }
 
     public entry fun open_fruit(meta:&mut MetaIdentity, ctx:&mut TxContext) : string::String {
-        let Fruit {} = items::extract_item(get_items(meta), string::utf8(b"Fruit"));
+        let Fruit {} = items::extract_item(get_items(meta), string::utf8(b"LuckyBox"));
         let num = get_random_num(0, 30610, 0, ctx);
         let num_u8 = num % 255;
         let reword_element : string::String = receive_random_element(num, meta);

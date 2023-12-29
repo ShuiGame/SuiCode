@@ -328,7 +328,7 @@ module MetaGame::airdrop_test {
             let itemGlobal = take_shared<items::ItemGlobal>(test);
             let meta = take_from_sender<metaIdentity::MetaIdentity>(test);
             let ticket = take_from_sender<boat_ticket::BoatTicket>(test);
-            market::list_game_item(&mut market_global, &mut meta, utf8(b"Fruit"), 1,  1, utf8(b"SUI"), &clock, ctx(test));
+            market::list_game_item(&mut market_global, &mut meta, utf8(b"LuckyBox"), 1,  1, utf8(b"SUI"), &clock, ctx(test));
             market::list_nft_item<boat_ticket::BoatTicket>(&mut market_global, &mut meta, utf8(b"boat_ticket"), 12, utf8(b"SUI"), &clock, ticket, ctx(test));
             return_to_sender(test, meta);
             let res = market::get_game_sales(&market_global, &clock);

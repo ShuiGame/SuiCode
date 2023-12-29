@@ -14,7 +14,7 @@ module MetaGame::boat_ticket {
 
     const DEFAULT_LINK: vector<u8> = b"https://shui.one";
     const DEFAULT_IMAGE_URL: vector<u8> = b"https://bafybeibzoi4kzr4gg75zhso5jespxnwespyfyakemrwibqorjczkn23vpi.ipfs.nftstorage.link/NFT-CARD1.png";
-    const DESCRIPTION: vector<u8> = b"Boat ticket to meta masrs";
+    const DESCRIPTION: vector<u8> = b"Airship to meta masrs";
     const PROJECT_URL: vector<u8> = b"https://shui.one/game/#/";
     const CREATOR: vector<u8> = b"metaGame";
     const AMOUNT_DECIMAL:u64 = 1_000_000_000;
@@ -61,7 +61,7 @@ module MetaGame::boat_ticket {
         };
         let ticket = BoatTicket {
             id:object::new(ctx),
-            name:utf8(b"Shui Meta Ticket"),
+            name:utf8(b"Airship"),
             index:global.num,
             whitelist_claimed: false
         };
@@ -73,7 +73,7 @@ module MetaGame::boat_ticket {
     public entry fun claim_ticket(global:&mut BoatTicketGlobal, ctx:&mut TxContext) {
         let ticket = BoatTicket {
             id:object::new(ctx),
-            name:utf8(b"Shui Meta Ticket"),
+            name:utf8(b"Airship"),
             index:global.num,
             whitelist_claimed: false
         };
@@ -109,8 +109,6 @@ module MetaGame::boat_ticket {
 
         // Claim the `Publisher` for the package!
         let publisher = package::claim(otw, ctx);
-
-        // Get a new `Display` object for the `SuiCat` type.
         let display = display::new_with_fields<BoatTicket>(
             &publisher, keys, values, ctx
         );

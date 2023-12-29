@@ -67,7 +67,7 @@ module MetaGame::dragon_egg {
         };
         let egg = DragonEggIce {
             id:object::new(ctx),
-            name:utf8(b"Metagame Ice Dragon Egg"),
+            name:utf8(b"Dragon Egg Ice"),
             power:0
         };
         global.egg_ice_bought_num = global.egg_ice_bought_num + 1;
@@ -93,7 +93,7 @@ module MetaGame::dragon_egg {
         };
         let egg = DragonEggFire {
             id:object::new(ctx),
-            name:utf8(b"Metagame Fire Dragon Egg"),
+            name:utf8(b"Dragon Egg Fire"),
             power:0
         };
         global.egg_fire_bought_num = global.egg_fire_bought_num + 1;
@@ -137,7 +137,6 @@ module MetaGame::dragon_egg {
         // Claim the `Publisher` for the package!
         let publisher = package::claim(otw, ctx);
 
-        // Get a new `Display` object for the `SuiCat` type.
         let displayFire = display::new_with_fields<DragonEggFire>(
             &publisher, keys, valueFire, ctx
         );

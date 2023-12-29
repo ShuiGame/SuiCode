@@ -24,6 +24,7 @@ module MetaGame::market {
     const ERR_NOT_OWNER: u64 = 0x03;
     const ERR_EXCEED_MAX_ON_SALE_NUM: u64 = 0x04;
     const ERR_INVALID_COIN:u64 = 0x05;
+    const ERR_CAN_NOT_BUY_YOUR_ITEM:u64 = 0x06;
     const DAY_IN_MS: u64 = 86_400_000;
 
     struct MARKET has drop {}
@@ -267,6 +268,7 @@ module MetaGame::market {
         payment:vector<Coin<T>>,
         clock: &Clock, 
         ctx: &mut TxContext) {
+        assert!(ownerMetaId != metaIdentity::getMetaId(meta), ERR_CAN_NOT_BUY_YOUR_ITEM);
         let now = clock::timestamp_ms(clock);   
         let merged_coins = merge_coins<T>(payment, ctx);
         assert!(linked_table::contains(&global.game_sales, ownerMetaId), ERR_SALES_NOT_EXIST);

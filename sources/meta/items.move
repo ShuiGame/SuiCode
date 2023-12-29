@@ -54,7 +54,7 @@ module MetaGame::items {
 
     fun init_items_desc(global:&mut ItemGlobal) {
         // fruit
-        table::add(&mut global.desc_table, string::utf8(b"Fruit"), string::utf8(b"Fruit desc"));
+        table::add(&mut global.desc_table, string::utf8(b"LuckyBox"), string::utf8(b"Fruit desc"));
 
         // water element
         table::add(&mut global.desc_table, string::utf8(b"Water element Holy"), string::utf8(b"holy water element desc"));
