@@ -46,6 +46,7 @@ module MetaGame::market {
         name:String,
         num:u64,
         price:u64,
+        price_gas:u64,
         type:String,
         coinType:String,
         time:u64
@@ -291,6 +292,7 @@ module MetaGame::market {
                         name:name,
                         num:num,
                         price:price,
+                        price_gas:price/1000,
                         type:type,
                         coinType:coinType,
                         time:now
@@ -360,6 +362,7 @@ module MetaGame::market {
                         name:name,
                         num:num,
                         price:price,
+                        price_gas: price / 1000,
                         type:type,
                         coinType:coinType,
                         time:now

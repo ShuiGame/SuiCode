@@ -13,6 +13,7 @@ module MetaGame::swap {
     use sui::ed25519;
     use std::debug::print;
     use sui::address::{Self};
+    friend MetaGame::boat_ticket;
 
     const ERR_NO_PERMISSION:u64 = 0x001;
     const ERR_EXCEED_SWAP_LIMIT:u64 = 0x002;
@@ -79,16 +80,11 @@ module MetaGame::swap {
         balance::join(&mut swapGlobal.balance_SHUI, balance);
     }
 
-    public fun add_whitelist(swapGlobal: &mut SwapGlobal, account: address, ctx: &mut TxContext) {
-        assert!(swapGlobal.creator == tx_context::sender(ctx), ERR_NO_PERMISSION);
-        table::add(&mut swapGlobal.whitelist_table, account, WHITELIST_SWAP_LIMIT);
-        assert!(table::length(&swapGlobal.whitelist_table) <= WHITELIST_MAX_NUM, 1);
-    }
-
-    // todo:check whether other ppl's ticket can be param
-    public fun set_whitelist(swapGlobal: &mut SwapGlobal, _: &boat_ticket::BoatTicket, ctx:&mut TxContext) {
+    public(friend) fun set_whitelist(swapGlobal: &mut SwapGlobal, ctx:&mut TxContext) {
         let sender = tx_context::sender(ctx);
-        table::add(&mut swapGlobal.whitelist_table, sender, WHITELIST_SWAP_LIMIT);
+        if (!table::contains(&swapGlobal.whitelist_table, sender)) {
+            table::add(&mut swapGlobal.whitelist_table, sender, WHITELIST_SWAP_LIMIT);
+        };
         assert!(table::length(&swapGlobal.whitelist_table) <= WHITELIST_MAX_NUM, 1);
     }
 
@@ -153,7 +149,7 @@ module MetaGame::swap {
         transfer::public_transfer(shui, recepient);
     }
 
-    public entry fun white_list_swap (global: &mut SwapGlobal, sui_pay_amount:u64, coins:vector<Coin<SUI>>, ctx:&mut TxContext) {
+    public entry fun white_list_swap(global: &mut SwapGlobal, sui_pay_amount:u64, coins:vector<Coin<SUI>>, ctx:&mut TxContext) {
         let ratio = 100;
         let limit = WHITELIST_SWAP_LIMIT;
         let recepient = tx_context::sender(ctx);

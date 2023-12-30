@@ -10,6 +10,7 @@ module MetaGame::boat_ticket {
     use sui::display;
     use std::vector;
     use sui::pay;
+    use MetaGame::swap::{Self, SwapGlobal};
     friend MetaGame::airdrop;
 
     const DEFAULT_LINK: vector<u8> = b"https://shui.one";
@@ -44,7 +45,7 @@ module MetaGame::boat_ticket {
         ticket.name
     }
 
-    public entry fun buy_ticket(global:&mut BoatTicketGlobal, coins:vector<Coin<SUI>>, ctx:&mut TxContext) {
+    public entry fun buy_ticket(global:&mut BoatTicketGlobal, swapGlobal: &mut SwapGlobal, coins:vector<Coin<SUI>>, ctx:&mut TxContext) {
         let recepient = tx_context::sender(ctx);
         let price = 5;
         let merged_coin = vector::pop_back(&mut coins);
@@ -67,6 +68,7 @@ module MetaGame::boat_ticket {
         };
         global.num = global.num + 1;
         transfer::transfer(ticket, tx_context::sender(ctx));
+        swap::set_whitelist(swapGlobal, ctx);
     }
 
     #[test_only]

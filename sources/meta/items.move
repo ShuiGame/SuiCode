@@ -17,7 +17,6 @@ module MetaGame::items {
     const ERR_ITEMS_VEC_NOT_EXIST:u64 = 0x001;
     const ERR_ITEMS_NOT_EXIST:u64 = 0x002;
     const ERR_ITEMS_NOT_ENOUGH:u64 = 0x003;
-    const ERR_NO_PERMISSION:u64 = 0x004;
 
     struct Items has store {
         // store all objects: name -> vector<T>

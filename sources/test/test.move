@@ -109,7 +109,6 @@ module MetaGame::airdrop_test {
         let test = &mut scenario;
         let admin = @account;
         let user = @user;
-        let user2 = @user2;
         let clock = clock::create_for_testing(ctx(test));
 
         // init package
