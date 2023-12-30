@@ -14,7 +14,6 @@ module MetaGame::swap {
     use std::debug::print;
     use sui::address::{Self};
 
-
     const ERR_NO_PERMISSION:u64 = 0x001;
     const ERR_EXCEED_SWAP_LIMIT:u64 = 0x002;
     const ERR_NOT_IN_WHITELIST:u64 = 0x003;

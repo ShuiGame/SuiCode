@@ -317,7 +317,7 @@ module MetaGame::market {
                     let vec = linked_table::remove(&mut global.game_sales, ownerMetaId);
                     vector::destroy_empty(vec);
                 };
-                let payment = coin::split<T>(&mut merged_coins, price, ctx);
+                let payment = coin::split<T>(&mut merged_coins, price * 999 / 1000, ctx);
                 let market_gas = coin::split<T>(&mut merged_coins, price / 1000, ctx);
                 transfer::public_transfer(market_gas, global.creator);
                 transfer::public_transfer(payment, owner);
@@ -382,7 +382,7 @@ module MetaGame::market {
                     let vec = linked_table::remove(&mut global.game_sales, metaId);
                     vector::destroy_empty(vec);
                 };
-                let payment = coin::split<T>(&mut merged_coins, price, ctx);
+                let payment = coin::split<T>(&mut merged_coins, price * 999 / 1000, ctx);
                 let market_gas = coin::split<T>(&mut merged_coins, price / 1000, ctx);
                 transfer::public_transfer(market_gas, global.creator);
                 transfer::public_transfer(payment, owner);
