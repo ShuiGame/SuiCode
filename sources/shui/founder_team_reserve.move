@@ -9,6 +9,7 @@ module MetaGame::founder_team_reserve {
     use sui::balance::{Self, Balance};
     use sui::table::{Self};
     use std::vector;
+    use std::debug::print;
 
     const ERR_INVALID_PHASE:u64 = 0x001;
     const ERR_NO_PERMISSION:u64 = 0x002;
@@ -152,12 +153,13 @@ module MetaGame::founder_team_reserve {
         }
     }
 
-    public entry fun claim_reserve(global: &mut FounderTeamGlobal, amount_type:u64, phase:u64, ctx: &mut TxContext) {
+    public entry fun claim_reserve(global: &mut FounderTeamGlobal, amount_type:u64, ctx: &mut TxContext) {
         assert!(global.current_phase > 0, ERR_PHASE_TIME_NOT_REACH);
         let account = tx_context::sender(ctx);
         // phase 1 claimed once , phase 2 claimed twice   phase > (limit - left claimed times)
         if (amount_type == 500) {
-            let claimed_nums = RESERVE_500_num - *table::borrow(&global.whitelist_500, account);
+            print(table::borrow(&global.whitelist_500, account));
+            let claimed_nums = 20 - *table::borrow(&global.whitelist_500, account);
             assert!(global.current_phase > claimed_nums, ERR_ALREADY_CLAIMED);
             let reserve = balance::split(&mut global.balance_SHUI, RESERVE_500_SINGLE * AMOUNT_DECIMAL);
             let shui = coin::from_balance(reserve, ctx);
@@ -165,7 +167,7 @@ module MetaGame::founder_team_reserve {
             let left_num:&mut u64 = table::borrow_mut(&mut global.whitelist_500, account);
             *left_num = *left_num - 1;
         } else if (amount_type == 300) {
-            let claimed_nums = RESERVE_300_num - *table::borrow(&global.whitelist_300, account);
+            let claimed_nums = 20 - *table::borrow(&global.whitelist_300, account);
             assert!(global.current_phase > claimed_nums, ERR_ALREADY_CLAIMED);
             let reserve = balance::split(&mut global.balance_SHUI, RESERVE_300_SINGLE * AMOUNT_DECIMAL);
             let shui = coin::from_balance(reserve, ctx);
@@ -173,7 +175,7 @@ module MetaGame::founder_team_reserve {
             let left_num:&mut u64 = table::borrow_mut(&mut global.whitelist_300, account);
             *left_num = *left_num - 1;
         } else if (amount_type == 200) {
-            let claimed_nums = RESERVE_200_num - *table::borrow(&global.whitelist_200, account);
+            let claimed_nums = 20 - *table::borrow(&global.whitelist_200, account);
             assert!(global.current_phase > claimed_nums, ERR_ALREADY_CLAIMED);
             let reserve = balance::split(&mut global.balance_SHUI, RESERVE_200_SINGLE * AMOUNT_DECIMAL);
             let shui = coin::from_balance(reserve, ctx);
@@ -181,7 +183,7 @@ module MetaGame::founder_team_reserve {
             let left_num:&mut u64 = table::borrow_mut(&mut global.whitelist_200, account);
             *left_num = *left_num - 1;
         } else if (amount_type == 100) {
-            let claimed_nums = RESERVE_100_num - *table::borrow(&global.whitelist_100, account);
+            let claimed_nums = 10 - *table::borrow(&global.whitelist_100, account);
             assert!(global.current_phase > claimed_nums, ERR_ALREADY_CLAIMED);
             let reserve = balance::split(&mut global.balance_SHUI, RESERVE_100_SINGLE * AMOUNT_DECIMAL);
             let shui = coin::from_balance(reserve, ctx);
@@ -189,7 +191,7 @@ module MetaGame::founder_team_reserve {
             *left_num = *left_num - 1;
             transfer::public_transfer(shui, account);
         } else if (amount_type == 50) {
-            let claimed_nums = RESERVE_50_num - *table::borrow(&global.whitelist_50, account);
+            let claimed_nums = 10 - *table::borrow(&global.whitelist_50, account);
             assert!(global.current_phase > claimed_nums, ERR_ALREADY_CLAIMED);
             let reserve = balance::split(&mut global.balance_SHUI, RESERVE_50_SINGLE * AMOUNT_DECIMAL);
             let shui = coin::from_balance(reserve, ctx);
@@ -197,7 +199,7 @@ module MetaGame::founder_team_reserve {
             let left_num:&mut u64 = table::borrow_mut(&mut global.whitelist_50, account);
             *left_num = *left_num - 1;
         } else if (amount_type == 20) {
-            let claimed_nums = RESERVE_20_num - *table::borrow(&global.whitelist_20, account);
+            let claimed_nums = 10 - *table::borrow(&global.whitelist_20, account);
             assert!(global.current_phase > claimed_nums, ERR_ALREADY_CLAIMED);
             let reserve = balance::split(&mut global.balance_SHUI, RESERVE_20_SINGLE * AMOUNT_DECIMAL);
             let shui = coin::from_balance(reserve, ctx);
@@ -205,7 +207,7 @@ module MetaGame::founder_team_reserve {
             let left_num:&mut u64 = table::borrow_mut(&mut global.whitelist_20, account);
             *left_num = *left_num - 1;
         } else  { // 10
-            let claimed_nums = RESERVE_10_num - *table::borrow(&global.whitelist_10, account);
+            let claimed_nums = 1 - *table::borrow(&global.whitelist_10, account);
             assert!(global.current_phase > claimed_nums, ERR_ALREADY_CLAIMED);
             let reserve = balance::split(&mut global.balance_SHUI, RESERVE_10_SINGLE * AMOUNT_DECIMAL);
             let shui = coin::from_balance(reserve, ctx);
