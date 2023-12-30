@@ -8,11 +8,11 @@ module MetaGame::shui_ticket {
     friend MetaGame::tree_of_life;
 
     const DEFAULT_LINK: vector<u8> = b"https://shui.one";
-    const IMAGE_URL_50: vector<u8> = b"gfire.jpg";
-    const IMAGE_URL_100: vector<u8> = b"ce.jpg";
-    const IMAGE_URL_500: vector<u8> = b"ce.jpg";
-    const IMAGE_URL_1000: vector<u8> = b"ce.jpg";
-    const IMAGE_URL_5000: vector<u8> = b"ce.jpg";
+    const IMAGE_URL_50: vector<u8> = b"https://bafybeicis764zsykvopcqtcqytsfz74ai3mwna33xi7qqh74z2f2osyyba.ipfs.nftstorage.link/st50.png";
+    const IMAGE_URL_100: vector<u8> = b"https://bafybeicis764zsykvopcqtcqytsfz74ai3mwna33xi7qqh74z2f2osyyba.ipfs.nftstorage.link/st100.png";
+    const IMAGE_URL_500: vector<u8> = b"https://bafybeicis764zsykvopcqtcqytsfz74ai3mwna33xi7qqh74z2f2osyyba.ipfs.nftstorage.link/st500.png";
+    const IMAGE_URL_1000: vector<u8> = b"https://bafybeicis764zsykvopcqtcqytsfz74ai3mwna33xi7qqh74z2f2osyyba.ipfs.nftstorage.link/st1000.png";
+    const IMAGE_URL_5000: vector<u8> = b"https://bafybeicis764zsykvopcqtcqytsfz74ai3mwna33xi7qqh74z2f2osyyba.ipfs.nftstorage.link/st5000.png";
 
     const DESCRIPTION: vector<u8> = b"metagame shui ticket, it can be used to swap shui token";
     const PROJECT_URL: vector<u8> = b"https://shui.one/game/#/";
