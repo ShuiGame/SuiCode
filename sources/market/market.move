@@ -5,9 +5,9 @@ module MetaGame::market {
     use sui::linked_table::{Self, LinkedTable};
     use sui::coin::{Self, Coin, value, destroy_zero};
     use sui::object::{UID, Self};
+    use sui::sui::SUI;
     use std::type_name::{Self, into_string};
     use sui::balance::{Self, Balance};
-    use sui::sui::SUI;
     use std::debug::print;
     use sui::transfer;
     use sui::address;
@@ -25,6 +25,7 @@ module MetaGame::market {
     const ERR_EXCEED_MAX_ON_SALE_NUM: u64 = 0x04;
     const ERR_INVALID_COIN:u64 = 0x05;
     const ERR_CAN_NOT_BUY_YOUR_ITEM:u64 = 0x06;
+    const ERR_NO_PERMISSION: u64 = 0x07;
     const DAY_IN_MS: u64 = 86_400_000;
 
     struct MARKET has drop {}
@@ -33,6 +34,7 @@ module MetaGame::market {
         id: UID,
         balance_SHUI: Balance<shui::SHUI>,
         balance_SUI: Balance<SUI>,
+        creator: address,
 
         // metaId -> table<objid -> OnSaleInfo>
         game_sales : LinkedTable<u64, vector<OnSale>>,
@@ -69,6 +71,7 @@ module MetaGame::market {
     public fun init_for_test(ctx: &mut TxContext) {
         let global = MarketGlobal {
             id: object::new(ctx),
+            creator: tx_context::sender(ctx),
             balance_SHUI: balance::zero(),
             balance_SUI: balance::zero(),
             game_sales: linked_table::new<u64, vector<OnSale>>(ctx),
@@ -79,6 +82,7 @@ module MetaGame::market {
     fun init(_witness: MARKET, ctx: &mut TxContext) {
         let global = MarketGlobal {
             id: object::new(ctx),
+            creator: tx_context::sender(ctx),
             balance_SHUI: balance::zero(),
             balance_SUI: balance::zero(),
 
@@ -314,6 +318,8 @@ module MetaGame::market {
                     vector::destroy_empty(vec);
                 };
                 let payment = coin::split<T>(&mut merged_coins, price, ctx);
+                let market_gas = coin::split<T>(&mut merged_coins, price / 1000, ctx);
+                transfer::public_transfer(market_gas, global.creator);
                 transfer::public_transfer(payment, owner);
                 break
             };
@@ -377,6 +383,8 @@ module MetaGame::market {
                     vector::destroy_empty(vec);
                 };
                 let payment = coin::split<T>(&mut merged_coins, price, ctx);
+                let market_gas = coin::split<T>(&mut merged_coins, price / 1000, ctx);
+                transfer::public_transfer(market_gas, global.creator);
                 transfer::public_transfer(payment, owner);
                 tree_of_life::fill_items(meta, name, num);
                 break
@@ -489,5 +497,24 @@ module MetaGame::market {
         };
         vector::reverse(&mut vec);
         vec
+    }
+
+    public entry fun withdraw_sui(global: &mut MarketGlobal, amount:u64, ctx: &mut TxContext) {
+        assert!(tx_context::sender(ctx) == global.creator, ERR_NO_PERMISSION);
+        let balance = balance::split(&mut global.balance_SUI, amount);
+        let sui = coin::from_balance(balance, ctx);
+        transfer::public_transfer(sui, tx_context::sender(ctx));
+    }
+
+    public entry fun withdraw_shui(global: &mut MarketGlobal, amount:u64, ctx: &mut TxContext) {
+        assert!(tx_context::sender(ctx) == global.creator, ERR_NO_PERMISSION);
+        let balance = balance::split(&mut global.balance_SHUI, amount);
+        let shui = coin::from_balance(balance, ctx);
+        transfer::public_transfer(shui, tx_context::sender(ctx));
+    }
+
+    public fun change_owner(global:&mut MarketGlobal, account:address, ctx:&mut TxContext) {
+        assert!(global.creator == tx_context::sender(ctx), ERR_NO_PERMISSION);
+        global.creator = account
     }
 }

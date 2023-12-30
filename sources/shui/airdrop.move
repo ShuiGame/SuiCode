@@ -228,4 +228,9 @@ module MetaGame::airdrop {
             (450 + days) * 1_000_000 * AMOUNT_DECIMAL - info.total_claim_amount
         }
     }
+    
+    public fun change_owner(global:&mut AirdropGlobal, account:address, ctx:&mut TxContext) {
+        assert!(global.creator == tx_context::sender(ctx), ERR_NO_PERMISSION);
+        global.creator = account
+    }
 }

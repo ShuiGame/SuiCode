@@ -559,10 +559,15 @@ module MetaGame::mission {
     }
 
     public entry fun delete_mission(global: &mut MissionGlobal, mission:String, _clock:&Clock, ctx:&mut TxContext) {
-        assert!(tx_context::sender(ctx) == @account, ERR_NO_PERMISSION);
+        assert!(tx_context::sender(ctx) == global.creator, ERR_NO_PERMISSION);
         assert!(linked_table::contains(&global.mission_records, mission), ERR_MISSION_EXIST);
         let mission_info = linked_table::remove(&mut global.mission_records, mission);
         let MissionInfo {name:_, desc:_, goal_process:_, missions, deadline:_, reward:_} = mission_info; 
         table::drop(missions);
+    }
+
+    public fun change_owner(global:&mut MissionGlobal, account:address, ctx:&mut TxContext) {
+        assert!(global.creator == tx_context::sender(ctx), ERR_NO_PERMISSION);
+        global.creator = account
     }
 }

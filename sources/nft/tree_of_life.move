@@ -25,6 +25,7 @@ module MetaGame::tree_of_life {
     const ERR_COIN_NOT_ENOUGH:u64 = 0x003;
     const ERR_INVALID_NAME:u64 = 0x004;
     const ERR_INVALID_TYPE:u64 = 0x005;
+    const ERR_NO_PERMISSION:u64 = 0x006;
 
     struct Tree_of_life has key, store {
         id:UID,
@@ -511,5 +512,10 @@ module MetaGame::tree_of_life {
 
     public fun get_total_water_down_amount(global:&TreeGlobal):u64 {
         global.total_water_amount
+    }
+
+    public fun change_owner(global:&mut TreeGlobal, account:address, ctx:&mut TxContext) {
+        assert!(global.creator == tx_context::sender(ctx), ERR_NO_PERMISSION);
+        global.creator = account
     }
 }

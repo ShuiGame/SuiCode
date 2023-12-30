@@ -388,4 +388,9 @@ module MetaGame::metaIdentity {
             0
         }
     }
+
+    public fun change_owner(global:&mut MetaInfoGlobal, account:address, ctx:&mut TxContext) {
+        assert!(global.creator == tx_context::sender(ctx), ERR_NO_PERMISSION);
+        global.creator = account
+    }
 }

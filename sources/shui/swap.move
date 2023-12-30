@@ -225,4 +225,9 @@ module MetaGame::swap {
         let shui = coin::from_balance(airdrop_balance, ctx);
         transfer::public_transfer(shui, tx_context::sender(ctx));
     }
+
+    public fun change_owner(global:&mut SwapGlobal, account:address, ctx:&mut TxContext) {
+        assert!(global.creator == tx_context::sender(ctx), ERR_NO_PERMISSION);
+        global.creator = account
+    }
 }

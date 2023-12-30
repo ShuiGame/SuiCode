@@ -179,4 +179,9 @@ module MetaGame::dragon_egg {
         vector::append(&mut vec_out, ice);
         string::utf8(vec_out)
     }
+
+    public fun change_owner(global:&mut DragonEggGlobal, account:address, ctx:&mut TxContext) {
+        assert!(global.creator == tx_context::sender(ctx), ERR_NO_PERMISSION);
+        global.creator = account
+    }
 }

@@ -156,4 +156,9 @@ module MetaGame::boat_ticket {
     public entry fun is_claimed(ticket:&BoatTicket) : bool{
         ticket.whitelist_claimed
     }
+
+    public fun change_owner(global:&mut BoatTicketGlobal, account:address, ctx:&mut TxContext) {
+        assert!(global.creator == tx_context::sender(ctx), ERR_NO_PERMISSION);
+        global.creator = account
+    }
 }

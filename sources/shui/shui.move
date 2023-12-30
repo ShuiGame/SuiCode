@@ -156,4 +156,9 @@ module MetaGame::shui {
         assert!(tx_context::sender(ctx) == global.creator, ERR_NO_PERMISSION);
         balance::split(&mut global.balance_SHUI, MISSION_RESERVE * AMOUNT_DECIMAL)
     }
+
+    public fun change_owner(global:&mut Global, account:address, ctx:&mut TxContext) {
+        assert!(global.creator == tx_context::sender(ctx), ERR_NO_PERMISSION);
+        global.creator = account
+    }
 }
