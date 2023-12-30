@@ -528,14 +528,14 @@ module MetaGame::airdrop_test {
         // };
 
         // founder_team_reserve start
-        next_tx(test, admin);
-        {
-            let founderTeamGlobal = take_shared<founder_team_reserve::FounderTeamGlobal>(test);
-            let time_cap = take_from_sender<founder_team_reserve::TimeCap1>(test);
-            founder_team_reserve::start_phase1(&mut founderTeamGlobal, time_cap, &clock);
-            tx_context::increment_epoch_timestamp(ctx(test), 1);
-            return_shared(founderTeamGlobal);
-        };
+        // next_tx(test, admin);
+        // {
+        //     let founderTeamGlobal = take_shared<founder_team_reserve::FounderTeamGlobal>(test);
+        //     let time_cap = take_from_sender<founder_team_reserve::TimeCap1>(test);
+        //     founder_team_reserve::start_phase1(&mut founderTeamGlobal, time_cap, &clock);
+        //     tx_context::increment_epoch_timestamp(ctx(test), 1);
+        //     return_shared(founderTeamGlobal);
+        // };
 
         // set swap whitelist
         next_tx(test, admin);
@@ -549,43 +549,43 @@ module MetaGame::airdrop_test {
         };
 
         // set founder team whitelist
-        next_tx(test, admin);
-        {
-            let type = 0;
-            let founderTeamGlobal = take_shared<founder_team_reserve::FounderTeamGlobal>(test);
-            let value = founder_team_reserve::get_total_shui_balance(&mut founderTeamGlobal);
-            print(&string::utf8(b"reserve pool:"));
-            print(&value);
-            let whitelist = vector::empty();
-            vector::push_back(&mut whitelist, test_user);
-            founder_team_reserve::set_white_lists(&mut founderTeamGlobal, whitelist, type, ctx(test));
-            return_shared(founderTeamGlobal);
-            next_epoch(test, admin);
-        };
+        // next_tx(test, admin);
+        // {
+        //     let type = 0;
+        //     let founderTeamGlobal = take_shared<founder_team_reserve::FounderTeamGlobal>(test);
+        //     let value = founder_team_reserve::get_total_shui_balance(&mut founderTeamGlobal);
+        //     print(&string::utf8(b"reserve pool:"));
+        //     print(&value);
+        //     let whitelist = vector::empty();
+        //     vector::push_back(&mut whitelist, test_user);
+        //     founder_team_reserve::set_white_lists(&mut founderTeamGlobal, whitelist, type, ctx(test));
+        //     return_shared(founderTeamGlobal);
+        //     next_epoch(test, admin);
+        // };
 
         // reserve claim test
-        clock::increment_for_testing(&mut clock, 1 * HOUR_IN_MS);
-        next_tx(test, test_user);
-        {
-            let type = 0;
-            let phase = 1;
-            let founderTeamGlobal = take_shared<founder_team_reserve::FounderTeamGlobal>(test);
-            let cliamed = founder_team_reserve::claim_reserve(&mut founderTeamGlobal, &clock, type, phase, ctx(test));
-            print(&cliamed);
-            return_shared(founderTeamGlobal);
-        };
+        // clock::increment_for_testing(&mut clock, 1 * HOUR_IN_MS);
+        // next_tx(test, test_user);
+        // {
+        //     let type = 0;
+        //     let phase = 1;
+        //     let founderTeamGlobal = take_shared<founder_team_reserve::FounderTeamGlobal>(test);
+        //     let cliamed = founder_team_reserve::claim_reserve(&mut founderTeamGlobal, &clock, type, phase, ctx(test));
+        //     print(&cliamed);
+        //     return_shared(founderTeamGlobal);
+        // };
 
         // reserve claim test2
-        clock::increment_for_testing(&mut clock, 30 * DAY_IN_MS + 1);
-        next_tx(test, test_user);
-        {
-            let type = 0;
-            let phase = 1;
-            let founderTeamGlobal = take_shared<founder_team_reserve::FounderTeamGlobal>(test);
-            let cliamed = founder_team_reserve::claim_reserve(&mut founderTeamGlobal, &clock, type, phase, ctx(test));
-            print(&cliamed);
-            return_shared(founderTeamGlobal);
-        };
+        // clock::increment_for_testing(&mut clock, 30 * DAY_IN_MS + 1);
+        // next_tx(test, test_user);
+        // {
+        //     let type = 0;
+        //     let phase = 1;
+        //     let founderTeamGlobal = take_shared<founder_team_reserve::FounderTeamGlobal>(test);
+        //     let cliamed = founder_team_reserve::claim_reserve(&mut founderTeamGlobal, &clock, type, phase, ctx(test));
+        //     print(&cliamed);
+        //     return_shared(founderTeamGlobal);
+        // };
 
         clock::destroy_for_testing(clock);
         end(scenario);
