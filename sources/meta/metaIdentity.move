@@ -106,6 +106,7 @@ module MetaGame::metaIdentity {
         transfer::share_object(global);
     }
 
+    #[allow(unused_function)]
     fun init(ctx: &mut TxContext) {
         let global = MetaInfoGlobal {
             id: object::new(ctx),
@@ -127,6 +128,7 @@ module MetaGame::metaIdentity {
     }
 
     // send 1 sui
+    #[lint_allow(self_transfer)]
     public entry fun inviteSendSui(global: &mut MetaInfoGlobal, inviteMetaId:u64, receiver:address, coins:vector<Coin<SUI>>, ctx:&mut TxContext) {
         let price = 1 * AMOUNT_DECIMAL;
         let sender = tx_context::sender(ctx);

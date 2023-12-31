@@ -89,6 +89,7 @@ module MetaGame::tree_of_life {
         transfer::share_object(global);
     }
 
+    #[allow(unused_function)]
     fun init(ctx: &mut TxContext) {
         let global = TreeGlobal {
             id: object::new(ctx),
@@ -101,6 +102,7 @@ module MetaGame::tree_of_life {
         transfer::share_object(global);
     }
 
+    #[lint_allow(self_transfer)]
     public entry fun mint(ctx:&mut TxContext) {
         let tree = Tree_of_life {
             id:object::new(ctx),
@@ -111,6 +113,7 @@ module MetaGame::tree_of_life {
         transfer::public_transfer(tree, tx_context::sender(ctx));
     }
 
+    #[lint_allow(self_transfer)]
     public entry fun water_down(mission_global: &mut mission::MissionGlobal, global: &mut TreeGlobal, meta:&mut MetaIdentity, coins:vector<Coin<SHUI>>, clock: &Clock, ctx:&mut TxContext) {
         // interval time should be greater than 1 days
         let amount = 1;

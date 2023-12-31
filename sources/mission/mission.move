@@ -69,6 +69,7 @@ module MetaGame::mission {
         balance::join(&mut global.balance_SHUI, balance);
     }
 
+    #[allow(unused_function)]
     fun init(ctx: &mut TxContext) {
         let global = MissionGlobal {
             id: object::new(ctx),
@@ -270,14 +271,14 @@ module MetaGame::mission {
 
     fun has_clamied_invite(global:&MissionGlobal, metaId:u64, missionNum:u64): bool {
         if (!table::contains(&global.invite_claim_records, metaId)) {
-            return false;
+            return false
         };
         let numTable = table::borrow(&global.invite_claim_records, metaId);
         if (!table::contains(numTable, missionNum)) {
-            return false;
+            return false
         };
         let value = table::borrow(numTable, missionNum);
-        return *value
+        *value
     }
 
     fun record_invite_clamied(global:&mut MissionGlobal, metaId:u64, missionNum:u64, ctx:&mut TxContext) {
@@ -293,6 +294,7 @@ module MetaGame::mission {
         };
     }
 
+    #[lint_allow(self_transfer)]
     public entry fun claim_invite_mission(global: &mut MissionGlobal, metaGlobal: &metaIdentity::MetaInfoGlobal, inviteNum:u64, 
         meta:&mut MetaIdentity, ctx:&mut TxContext) {
         let num = metaIdentity::query_invited_num(metaGlobal, metaIdentity::getMetaId(meta));

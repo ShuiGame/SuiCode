@@ -3,7 +3,6 @@ module MetaGame::swap {
     use sui::object::{Self, UID};
     use sui::tx_context::{Self, TxContext};
     use MetaGame::shui::{Self};
-    use MetaGame::boat_ticket::{Self};
     use sui::balance::{Self, Balance};
     use sui::sui::SUI;
     use std::vector::{Self};
@@ -59,6 +58,7 @@ module MetaGame::swap {
         global.phase = phase;
     }
 
+    #[allow(unused_function)]
     fun init(ctx: &mut TxContext) {
         let global = SwapGlobal {
             id: object::new(ctx),
@@ -80,7 +80,7 @@ module MetaGame::swap {
         balance::join(&mut swapGlobal.balance_SHUI, balance);
     }
 
-    public(friend) fun set_whitelist(swapGlobal: &mut SwapGlobal, ctx:&mut TxContext) {
+    public(friend) fun set_whitelist(swapGlobal: &mut SwapGlobal, ctx:&TxContext) {
         let sender = tx_context::sender(ctx);
         if (!table::contains(&swapGlobal.whitelist_table, sender)) {
             table::add(&mut swapGlobal.whitelist_table, sender, WHITELIST_SWAP_LIMIT);
@@ -100,6 +100,7 @@ module MetaGame::swap {
         assert!(table::length(&swapGlobal.whitelist_table) <= WHITELIST_MAX_NUM, 1);
     }
 
+    #[lint_allow(self_transfer)]
     public entry fun gold_reserve_swap(global: &mut SwapGlobal, sui_pay_amount:u64, coins:vector<Coin<SUI>>, ctx:&mut TxContext) {
         let ratio = 1;
         let recepient = tx_context::sender(ctx);
@@ -124,6 +125,7 @@ module MetaGame::swap {
         transfer::public_transfer(shui, recepient);
     }
 
+    #[lint_allow(self_transfer)]
     public entry fun public_swap(global: &mut SwapGlobal, sui_pay_amount:u64, coins:vector<Coin<SUI>>, ctx:&mut TxContext) {
         assert!(global.phase == 1, ERR_NOT_START);
         let ratio = 10;
@@ -149,6 +151,7 @@ module MetaGame::swap {
         transfer::public_transfer(shui, recepient);
     }
 
+    #[lint_allow(self_transfer)]
     public entry fun white_list_swap(global: &mut SwapGlobal, sui_pay_amount:u64, coins:vector<Coin<SUI>>, ctx:&mut TxContext) {
         let ratio = 100;
         let limit = WHITELIST_SWAP_LIMIT;
@@ -207,6 +210,7 @@ module MetaGame::swap {
         global.swaped_shui
     }
 
+    #[lint_allow(self_transfer)]
     public entry fun withdraw_sui(global: &mut SwapGlobal, amount:u64, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == global.creator, ERR_NO_PERMISSION);
         let airdrop_balance = balance::split(&mut global.balance_SUI, amount);
@@ -214,6 +218,7 @@ module MetaGame::swap {
         transfer::public_transfer(sui, tx_context::sender(ctx));
     }
 
+    #[lint_allow(self_transfer)]
     public entry fun withdraw_shui(global: &mut SwapGlobal, amount:u64, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == global.creator, ERR_NO_PERMISSION);
         let airdrop_balance = balance::split(&mut global.balance_SHUI, amount);

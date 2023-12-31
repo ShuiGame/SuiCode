@@ -8,7 +8,6 @@ module MetaGame::market {
     use sui::sui::SUI;
     use std::type_name::{Self, into_string};
     use sui::balance::{Self, Balance};
-    use std::debug::print;
     use sui::transfer;
     use sui::address;
     use sui::bag::{Self};
@@ -80,6 +79,7 @@ module MetaGame::market {
         transfer::share_object(global);
     }
 
+    #[allow(unused_function)]
     fun init(_witness: MARKET, ctx: &mut TxContext) {
         let global = MarketGlobal {
             id: object::new(ctx),
@@ -131,7 +131,6 @@ module MetaGame::market {
     }
 
     public entry fun get_game_sales(global: &MarketGlobal, _clock:&Clock) : string::String {
-        let byte_semi = ascii::byte(ascii::char(59));
         let table = &global.game_sales;
         if (linked_table::is_empty(table)) {
             return utf8(b"none")
@@ -225,6 +224,7 @@ module MetaGame::market {
         };
     }
 
+    #[lint_allow(self_transfer)]
     public entry fun unlist_nft_item<T:key+store> (
         global:&mut MarketGlobal, 
         meta: &mut MetaIdentity,
@@ -264,6 +264,7 @@ module MetaGame::market {
         };
     }
 
+    #[lint_allow(self_transfer)]
     public entry fun purchase_nft_item<T, Nft: key + store> (
         global:&mut MarketGlobal, 
         meta: &mut MetaIdentity,
@@ -284,7 +285,7 @@ module MetaGame::market {
             let onSale:&OnSale = vector::borrow(his_sales, i);
             if (onSale.name == name && onSale.num == num && onSale.price <= value) {
                 let sale = vector::remove(his_sales, i);
-                let OnSale {id, name:name, num:num, price, coinType:coinType, owner:owner, metaId:metaId, type:type, onsale_time:_, bag:items, nftType:_} = sale;
+                let OnSale {id, name:name, num:num, price, coinType:coinType, owner:owner, metaId:_, type:type, onsale_time:_, bag:items, nftType:_} = sale;
                 event::emit(
                     TransactionRecord {
                         seller:owner,
@@ -335,6 +336,7 @@ module MetaGame::market {
         };
     }
 
+    #[lint_allow(self_transfer)]
     public entry fun purchase_game_item<T> (
         global:&mut MarketGlobal, 
         meta: &mut MetaIdentity, 
@@ -502,6 +504,7 @@ module MetaGame::market {
         vec
     }
 
+    #[lint_allow(self_transfer)]
     public entry fun withdraw_sui(global: &mut MarketGlobal, amount:u64, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == global.creator, ERR_NO_PERMISSION);
         let balance = balance::split(&mut global.balance_SUI, amount);
@@ -509,6 +512,7 @@ module MetaGame::market {
         transfer::public_transfer(sui, tx_context::sender(ctx));
     }
 
+    #[lint_allow(self_transfer)]
     public entry fun withdraw_shui(global: &mut MarketGlobal, amount:u64, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == global.creator, ERR_NO_PERMISSION);
         let balance = balance::split(&mut global.balance_SHUI, amount);

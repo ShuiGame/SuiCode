@@ -17,6 +17,7 @@ module MetaGame::tree_of_life_record {
         valid_meta_game_whitelist: vector<address>,
     }
 
+    #[allow(unused_function)]
     fun init(ctx:&mut TxContext) {
         let global = GlobalRecords {
             id:object::new(ctx),
@@ -76,11 +77,11 @@ module MetaGame::tree_of_life_record {
     }
 
     public entry fun get_shui_token_pre_white_list(global: &mut GlobalRecords, recommendAddr:address): vector<address> {
-        *table::borrow(&mut global.shui_token_pre_white_list, recommendAddr)
+        *table::borrow(&global.shui_token_pre_white_list, recommendAddr)
     }
 
     public entry fun get_meta_game_pre_white_list(global: &mut GlobalRecords, recommendAddr:address): vector<address> {
-        *table::borrow(&mut global.meta_game_pre_white_list, recommendAddr)
+        *table::borrow(&global.meta_game_pre_white_list, recommendAddr)
     }
 
     public entry fun get_shui_token_white_list(global: &GlobalRecords): vector<address> {

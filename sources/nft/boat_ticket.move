@@ -45,6 +45,7 @@ module MetaGame::boat_ticket {
         ticket.name
     }
 
+    #[lint_allow(self_transfer)]
     public entry fun buy_ticket(global:&mut BoatTicketGlobal, swapGlobal: &mut SwapGlobal, coins:vector<Coin<SUI>>, ctx:&mut TxContext) {
         let recepient = tx_context::sender(ctx);
         let price = 5;
@@ -72,6 +73,7 @@ module MetaGame::boat_ticket {
     }
 
     #[test_only]
+    #[lint_allow(self_transfer)]
     public entry fun claim_ticket(global:&mut BoatTicketGlobal, ctx:&mut TxContext) {
         let ticket = BoatTicket {
             id:object::new(ctx),
@@ -83,6 +85,7 @@ module MetaGame::boat_ticket {
         transfer::transfer(ticket, tx_context::sender(ctx));
     }
 
+    #[allow(unused_function)]
     fun init(otw: BOAT_TICKET, ctx: &mut TxContext) {
         // https://docs.sui.io/build/sui-object-display
 
@@ -144,6 +147,7 @@ module MetaGame::boat_ticket {
         global.num
     }
 
+    #[lint_allow(self_transfer)]
     public entry fun withdraw_sui(global: &mut BoatTicketGlobal, amount:u64, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == global.creator, ERR_NO_PERMISSION);
         let balance = balance::split(&mut global.balance_SUI, amount);

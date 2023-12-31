@@ -4,7 +4,7 @@ module MetaGame::shui_ticket {
     use sui::transfer;
     use sui::display;
     use sui::package;
-    use std::string::{Self, String, utf8};
+    use std::string::{String, utf8};
     friend MetaGame::tree_of_life;
 
     const DEFAULT_LINK: vector<u8> = b"https://shui.one";
@@ -45,9 +45,8 @@ module MetaGame::shui_ticket {
         amount:u64
     }
 
-     fun init(otw: SHUI_TICKET, ctx: &mut TxContext) {
-        // https://docs.sui.io/build/sui-object-display
-
+    #[allow(unused_function)]
+    fun init(otw: SHUI_TICKET, ctx: &mut TxContext) {
         let keys = vector[
             // A name for the object. The name is displayed when users view the object.
             utf8(b"name"),
@@ -136,6 +135,7 @@ module MetaGame::shui_ticket {
         transfer::public_transfer(publisher, sender(ctx));
     }
 
+    #[lint_allow(self_transfer)]
     public(friend) fun mint(amount:u64, ctx:&mut TxContext) {
         if (amount == 50) {
             let ticket = ShuiTicket50 {

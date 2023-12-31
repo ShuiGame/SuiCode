@@ -43,6 +43,7 @@ module MetaGame::items {
         transfer::share_object(global);
     }
 
+    #[allow(unused_function)]
     fun init(ctx: &mut TxContext) {
         let global = ItemGlobal {
             id: object::new(ctx),
@@ -85,7 +86,7 @@ module MetaGame::items {
     }
 
     public(friend) fun store_item<T:store>(items: &mut Items, name:string::String, item:T) {
-        if (bag::contains(&mut items.bags, name)) {
+        if (bag::contains(&items.bags, name)) {
             let vec = bag::borrow_mut(&mut items.bags, name);
             vector::push_back(vec, item);
             let len = vector::length(vec);
@@ -99,7 +100,7 @@ module MetaGame::items {
     }
 
     public(friend) fun store_items<T:store>(items: &mut Items, name:string::String, item_arr: vector<T>) {
-        if (bag::contains(&mut items.bags, name)) {
+        if (bag::contains(&items.bags, name)) {
             let vec = bag::borrow_mut(&mut items.bags, name);
             let (i, len) = (0u64, vector::length(&item_arr));
             while (i < len) {

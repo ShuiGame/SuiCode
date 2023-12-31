@@ -122,6 +122,7 @@ module MetaGame::shui {
         coin::burn(treasury, coin);
     }
 
+    #[lint_allow(self_transfer)]
     public entry fun withdraw_sui(global: &mut Global, amount:u64, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == global.creator, ERR_NO_PERMISSION);
         let airdrop_balance = balance::split(&mut global.balance_SUI, amount);
@@ -129,6 +130,7 @@ module MetaGame::shui {
         transfer::public_transfer(sui, tx_context::sender(ctx));
     }
 
+    #[lint_allow(self_transfer)]
     public entry fun withdraw_shui(global: &mut Global, amount:u64, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == global.creator, ERR_NO_PERMISSION);
         let airdrop_balance = balance::split(&mut global.balance_SHUI, amount);
@@ -136,28 +138,28 @@ module MetaGame::shui {
         transfer::public_transfer(shui, tx_context::sender(ctx));
     }
 
-    public(friend) fun extract_airdrop_balance(global: &mut Global, ctx: &mut TxContext) : balance::Balance<SHUI> {
+    public(friend) fun extract_airdrop_balance(global: &mut Global, ctx: &TxContext) : balance::Balance<SHUI> {
         assert!(tx_context::sender(ctx) == global.creator, ERR_NO_PERMISSION);
         balance::split(&mut global.balance_SHUI, (AIRDROP_AMOUNT + WHITE_LIST_RESERVE) * AMOUNT_DECIMAL)
     }
 
     // todo: only once call
-    public(friend) fun extract_swap_balance(global: &mut Global, ctx: &mut TxContext) : balance::Balance<SHUI> {
+    public(friend) fun extract_swap_balance(global: &mut Global, ctx: &TxContext) : balance::Balance<SHUI> {
         assert!(tx_context::sender(ctx) == global.creator, ERR_NO_PERMISSION);
         balance::split(&mut global.balance_SHUI, SWAP_AMOUNT * AMOUNT_DECIMAL)
     }
 
-    public(friend) fun extract_founder_reserve_balance(global: &mut Global, ctx: &mut TxContext) : balance::Balance<SHUI> {
+    public(friend) fun extract_founder_reserve_balance(global: &mut Global, ctx: &TxContext) : balance::Balance<SHUI> {
         assert!(tx_context::sender(ctx) == global.creator, ERR_NO_PERMISSION);
         balance::split(&mut global.balance_SHUI, FOUNDER_TEAM_RESERVE * AMOUNT_DECIMAL)
     }
 
-    public(friend) fun extract_mission_reserve_balance(global: &mut Global, ctx: &mut TxContext) : balance::Balance<SHUI> {
+    public(friend) fun extract_mission_reserve_balance(global: &mut Global, ctx: &TxContext) : balance::Balance<SHUI> {
         assert!(tx_context::sender(ctx) == global.creator, ERR_NO_PERMISSION);
         balance::split(&mut global.balance_SHUI, MISSION_RESERVE * AMOUNT_DECIMAL)
     }
 
-    public fun change_owner(global:&mut Global, account:address, ctx:&mut TxContext) {
+    public fun change_owner(global:&mut Global, account:address, ctx:&TxContext) {
         assert!(global.creator == tx_context::sender(ctx), ERR_NO_PERMISSION);
         global.creator = account
     }

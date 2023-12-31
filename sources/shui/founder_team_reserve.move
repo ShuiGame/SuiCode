@@ -8,16 +8,11 @@ module MetaGame::founder_team_reserve {
     use sui::coin::{Self};
     use sui::balance::{Self, Balance};
     use sui::table::{Self};
-    use std::vector;
     use std::debug::print;
 
-    const ERR_INVALID_PHASE:u64 = 0x001;
     const ERR_NO_PERMISSION:u64 = 0x002;
     const ERR_EXCEED_LIST_LIMIT:u64 = 0x009;
-    const ERR_RESERVE_IS_lOCKED:u64 = 0x010;
-    const ERR_INVALID_TYPE:u64 = 0x011;
     const ERR_ACCOUNT_HAS_BEEN_IN_WHITELIST:u64 = 0x012;
-    const ERR_NOT_IN_WHITELIST:u64 = 0x013;
     const ERR_PHASE_TIME_NOT_REACH:u64 = 0x014;
     const ERR_ALREADY_CLAIMED:u64 = 0x015;
 
@@ -78,6 +73,7 @@ module MetaGame::founder_team_reserve {
         transfer::share_object(global);
     }
 
+    #[allow(unused_function)]
     fun init(ctx: &mut TxContext) {
         let global = FounderTeamGlobal {
             id: object::new(ctx),
@@ -107,7 +103,7 @@ module MetaGame::founder_team_reserve {
         balance::value(&global.balance_SHUI)
     }
 
-    public fun get_current_phase(global:&FounderTeamGlobal, clock_object: &Clock) :u64 {
+    public fun get_current_phase(global:&FounderTeamGlobal) :u64 {
         global.current_phase
     }
 
@@ -153,6 +149,7 @@ module MetaGame::founder_team_reserve {
         }
     }
 
+    #[lint_allow(self_transfer)]
     public entry fun claim_reserve(global: &mut FounderTeamGlobal, amount_type:u64, ctx: &mut TxContext) {
         assert!(global.current_phase > 0, ERR_PHASE_TIME_NOT_REACH);
         let account = tx_context::sender(ctx);

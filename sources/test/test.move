@@ -5,7 +5,6 @@ module MetaGame::airdrop_test {
     use std::string::{Self, utf8};
     use sui::clock::{Self, Clock};
     use std::debug::print;
-    use MetaGame::items_credential;
     use sui::coin::{Self, Coin};
     use sui::test_scenario::{
         Scenario, next_tx, begin, end, ctx, take_shared, return_shared, take_from_sender,return_to_sender,take_from_address,
@@ -26,11 +25,10 @@ module MetaGame::airdrop_test {
     use MetaGame::market;
     use MetaGame::boat_ticket::{Self};
     use MetaGame::mission;
-    use sui::kiosk::{Self};
 
     const DAY_IN_MS: u64 = 86_400_000;
     const HOUR_IN_MS: u64 = 3_600_000;
-    const START:u64 = 80000;
+
 
     struct OTW has drop {}
 
@@ -60,14 +58,14 @@ module MetaGame::airdrop_test {
         return_shared(missionGlobal);
     }
 
-    fun print_items(itemGlobal: &items::ItemGlobal, test: &mut Scenario) {
+    fun print_items(itemGlobal: &items::ItemGlobal, test: &Scenario) {
         let meta = take_from_sender<metaIdentity::MetaIdentity>(test);
         let items_info = metaIdentity::get_items_info(&meta, itemGlobal);
         print(&items_info);
         return_to_sender(test, meta);
     }
 
-    fun print_missions(test: &mut Scenario, clock: &Clock) {
+    fun print_missions(test: &Scenario, clock: &Clock) {
         let missionGlobal = take_shared<mission::MissionGlobal>(test);
         let meta = take_from_sender<metaIdentity::MetaIdentity>(test);
         let mission_list = mission::query_mission_list(&missionGlobal, &mut meta, clock);
@@ -78,6 +76,7 @@ module MetaGame::airdrop_test {
         return_shared(missionGlobal);
     }
 
+    #[allow(unused_function)]
     fun print_balance(test: &mut Scenario, user:address) {
         let coin = take_from_address<Coin<shui::SHUI>>(test, user);
         let value = coin::value(&coin);
@@ -87,6 +86,7 @@ module MetaGame::airdrop_test {
     }
 
     // #[test]
+    #[allow(unused_function)]
     fun test_crypto() {
         let scenario = scenario();
         let test = &mut scenario;
@@ -393,7 +393,6 @@ module MetaGame::airdrop_test {
 
         next_tx(test, admin);
         {
-            let type = 0;
             let founderTeamGlobal = take_shared<founder_team_reserve::FounderTeamGlobal>(test);
             founder_team_reserve::next_phase(&mut founderTeamGlobal, &clock, ctx(test));
             founder_team_reserve::add_white_list(&mut founderTeamGlobal, @account, 500, ctx(test));
@@ -403,7 +402,6 @@ module MetaGame::airdrop_test {
 
         next_tx(test, admin);
         {
-            let type = 0;
             let founderTeamGlobal = take_shared<founder_team_reserve::FounderTeamGlobal>(test);
             founder_team_reserve::claim_reserve(&mut founderTeamGlobal, 500, ctx(test));
             return_shared(founderTeamGlobal);

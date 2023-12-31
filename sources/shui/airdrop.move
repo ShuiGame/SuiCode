@@ -42,6 +42,7 @@ module MetaGame::airdrop {
     }
 
     #[test_only]
+    #[lint_allow(self_transfer)]
     public fun init_for_test(ctx: &mut TxContext) {
         let global = AirdropGlobal {
             id: object::new(ctx),
@@ -61,6 +62,7 @@ module MetaGame::airdrop {
         transfer::transfer(time_cap, tx_context::sender(ctx));
     }
 
+    #[allow(unused_function)]
     fun init(ctx: &mut TxContext) {
         let global = AirdropGlobal {
             id: object::new(ctx),
@@ -116,11 +118,11 @@ module MetaGame::airdrop {
         table::add(table, recepient, time);
     }
 
+    #[lint_allow(self_transfer)]
     public entry fun claim_boat_whitelist_airdrop(info:&mut AirdropGlobal, ticket:&mut BoatTicket, meta: &metaIdentity::MetaIdentity, ctx: &mut TxContext) {
         assert!(metaIdentity::is_active(meta), ERR_INACTIVE_META);
         assert!(!boat_ticket::is_claimed(ticket), ERR_HAS_BEEN_CLAIMED);
         assert!(info.white_list_claim_amount <= 20000, ERR_HAS_REACHED_WHITELIST_CLAIM_LIMIT);
-        let user = tx_context::sender(ctx);
         let amount = 10_000 * AMOUNT_DECIMAL;
         let whitelist_airdrop = balance::split(&mut info.balance_SHUI, amount);
         let shui = coin::from_balance(whitelist_airdrop, ctx);
@@ -133,6 +135,7 @@ module MetaGame::airdrop {
         airdropGlobal.white_list_claim_amount
     }
 
+    #[lint_allow(self_transfer)]
     public entry fun claim_airdrop(mission_global:&mut mission::MissionGlobal, info:&mut AirdropGlobal, meta: &metaIdentity::MetaIdentity, clock:&Clock, ctx: &mut TxContext) {
         assert!(metaIdentity::is_active(meta), ERR_INACTIVE_META);
         assert!(info.start > 0, ERR_AIRDROP_NOT_START);

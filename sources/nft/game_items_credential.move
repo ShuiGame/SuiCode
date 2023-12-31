@@ -23,6 +23,7 @@ module MetaGame::items_credential {
 
     struct ITEMS_CREDENTIAL has drop {}
 
+    #[allow(unused_function)]
     fun init(otw: ITEMS_CREDENTIAL, ctx: &mut TxContext) {
         let keys = vector[
             // A name for the object. The name is displayed when users view the object.
