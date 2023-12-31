@@ -19,13 +19,15 @@ module MetaGame::market {
     use MetaGame::shui;
     use sui::event;
 
-    const ERR_SALES_NOT_EXIST: u64 = 0x02;
-    const ERR_NOT_OWNER: u64 = 0x03;
-    const ERR_EXCEED_MAX_ON_SALE_NUM: u64 = 0x04;
-    const ERR_INVALID_COIN:u64 = 0x05;
-    const ERR_CAN_NOT_BUY_YOUR_ITEM:u64 = 0x06;
-    const ERR_NO_PERMISSION: u64 = 0x07;
+    const ERR_SALES_NOT_EXIST: u64 = 0x002;
+    const ERR_NOT_OWNER: u64 = 0x003;
+    const ERR_EXCEED_MAX_ON_SALE_NUM: u64 = 0x004;
+    const ERR_INVALID_COIN:u64 = 0x005;
+    const ERR_CAN_NOT_BUY_YOUR_ITEM:u64 = 0x006;
+    const ERR_NO_PERMISSION: u64 = 0x007;
+    const ERR_INVALID_VERSION:u64 = 0x008;
     const DAY_IN_MS: u64 = 86_400_000;
+    const VERSION: u64 = 0;
 
     struct MARKET has drop {}
 
@@ -37,6 +39,7 @@ module MetaGame::market {
 
         // metaId -> table<objid -> OnSaleInfo>
         game_sales : LinkedTable<u64, vector<OnSale>>,
+        version: u64
     }
 
     struct TransactionRecord has copy, drop {
@@ -75,6 +78,7 @@ module MetaGame::market {
             balance_SHUI: balance::zero(),
             balance_SUI: balance::zero(),
             game_sales: linked_table::new<u64, vector<OnSale>>(ctx),
+            version: 0
         };
         transfer::share_object(global);
     }
@@ -89,6 +93,7 @@ module MetaGame::market {
 
             // metaId -> sales
             game_sales: linked_table::new<u64, vector<OnSale>>(ctx),
+            version: 0
         };
         transfer::share_object(global);
     }
@@ -197,6 +202,7 @@ module MetaGame::market {
         clock: &Clock, 
         ctx: &mut TxContext
     ) {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
         let metaId = metaIdentity::getMetaId(meta);
         assert!(linked_table::contains(&global.game_sales, metaId), ERR_SALES_NOT_EXIST);
         let his_sales = linked_table::borrow_mut(&mut global.game_sales, metaId);
@@ -234,6 +240,7 @@ module MetaGame::market {
         clock: &Clock, 
         ctx: &mut TxContext
     ) {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
         let metaId = metaIdentity::getMetaId(meta);
         assert!(linked_table::contains(&global.game_sales, metaId), ERR_SALES_NOT_EXIST);
         let his_sales = linked_table::borrow_mut(&mut global.game_sales, metaId);
@@ -274,6 +281,7 @@ module MetaGame::market {
         payment:vector<Coin<T>>,
         clock: &Clock, 
         ctx: &mut TxContext) {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
         assert!(ownerMetaId != metaIdentity::getMetaId(meta), ERR_CAN_NOT_BUY_YOUR_ITEM);
         let now = clock::timestamp_ms(clock);   
         let merged_coins = merge_coins<T>(payment, ctx);
@@ -346,6 +354,7 @@ module MetaGame::market {
         payment:vector<Coin<T>>,
         clock: &Clock, 
         ctx: &mut TxContext) {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
         let merged_coins = merge_coins<T>(payment, ctx);
         assert!(linked_table::contains(&global.game_sales, ownerMetaId), ERR_SALES_NOT_EXIST);
         let his_sales = linked_table::borrow_mut(&mut global.game_sales, ownerMetaId);
@@ -433,6 +442,7 @@ module MetaGame::market {
         clock: &Clock,
         ctx: &mut TxContext
     ) {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
         tree_of_life::extract_drop_items(meta, name, num);
         let sales = &mut global.game_sales;
         let metaId = metaIdentity::getMetaId(meta);
@@ -461,6 +471,7 @@ module MetaGame::market {
         nft:Nft,
         ctx: &mut TxContext
     ) {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
         let sales = &mut global.game_sales;
         let metaId = metaIdentity::getMetaId(meta);
         let type = utf8(b"nft");
@@ -523,5 +534,10 @@ module MetaGame::market {
     public fun change_owner(global:&mut MarketGlobal, account:address, ctx:&mut TxContext) {
         assert!(global.creator == tx_context::sender(ctx), ERR_NO_PERMISSION);
         global.creator = account
+    }
+
+    public fun increment(global: &mut MarketGlobal, version: u64) {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
+        global.version = version;
     }
 }

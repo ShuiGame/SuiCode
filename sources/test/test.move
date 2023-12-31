@@ -33,7 +33,7 @@ module MetaGame::airdrop_test {
     struct OTW has drop {}
 
     // utilities
-    fun scenario(): Scenario { begin(@account) }
+    fun scenario(): Scenario { begin(@manager) }
 
     fun claim_airdrop(test: &mut Scenario, clock:&clock::Clock) {
         let airdropGlobal = take_shared<airdrop::AirdropGlobal>(test);
@@ -90,7 +90,7 @@ module MetaGame::airdrop_test {
     fun test_crypto() {
         let scenario = scenario();
         let test = &mut scenario;
-        let admin = @account;
+        let admin = @manager;
 
         // init package
         next_tx(test, admin);
@@ -107,7 +107,7 @@ module MetaGame::airdrop_test {
     fun test_market() {
         let scenario = scenario();
         let test = &mut scenario;
-        let admin = @account;
+        let admin = @manager;
         let user = @user;
         let clock = clock::create_for_testing(ctx(test));
 
@@ -287,13 +287,14 @@ module MetaGame::airdrop_test {
         next_tx(test, admin);
         {
             print(&string::utf8(b"open some fruits"));
+            let treeGlobal = take_shared<tree_of_life::TreeGlobal>(test);
             let itemGlobal = take_shared<items::ItemGlobal>(test);
             tx_context::increment_epoch_timestamp(ctx(test), 4);
             let i = 0;
             let loop_num = 5;
             while (i < loop_num) {
                 let meta = take_from_sender<metaIdentity::MetaIdentity>(test);
-                tree_of_life::open_fruit(&mut meta, ctx(test));
+                tree_of_life::open_fruit(&treeGlobal, &mut meta, ctx(test));
                 return_to_sender(test, meta);
                 next_epoch(test, admin);
                 i = i + 1;
@@ -301,6 +302,7 @@ module MetaGame::airdrop_test {
             };
             print_items(&itemGlobal, test);
             return_shared(itemGlobal);
+            return_shared(treeGlobal);
         };
 
         next_tx(test, admin);
@@ -395,7 +397,7 @@ module MetaGame::airdrop_test {
         {
             let founderTeamGlobal = take_shared<founder_team_reserve::FounderTeamGlobal>(test);
             founder_team_reserve::next_phase(&mut founderTeamGlobal, &clock, ctx(test));
-            founder_team_reserve::add_white_list(&mut founderTeamGlobal, @account, 500, ctx(test));
+            founder_team_reserve::add_white_list(&mut founderTeamGlobal, @manager, 500, ctx(test));
             return_shared(founderTeamGlobal);
             next_epoch(test, admin);
         };

@@ -19,17 +19,19 @@ module MetaGame::mission {
     friend MetaGame::tree_of_life;
     friend MetaGame::airdrop;
 
-    const ERR_MISSION_EXIST:u64 = 0x01;
-    const ERR_NO_PERMISSION:u64 = 0x02;
-    const ERR_META_RECORDS_NOT_EXIST:u64 = 0x03;
-    const ERR_MISSION_NOT_EXIST:u64 = 0x04;
-    const ERR_IS_ALREADY_CLAIMED:u64 = 0x05;
-    const ERR_PROGRESS_NOT_REACH:u64 = 0x06;
-    const ERR_HAS_EXCEED_INVITE_POOL_LIMIT:u64 = 0x07;
+    const ERR_MISSION_EXIST:u64 = 0x001;
+    const ERR_NO_PERMISSION:u64 = 0x002;
+    const ERR_META_RECORDS_NOT_EXIST:u64 = 0x003;
+    const ERR_MISSION_NOT_EXIST:u64 = 0x004;
+    const ERR_IS_ALREADY_CLAIMED:u64 = 0x005;
+    const ERR_PROGRESS_NOT_REACH:u64 = 0x006;
+    const ERR_HAS_EXCEED_INVITE_POOL_LIMIT:u64 = 0x007;
     const DAY_IN_MS: u64 = 86_400_000;
     const AMOUNT_DECIMAL:u64 = 1_000_000_000;
     const INVITE_REWARD_LIMIT:u64 = 59_000_000;
-    const ERR_NOT_PERMIT_TO_CLAIM:u64 = 0x08;
+    const ERR_NOT_PERMIT_TO_CLAIM:u64 = 0x008;
+    const ERR_INVALID_VERSION:u64 = 0x009;
+    const VERSION: u64 = 0;
 
     struct MissionGlobal has key {
         id: UID,
@@ -42,7 +44,8 @@ module MetaGame::mission {
 
         // metaId -> invite mission num -> has claimed
         invite_claim_records: Table<u64, Table<u64, bool>>,
-        creator: address
+        creator: address,
+        version: u64
     }
 
     struct MissionInfo has store {
@@ -76,8 +79,9 @@ module MetaGame::mission {
             invite_pool_limit: 0,
             mission_records: linked_table::new<String, MissionInfo>(ctx),
             balance_SHUI: balance::zero(),
-            creator: @account,
-            invite_claim_records: table::new<u64, Table<u64, bool>>(ctx)
+            creator: @manager,
+            invite_claim_records: table::new<u64, Table<u64, bool>>(ctx),
+            version: 0
         };
         transfer::share_object(global);
     }
@@ -89,8 +93,9 @@ module MetaGame::mission {
             invite_pool_limit: 0,
             balance_SHUI: balance::zero(),
             mission_records: linked_table::new<String, MissionInfo>(ctx),
-            creator: @account,
-            invite_claim_records: table::new<u64, Table<u64, bool>>(ctx)
+            creator: @manager,
+            invite_claim_records: table::new<u64, Table<u64, bool>>(ctx),
+            version: 0
         };
         transfer::share_object(global);
     }
@@ -297,6 +302,7 @@ module MetaGame::mission {
     #[lint_allow(self_transfer)]
     public entry fun claim_invite_mission(global: &mut MissionGlobal, metaGlobal: &metaIdentity::MetaInfoGlobal, inviteNum:u64, 
         meta:&mut MetaIdentity, ctx:&mut TxContext) {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
         let num = metaIdentity::query_invited_num(metaGlobal, metaIdentity::getMetaId(meta));
         let claimed = false;
         if (inviteNum == 2 && num >= 2) {
@@ -381,6 +387,7 @@ module MetaGame::mission {
     }
 
     public entry fun claim_mission(global: &mut MissionGlobal, mission:String, meta:&mut MetaIdentity) {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
         let mission_records = &mut global.mission_records;
         assert!(linked_table::contains(mission_records, mission), ERR_MISSION_NOT_EXIST);
         let mission_info = linked_table::borrow_mut(mission_records, mission);
@@ -414,7 +421,7 @@ module MetaGame::mission {
                 if (user_record.current_process < goal_process) {
                     user_record.current_process = user_record.current_process + 1;
                 };
-            };
+            }; 
         };
     }
 
@@ -571,5 +578,10 @@ module MetaGame::mission {
     public fun change_owner(global:&mut MissionGlobal, account:address, ctx:&mut TxContext) {
         assert!(global.creator == tx_context::sender(ctx), ERR_NO_PERMISSION);
         global.creator = account
+    }
+
+    public fun increment(global: &mut MissionGlobal, version: u64) {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
+        global.version = version;
     }
 }

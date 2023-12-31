@@ -10,11 +10,13 @@ module MetaGame::founder_team_reserve {
     use sui::table::{Self};
     use std::debug::print;
 
-    const ERR_NO_PERMISSION:u64 = 0x002;
-    const ERR_EXCEED_LIST_LIMIT:u64 = 0x009;
-    const ERR_ACCOUNT_HAS_BEEN_IN_WHITELIST:u64 = 0x012;
-    const ERR_PHASE_TIME_NOT_REACH:u64 = 0x014;
-    const ERR_ALREADY_CLAIMED:u64 = 0x015;
+    const ERR_NO_PERMISSION:u64 = 0x001;
+    const ERR_EXCEED_LIST_LIMIT:u64 = 0x002;
+    const ERR_ACCOUNT_HAS_BEEN_IN_WHITELIST:u64 = 0x003;
+    const ERR_PHASE_TIME_NOT_REACH:u64 = 0x004;
+    const ERR_ALREADY_CLAIMED:u64 = 0x005;
+    const ERR_INVALID_VERSION:u64 = 0x006;
+    const VERSION: u64 = 0;
 
     const DAY_IN_MS: u64 = 86_400_000;
     const AMOUNT_DECIMAL:u64 = 1_000_000_000;
@@ -50,7 +52,8 @@ module MetaGame::founder_team_reserve {
         whitelist_50: table::Table<address, u64>,
         whitelist_20: table::Table<address, u64>,
         whitelist_10: table::Table<address, u64>,
-        address_set: table::Table<address, u64>
+        address_set: table::Table<address, u64>,
+        version: u64
     }
 
     #[test_only]
@@ -69,6 +72,7 @@ module MetaGame::founder_team_reserve {
             whitelist_20: table::new<address, u64>(ctx),
             whitelist_10: table::new<address, u64>(ctx),
             address_set: table::new<address, u64>(ctx),
+            version: 0
         };
         transfer::share_object(global);
     }
@@ -88,7 +92,8 @@ module MetaGame::founder_team_reserve {
             whitelist_50: table::new<address, u64>(ctx),
             whitelist_20: table::new<address, u64>(ctx),
             whitelist_10: table::new<address, u64>(ctx),
-            address_set: table::new<address, u64>(ctx)
+            address_set: table::new<address, u64>(ctx),
+            version: 0
         };
         transfer::share_object(global);
     }
@@ -108,6 +113,7 @@ module MetaGame::founder_team_reserve {
     }
 
     public entry fun next_phase(global:&mut FounderTeamGlobal, clock:&Clock, ctx:&mut TxContext) {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
         assert!(global.creator == tx_context::sender(ctx), ERR_NO_PERMISSION);
         if (global.current_phase == 0) {
             global.phase_start_time = clock::timestamp_ms(clock);
@@ -122,6 +128,7 @@ module MetaGame::founder_team_reserve {
     }
 
     public entry fun add_white_list(global:&mut FounderTeamGlobal, account:address, amount_type:u64, ctx: &mut TxContext) {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
         assert!(global.creator == tx_context::sender(ctx), ERR_NO_PERMISSION);
         assert!(!table::contains(&global.address_set, account), ERR_ACCOUNT_HAS_BEEN_IN_WHITELIST);
         table::add(&mut global.address_set, account, 1);
@@ -143,7 +150,7 @@ module MetaGame::founder_team_reserve {
         } else if (amount_type == 20) {
             table::add(&mut global.whitelist_20, account, 10);
             assert!(table::length(&global.whitelist_20) <= RESERVE_20_num, ERR_EXCEED_LIST_LIMIT);
-        } else  { // 10
+        } else if (amount_type == 10) {
             table::add(&mut global.whitelist_10, account, 1);
             assert!(table::length(&global.whitelist_10) <= RESERVE_10_num, ERR_EXCEED_LIST_LIMIT);
         }
@@ -151,6 +158,7 @@ module MetaGame::founder_team_reserve {
 
     #[lint_allow(self_transfer)]
     public entry fun claim_reserve(global: &mut FounderTeamGlobal, amount_type:u64, ctx: &mut TxContext) {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
         assert!(global.current_phase > 0, ERR_PHASE_TIME_NOT_REACH);
         let account = tx_context::sender(ctx);
         // phase 1 claimed once , phase 2 claimed twice   phase > (limit - left claimed times)
@@ -203,7 +211,7 @@ module MetaGame::founder_team_reserve {
             transfer::public_transfer(shui, account);
             let left_num:&mut u64 = table::borrow_mut(&mut global.whitelist_20, account);
             *left_num = *left_num - 1;
-        } else  { // 10
+        } else if (amount_type == 10) {
             let claimed_nums = 1 - *table::borrow(&global.whitelist_10, account);
             assert!(global.current_phase > claimed_nums, ERR_ALREADY_CLAIMED);
             let reserve = balance::split(&mut global.balance_SHUI, RESERVE_10_SINGLE * AMOUNT_DECIMAL);
@@ -217,5 +225,10 @@ module MetaGame::founder_team_reserve {
     public fun change_owner(global:&mut FounderTeamGlobal, account:address, ctx:&mut TxContext) {
         assert!(global.creator == tx_context::sender(ctx), ERR_NO_PERMISSION);
         global.creator = account
+    }
+
+    public fun increment(global: &mut FounderTeamGlobal, version: u64) {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
+        global.version = version;
     }
 }

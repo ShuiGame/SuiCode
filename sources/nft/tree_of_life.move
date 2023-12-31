@@ -17,15 +17,17 @@ module MetaGame::tree_of_life {
     use MetaGame::shui_ticket::{Self};
     use std::string::{Self, String, utf8};
     use sui::event;
-
     friend MetaGame::market;
-    const SECONDS_IN_MILLS: u64 = 1_000;
+
+    const HOUR_IN_MS:u64 = 3_600_000;
     const AMOUNT_DECIMAL: u64 = 1_000_000_000;
     const ERR_INTERVAL_TIME_ONE_DAY:u64 = 0x001;
     const ERR_COIN_NOT_ENOUGH:u64 = 0x003;
     const ERR_INVALID_NAME:u64 = 0x004;
     const ERR_INVALID_TYPE:u64 = 0x005;
     const ERR_NO_PERMISSION:u64 = 0x006;
+    const ERR_INVALID_VERSION:u64 = 0x007;
+    const VERSION: u64 = 0;
 
     struct Tree_of_life has key, store {
         id:UID,
@@ -41,6 +43,7 @@ module MetaGame::tree_of_life {
         creator: address,
         water_down_last_time_records: Table<u64, u64>,
         water_down_person_exp_records: Table<u64, u64>,
+        version: u64
     }
 
     // ====== Events ======
@@ -85,6 +88,7 @@ module MetaGame::tree_of_life {
             creator: tx_context::sender(ctx),
             water_down_last_time_records: table::new<u64, u64>(ctx),
             water_down_person_exp_records: table::new<u64, u64>(ctx),
+            version: 0
         };
         transfer::share_object(global);
     }
@@ -98,6 +102,7 @@ module MetaGame::tree_of_life {
             creator: tx_context::sender(ctx),
             water_down_last_time_records: table::new<u64, u64>(ctx),
             water_down_person_exp_records: table::new<u64, u64>(ctx),
+            version: 0
         };
         transfer::share_object(global);
     }
@@ -115,13 +120,13 @@ module MetaGame::tree_of_life {
 
     #[lint_allow(self_transfer)]
     public entry fun water_down(mission_global: &mut mission::MissionGlobal, global: &mut TreeGlobal, meta:&mut MetaIdentity, coins:vector<Coin<SHUI>>, clock: &Clock, ctx:&mut TxContext) {
-        // interval time should be greater than 1 days
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
         let amount = 1;
         let now = clock::timestamp_ms(clock);
         global.total_water_amount = global.total_water_amount + amount;
         if (table::contains(&global.water_down_last_time_records, metaIdentity::get_meta_id(meta))) {
             let lastWaterDownTime = table::borrow_mut(&mut global.water_down_last_time_records, metaIdentity::get_meta_id(meta));
-            assert!((now - *lastWaterDownTime) > 15 * SECONDS_IN_MILLS, ERR_INTERVAL_TIME_ONE_DAY);
+            assert!((now - *lastWaterDownTime) > 8 * HOUR_IN_MS, ERR_INTERVAL_TIME_ONE_DAY);
             *lastWaterDownTime = now;
         } else {
             table::add(&mut global.water_down_last_time_records, metaIdentity::get_meta_id(meta), now);
@@ -207,7 +212,8 @@ module MetaGame::tree_of_life {
         vector::destroy_empty(vec);
     }
 
-    public entry fun swap_fragment<T:store + drop>(mission_global:&mut mission::MissionGlobal, meta:&mut MetaIdentity, fragment_type:string::String) {
+    public entry fun swap_fragment<T:store + drop>(global: &TreeGlobal, mission_global:&mut mission::MissionGlobal, meta:&mut MetaIdentity, fragment_type:string::String) {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
         assert!(check_class(&fragment_type), ERR_INVALID_TYPE);
         let items = get_items(meta);
         let fragment_name = string::utf8(b"Fragment ");
@@ -434,7 +440,8 @@ module MetaGame::tree_of_life {
         }
     }
 
-    public entry fun open_fruit(meta:&mut MetaIdentity, ctx:&mut TxContext) : string::String {
+    public entry fun open_fruit(global: &TreeGlobal, meta:&mut MetaIdentity, ctx:&mut TxContext) : string::String {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
         let Fruit {} = items::extract_item(get_items(meta), string::utf8(b"LuckyBox"));
         let num = get_random_num(0, 30610, 0, ctx);
         let num_u8 = num % 255;
@@ -505,7 +512,7 @@ module MetaGame::tree_of_life {
         if (table::contains(&global.water_down_last_time_records, metaIdentity::get_meta_id(meta))) {
             last_time = *table::borrow(&global.water_down_last_time_records, metaIdentity::get_meta_id(meta));
         };
-        let next_time = last_time + 15 * SECONDS_IN_MILLS;
+        let next_time = last_time + 8 * HOUR_IN_MS;
         if (now < next_time) {
             next_time - now
         } else {
@@ -520,5 +527,10 @@ module MetaGame::tree_of_life {
     public fun change_owner(global:&mut TreeGlobal, account:address, ctx:&mut TxContext) {
         assert!(global.creator == tx_context::sender(ctx), ERR_NO_PERMISSION);
         global.creator = account
+    }
+
+    public fun increment(global: &mut TreeGlobal, version: u64) {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
+        global.version = version;
     }
 }

@@ -22,8 +22,10 @@ module MetaGame::metaIdentity {
     const ERR_HAS_BEEN_INVITED_BY_MYSELF:u64 = 0x015;
     const ERR_HAS_BEEN_INVITED:u64 = 0x016;
     const ERR_ALREADY_BEEN_INVITED:u64 = 0x017;
-    const ERR_NOT_BEEN_INVITED:u64 = 0x18;
-    const ERR_HE_NOT_INVITE_ANYONE:u64 = 0x19;
+    const ERR_NOT_BEEN_INVITED:u64 = 0x018;
+    const ERR_HE_NOT_INVITE_ANYONE:u64 = 0x019;
+    const ERR_INVALID_VERSION:u64 = 0x020;
+    const VERSION: u64 = 0;
 
     const TYPE_ALPHA:u64 = 0;
     const TYPE_BETA:u64 = 1;
@@ -82,14 +84,15 @@ module MetaGame::metaIdentity {
         // invitor metaId -> vec<other players's addres>
         inviteMap:LinkedTable<u64, vector<address>>,
 
-        invitedMap:LinkedTable<u64, vector<address>>
+        invitedMap:LinkedTable<u64, vector<address>>,
+        version: u64
     }
 
     #[test_only]
     public fun init_for_test(ctx: &mut TxContext) {
         let global = MetaInfoGlobal {
             id: object::new(ctx),
-            creator:@account,
+            creator:@manager,
             total_players: 0,
             meta_alpha_count: 0,
             meta_beta_count:0,
@@ -99,9 +102,10 @@ module MetaGame::metaIdentity {
             wallet_meta_map:table::new<address, address>(ctx),
             phone_meta_map:table::new<string::String, address>(ctx),
             wallet_phone_map:table::new<address, string::String>(ctx),
-            register_owner:@register_manager,
+            register_owner:@manager,
             inviteMap:linked_table::new<u64, vector<address>>(ctx),
             invitedMap:linked_table::new<u64, vector<address>>(ctx),
+            version: 0
         };
         transfer::share_object(global);
     }
@@ -110,7 +114,7 @@ module MetaGame::metaIdentity {
     fun init(ctx: &mut TxContext) {
         let global = MetaInfoGlobal {
             id: object::new(ctx),
-            creator:@account,
+            creator:@manager,
             total_players: 0,
             meta_alpha_count: 0,
             meta_beta_count:0,
@@ -120,9 +124,10 @@ module MetaGame::metaIdentity {
             wallet_meta_map:table::new<address, address>(ctx),
             phone_meta_map:table::new<string::String, address>(ctx),
             wallet_phone_map:table::new<address, string::String>(ctx),
-            register_owner:@register_manager,
+            register_owner:@manager,
             inviteMap:linked_table::new<u64, vector<address>>(ctx),
-            invitedMap:linked_table::new<u64, vector<address>>(ctx)
+            invitedMap:linked_table::new<u64, vector<address>>(ctx),
+            version: 0
         };
         transfer::share_object(global);
     }
@@ -130,6 +135,7 @@ module MetaGame::metaIdentity {
     // send 1 sui
     #[lint_allow(self_transfer)]
     public entry fun inviteSendSui(global: &mut MetaInfoGlobal, inviteMetaId:u64, receiver:address, coins:vector<Coin<SUI>>, ctx:&mut TxContext) {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
         let price = 1 * AMOUNT_DECIMAL;
         let sender = tx_context::sender(ctx);
         let merged_coin = vector::pop_back(&mut coins);
@@ -158,6 +164,7 @@ module MetaGame::metaIdentity {
 
     public entry fun mintInviteMeta(global: &mut MetaInfoGlobal, inviteMetaId:u64, name:string::String, phone:string::String,
         email:string::String, user_addr:address, ctx:&mut TxContext) {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
         let sender = tx_context::sender(ctx);
         assert!(!table::contains(&global.wallet_meta_map, user_addr), ERR_ALREADY_BIND);
         let uid = object::new(ctx);
@@ -204,6 +211,7 @@ module MetaGame::metaIdentity {
     }
 
     public entry fun mintMeta(global: &mut MetaInfoGlobal, name:string::String, phone:string::String, email:string::String, user_addr:address, ctx:&mut TxContext) {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
         let sender = tx_context::sender(ctx);
         assert!(!table::contains(&global.wallet_meta_map, user_addr), ERR_ALREADY_BIND);
         let uid = object::new(ctx);
@@ -310,7 +318,7 @@ module MetaGame::metaIdentity {
     }
 
     public fun add_whitelists_by_type(global: &mut MetaInfoGlobal, whitelist: vector<address>, type:u64, ctx: &mut TxContext) {
-        assert!(@meta_manager == tx_context::sender(ctx), ERR_NO_PERMISSION);
+        assert!(@manager == tx_context::sender(ctx), ERR_NO_PERMISSION);
         assert!(type >= TYPE_ALPHA && type <= TYPE_BETA, ERR_INVALID_TYPE);
         let whitelist_table;
         if (type == TYPE_ALPHA) {
@@ -327,7 +335,7 @@ module MetaGame::metaIdentity {
     }
 
     public fun add_whitelist_by_type(global: &mut MetaInfoGlobal, account: address, type:u64, ctx: &mut TxContext) {
-        assert!(@meta_manager == tx_context::sender(ctx), ERR_NO_PERMISSION);
+        assert!(@manager == tx_context::sender(ctx), ERR_NO_PERMISSION);
         assert!(type >= TYPE_ALPHA && type <= TYPE_BETA, ERR_INVALID_TYPE);
         let whitelist_table;
         if (type == TYPE_ALPHA) {
@@ -394,5 +402,10 @@ module MetaGame::metaIdentity {
     public fun change_owner(global:&mut MetaInfoGlobal, account:address, ctx:&mut TxContext) {
         assert!(global.creator == tx_context::sender(ctx), ERR_NO_PERMISSION);
         global.creator = account
+    }
+    
+    public fun increment(global: &mut MetaInfoGlobal, version: u64) {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
+        global.version = version;
     }
 }

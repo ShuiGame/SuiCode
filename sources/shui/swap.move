@@ -21,9 +21,11 @@ module MetaGame::swap {
     const ERR_NOT_START:u64 = 0x005;
     const ERR_INVALID_PHASE:u64 = 0x006;
     const ERR_INVALID_MSG:u64 = 0x007;
+    const ERR_INVALID_VERSION:u64 = 0x008;
     const AMOUNT_DECIMAL:u64 = 1_000_000_000;
     const WHITELIST_SWAP_LIMIT:u64 = 100;
     const WHITELIST_MAX_NUM:u64 = 10_000;
+    const VERSION: u64 = 0;
 
     struct SwapGlobal has key {
         id: UID,
@@ -35,6 +37,7 @@ module MetaGame::swap {
         swaped_shui: u64,
         swaped_sui: u64,
         whitelist_table: Table<address, u64>,
+        version: u64
     }
 
     #[test_only]
@@ -48,7 +51,8 @@ module MetaGame::swap {
             balance_SHUI: balance::zero(),
             swaped_shui: 0,
             swaped_sui: 0,
-            whitelist_table: table::new<address, u64>(ctx)
+            whitelist_table: table::new<address, u64>(ctx),
+            version: 0
         };
         transfer::share_object(global);
     }
@@ -69,7 +73,8 @@ module MetaGame::swap {
             balance_SHUI: balance::zero(),
             swaped_shui: 0,
             swaped_sui: 0,
-            whitelist_table: table::new<address, u64>(ctx)
+            whitelist_table: table::new<address, u64>(ctx),
+            version: 0
         };
         transfer::share_object(global);
     }
@@ -102,6 +107,7 @@ module MetaGame::swap {
 
     #[lint_allow(self_transfer)]
     public entry fun gold_reserve_swap(global: &mut SwapGlobal, sui_pay_amount:u64, coins:vector<Coin<SUI>>, ctx:&mut TxContext) {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
         let ratio = 1;
         let recepient = tx_context::sender(ctx);
         let shui_to_be_swap:u64 = sui_pay_amount * ratio;
@@ -127,6 +133,7 @@ module MetaGame::swap {
 
     #[lint_allow(self_transfer)]
     public entry fun public_swap(global: &mut SwapGlobal, sui_pay_amount:u64, coins:vector<Coin<SUI>>, ctx:&mut TxContext) {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
         assert!(global.phase == 1, ERR_NOT_START);
         let ratio = 10;
         let recepient = tx_context::sender(ctx);
@@ -153,6 +160,7 @@ module MetaGame::swap {
 
     #[lint_allow(self_transfer)]
     public entry fun white_list_swap(global: &mut SwapGlobal, sui_pay_amount:u64, coins:vector<Coin<SUI>>, ctx:&mut TxContext) {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
         let ratio = 100;
         let limit = WHITELIST_SWAP_LIMIT;
         let recepient = tx_context::sender(ctx);
@@ -229,5 +237,10 @@ module MetaGame::swap {
     public fun change_owner(global:&mut SwapGlobal, account:address, ctx:&mut TxContext) {
         assert!(global.creator == tx_context::sender(ctx), ERR_NO_PERMISSION);
         global.creator = account
+    }
+
+    public fun increment(global: &mut SwapGlobal, version: u64) {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
+        global.version = version;
     }
 }

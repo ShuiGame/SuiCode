@@ -14,14 +14,16 @@ module MetaGame::airdrop {
 
     const ERR_INVALID_PHASE:u64 = 0x001;
     const ERR_NO_PERMISSION:u64 = 0x002;
-    const ERR_HAS_CLAIMED_IN_24HOUR:u64 = 0x004;
-    const ERR_AIRDROP_NOT_START:u64 = 0x005;
-    const ERR_INACTIVE_META:u64 = 0x007;
-    const ERR_EXCEED_DAILY_LIMIT:u64 = 0x008;
-    const ERR_HAS_BEEN_CLAIMED:u64 = 0x009;
-    const ERR_HAS_REACHED_WHITELIST_CLAIM_LIMIT:u64 = 0x010;
+    const ERR_HAS_CLAIMED_IN_24HOUR:u64 = 0x003;
+    const ERR_AIRDROP_NOT_START:u64 = 0x004;
+    const ERR_INACTIVE_META:u64 = 0x005;
+    const ERR_EXCEED_DAILY_LIMIT:u64 = 0x006;
+    const ERR_HAS_BEEN_CLAIMED:u64 = 0x007;
+    const ERR_HAS_REACHED_WHITELIST_CLAIM_LIMIT:u64 = 0x008;
+    const ERR_INVALID_VERSION:u64 = 0x009;
     const DAY_IN_MS: u64 = 86_400_000;
     const AMOUNT_DECIMAL:u64 = 1_000_000_000;
+    const VERSION: u64 = 0;
 
     struct AirdropGlobal has key {
         id: UID,
@@ -34,7 +36,8 @@ module MetaGame::airdrop {
         total_claim_amount: u64,
         now_days: u64,
         total_daily_claim_amount: u64,
-        white_list_claim_amount:u64
+        white_list_claim_amount: u64,
+        version: u64
     }
 
     struct TimeCap has key {
@@ -53,7 +56,8 @@ module MetaGame::airdrop {
             total_claim_amount: 0,
             now_days: 0,
             total_daily_claim_amount: 0,
-            white_list_claim_amount: 0
+            white_list_claim_amount: 0,
+            version: 0
         };
         transfer::share_object(global);
         let time_cap = TimeCap {
@@ -73,7 +77,8 @@ module MetaGame::airdrop {
             total_claim_amount: 0,
             now_days: 0,
             total_daily_claim_amount: 0,
-            white_list_claim_amount: 0
+            white_list_claim_amount: 0,
+            version: 0
         };
         transfer::share_object(global);
         let time_cap = TimeCap {
@@ -120,6 +125,7 @@ module MetaGame::airdrop {
 
     #[lint_allow(self_transfer)]
     public entry fun claim_boat_whitelist_airdrop(info:&mut AirdropGlobal, ticket:&mut BoatTicket, meta: &metaIdentity::MetaIdentity, ctx: &mut TxContext) {
+        assert!(info.version == VERSION, ERR_INVALID_VERSION);
         assert!(metaIdentity::is_active(meta), ERR_INACTIVE_META);
         assert!(!boat_ticket::is_claimed(ticket), ERR_HAS_BEEN_CLAIMED);
         assert!(info.white_list_claim_amount <= 20000, ERR_HAS_REACHED_WHITELIST_CLAIM_LIMIT);
@@ -137,6 +143,7 @@ module MetaGame::airdrop {
 
     #[lint_allow(self_transfer)]
     public entry fun claim_airdrop(mission_global:&mut mission::MissionGlobal, info:&mut AirdropGlobal, meta: &metaIdentity::MetaIdentity, clock:&Clock, ctx: &mut TxContext) {
+        assert!(info.version == VERSION, ERR_INVALID_VERSION);
         assert!(metaIdentity::is_active(meta), ERR_INACTIVE_META);
         assert!(info.start > 0, ERR_AIRDROP_NOT_START);
         let now = clock::timestamp_ms(clock);
@@ -235,5 +242,10 @@ module MetaGame::airdrop {
     public fun change_owner(global:&mut AirdropGlobal, account:address, ctx:&mut TxContext) {
         assert!(global.creator == tx_context::sender(ctx), ERR_NO_PERMISSION);
         global.creator = account
+    }
+
+    public fun increment(global: &mut AirdropGlobal, version: u64) {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
+        global.version = version;
     }
 }

@@ -20,10 +20,12 @@ module MetaGame::dragon_egg {
     const DESCRIPTION: vector<u8> = b"metagame dragon egg series";
     const PROJECT_URL: vector<u8> = b"https://shui.one/game/#/";
     const CREATOR: vector<u8> = b"metaGame";
-    const ERR_NO_PERMISSION:u64 = 0x02;
+    const ERR_NO_PERMISSION:u64 = 0x001;
+    const ERR_INVALID_VERSION:u64 = 0x002;
     const AMOUNT_DECIMAL:u64 = 1_000_000_000;   
-    const ERR_PAY_AMOUNT_ERROR:u64 = 0x04;
-    const ERR_HAS_BEEN_BOUGHT:u64 = 0x05;
+    const ERR_PAY_AMOUNT_ERROR:u64 = 0x004;
+    const ERR_HAS_BEEN_BOUGHT:u64 = 0x005;
+    const VERSION: u64 = 0;
 
     struct DRAGON_EGG has drop {}
     struct DragonEggFire has key, store {
@@ -45,10 +47,12 @@ module MetaGame::dragon_egg {
         egg_ice_bought_num: u64,
         egg_fire_bought_num: u64,
         bought_list: table::Table<address, bool>,
+        version:u64
     }
 
     #[lint_allow(self_transfer)]
     public entry fun buy_dragon_egg_ice(global:&mut DragonEggGlobal, coins:vector<Coin<SHUI>>, ctx:&mut TxContext) {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
         let recepient = tx_context::sender(ctx);
         let price = 10000;
         let merged_coin = vector::pop_back(&mut coins);
@@ -76,6 +80,7 @@ module MetaGame::dragon_egg {
 
     #[lint_allow(self_transfer)]
     public entry fun buy_dragon_egg_fire(global:&mut DragonEggGlobal, coins:vector<Coin<SHUI>>, ctx:&mut TxContext) {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);    
         let recepient = tx_context::sender(ctx);
         let price = 10000;
         let merged_coin = vector::pop_back(&mut coins);
@@ -157,7 +162,8 @@ module MetaGame::dragon_egg {
             creator: tx_context::sender(ctx),
             egg_ice_bought_num:0,
             egg_fire_bought_num:0,
-            bought_list: table::new<address, bool>(ctx)
+            bought_list: table::new<address, bool>(ctx),
+            version:0
         };
         transfer::share_object(global);
     }
@@ -184,5 +190,10 @@ module MetaGame::dragon_egg {
     public fun change_owner(global:&mut DragonEggGlobal, account:address, ctx:&mut TxContext) {
         assert!(global.creator == tx_context::sender(ctx), ERR_NO_PERMISSION);
         global.creator = account
+    }
+
+    public fun increment(global: &mut DragonEggGlobal, version: u64) {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
+        global.version = version;
     }
 }
