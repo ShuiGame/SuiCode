@@ -8,6 +8,7 @@ Sui = { git = "https://github.com/MystenLabs/sui.git",  rev = "framework/testnet
 [addresses]
 MetaGame = "0x0"
 MetaGameVersion = "0x0"
+empty_addr = "0x0"
 manager = "0xbe379359ac6e9d0fc0b867f147f248f1c2d9fc019a9a708adfcbe15fc3130c18"
 user = "0xce379359ac6e9d0fc0b867f147f248f1c2d9fc019a9a708adfcbe15fc3130c19"
 std= "0x1"

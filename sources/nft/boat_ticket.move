@@ -24,6 +24,8 @@ module MetaGame::boat_ticket {
     const ERR_NO_PERMISSION:u64 = 0x002;
     const ERR_ONLY_CAN_BUY_ONCE: u64 = 0x003;
     const ERR_INVALID_VERSION:u64 = 0x004;
+    const ERR_HAS_BEEN_SOLD_OUT:u64 = 0x005;
+    const MAX_NUM:u64 = 10000;
     const VERSION: u64 = 0;
 
     struct BOAT_TICKET has drop {}
@@ -76,6 +78,7 @@ module MetaGame::boat_ticket {
             whitelist_claimed: false
         };
         global.num = global.num + 1;
+        assert!(global.num <= MAX_NUM, ERR_HAS_BEEN_SOLD_OUT);
         table::add(&mut global.bought_list, recepient, true);
         transfer::transfer(ticket, tx_context::sender(ctx));
         swap::set_whitelist(swapGlobal, ctx);
@@ -156,8 +159,8 @@ module MetaGame::boat_ticket {
         transfer::share_object(global);
     }
 
-    public fun get_boat_num(global:&BoatTicketGlobal):u64 {
-        global.num
+    public fun get_left_boat_num(global:&BoatTicketGlobal):u64 {
+        MAX_NUM - global.num
     }
 
     #[lint_allow(self_transfer)]

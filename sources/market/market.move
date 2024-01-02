@@ -67,7 +67,8 @@ module MetaGame::market {
 
         // at most store one obejct
         bag: bag::Bag,
-        nftType: String
+        nftType: String,
+        nft_addr: address
     }
 
     #[test_only]
@@ -102,6 +103,7 @@ module MetaGame::market {
         let now = clock::timestamp_ms(clock);
         let bags = bag::new(ctx);
         let nftType = string::from_ascii(*type_name::borrow_string(&type_name::get<Nft>()));
+        let addr = object::id_address(&nft);
         bag::add(&mut bags, 0, nft);
         OnSale {
             id: object::new(ctx),
@@ -114,7 +116,8 @@ module MetaGame::market {
             type: type,
             onsale_time: now,
             bag: bags,
-            nftType: nftType
+            nftType: nftType,
+            nft_addr: addr
         }
     }
 
@@ -131,7 +134,8 @@ module MetaGame::market {
             type: type,
             onsale_time: now,
             bag: bag::new(ctx),
-            nftType: utf8(b"")
+            nftType: utf8(b""),
+            nft_addr: @empty_addr
         }
     }
 
@@ -186,6 +190,9 @@ module MetaGame::market {
             vector::push_back(&mut vec_out, byte_comma);
             vector::append(&mut vec_out, numbers_to_ascii_vector(onSale.metaId));
             vector::push_back(&mut vec_out, byte_comma);
+            let nft_addr = address::to_string(onSale.nft_addr);
+            vector::append(&mut vec_out, *string::bytes(&nft_addr));
+            vector::push_back(&mut vec_out, byte_comma);
             vector::append(&mut vec_out, numbers_to_ascii_vector(onSale.onsale_time));
             vector::push_back(&mut vec_out, byte_semi);
             i = i + 1
@@ -211,7 +218,7 @@ module MetaGame::market {
             let onSale:&OnSale = vector::borrow(his_sales, i);
             if (onSale.name == name && onSale.num == num && onSale.price == price) {
                 let sale = vector::remove(his_sales, i);
-                let OnSale {id, name:_, num:_, price:_, coinType:_, owner:owner, metaId:metaId, type:_, onsale_time:onsale_time, bag:items, nftType:_} = sale;
+                let OnSale {id, name:_, num:_, price:_, coinType:_, owner:owner, metaId:metaId, type:_, onsale_time:onsale_time, bag:items, nft_addr:_, nftType:_} = sale;
                 let time_dif = clock::timestamp_ms(clock) - onsale_time;
                 let days = time_dif / DAY_IN_MS;
                 if (days < 10) {
@@ -249,7 +256,7 @@ module MetaGame::market {
             let onSale:&OnSale = vector::borrow(his_sales, i);
             if (onSale.name == name && onSale.num == num && onSale.price == price) {
                 let sale = vector::remove(his_sales, i);
-                let OnSale {id, name:_, num:_, price:_, coinType:_, owner:owner, metaId:_, type:_, onsale_time:onsale_time, bag:items, nftType:_} = sale;
+                let OnSale {id, name:_, num:_, price:_, coinType:_, owner:owner, metaId:_, type:_, onsale_time:onsale_time, bag:items, nft_addr:_, nftType:_} = sale;
                 let time_dif = clock::timestamp_ms(clock) - onsale_time;
                 let days = time_dif / DAY_IN_MS;
                 if (days < 10) {
@@ -293,7 +300,7 @@ module MetaGame::market {
             let onSale:&OnSale = vector::borrow(his_sales, i);
             if (onSale.name == name && onSale.num == num && onSale.price <= value) {
                 let sale = vector::remove(his_sales, i);
-                let OnSale {id, name:name, num:num, price, coinType:coinType, owner:owner, metaId:_, type:type, onsale_time:_, bag:items, nftType:_} = sale;
+                let OnSale {id, name:name, num:num, price, coinType:coinType, owner:owner, metaId:_, type:type, onsale_time:_, bag:items, nft_addr:_, nftType:_} = sale;
                 event::emit(
                     TransactionRecord {
                         seller:owner,
@@ -365,7 +372,7 @@ module MetaGame::market {
             let onSale:&OnSale = vector::borrow(his_sales, i);
             if (onSale.name == name && onSale.num == num && onSale.price <= value) {
                 let sale = vector::remove(his_sales, i);
-                let OnSale {id, name:name, num:num, price, coinType:coinType, owner:owner, metaId:metaId, type:type, onsale_time:_, bag:items, nftType:_} = sale;
+                let OnSale {id, name:name, num:num, price, coinType:coinType, owner:owner, metaId:metaId, type:type, onsale_time:_, bag:items, nft_addr:_, nftType:_} = sale;
                 event::emit(
                     TransactionRecord {
                         seller:owner,
