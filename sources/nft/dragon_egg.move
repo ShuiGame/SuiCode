@@ -14,11 +14,11 @@ module MetaGame::dragon_egg {
     use MetaGame::shui::{SHUI};
     use MetaGame::utils;
 
-    const DEFAULT_LINK: vector<u8> = b"https://shui.one";
+    const DEFAULT_LINK: vector<u8> = b"https://shui.game";
     const DEFAULT_IMAGE_URL_FIRE: vector<u8> = b"https://bafybeifgrwsodbehvvahrqvtql3d7ta6ztjovjfmsbk7wslyswsymrnpzi.ipfs.nftstorage.link/dragoneggfire.jpg";
     const DEFAULT_IMAGE_URL_ICE: vector<u8> = b"https://bafybeifgrwsodbehvvahrqvtql3d7ta6ztjovjfmsbk7wslyswsymrnpzi.ipfs.nftstorage.link/dragoneggice.jpg";
     const DESCRIPTION: vector<u8> = b"metagame dragon egg series";
-    const PROJECT_URL: vector<u8> = b"https://shui.one/game/#/";
+    const PROJECT_URL: vector<u8> = b"https://shui.game/game/#/";
     const CREATOR: vector<u8> = b"metaGame";
     const ERR_NO_PERMISSION:u64 = 0x001;
     const ERR_INVALID_VERSION:u64 = 0x002;

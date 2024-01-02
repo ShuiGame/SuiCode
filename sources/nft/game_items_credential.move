@@ -9,10 +9,10 @@ module MetaGame::items_credential {
 
     friend MetaGame::market;
 
-    const DEFAULT_LINK: vector<u8> = b"https://shui.one";
+    const DEFAULT_LINK: vector<u8> = b"https://shui.game";
     const DEFAULT_IMAGE_URL: vector<u8> = b"https://bafybeibzoi4kzr4gg75zhso5jespxnwespyfyakemrwibqorjczkn23vpi.ipfs.nftstorage.link/NFT-CARD1.png";
     const DESCRIPTION: vector<u8> = b"Boat ticket to meta masrs";
-    const PROJECT_URL: vector<u8> = b"https://shui.one/game/#/";
+    const PROJECT_URL: vector<u8> = b"https://shui.game/game/#/";
     const CREATOR: vector<u8> = b"metaGame";
 
     struct GameItemsCredential has key, store {
