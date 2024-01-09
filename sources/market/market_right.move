@@ -848,15 +848,15 @@ module MetaGame::market_right {
     public entry fun claimed_game_0(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_GAME0, ctx: &mut TxContext) {
         let total_shui_amount = global.culmulate_game_SHUI;
         let total_sui_amount = global.culmulate_game_SUI;
-        if (total_shui_amount /1000  > nft.claimed_shui_amount) {
-            let left_amount = total_shui_amount /1000 - nft.claimed_shui_amount;
+        if (total_shui_amount * 7 /10000  > nft.claimed_shui_amount) {
+            let left_amount = total_shui_amount * 7 /10000 - nft.claimed_shui_amount;
             nft.claimed_shui_amount = nft.claimed_shui_amount + left_amount;
             let balance = balance::split(&mut global.balance_nft_SHUI, left_amount);
             let shui = coin::from_balance(balance, ctx);
             transfer::public_transfer(shui, tx_context::sender(ctx));
         };
-        if (total_sui_amount /1000 > nft.claimed_sui_amount) {
-            let left_amount = total_sui_amount /1000 - nft.claimed_sui_amount;
+        if (total_sui_amount * 7 /10000 > nft.claimed_sui_amount) {
+            let left_amount = total_sui_amount * 7 /10000 - nft.claimed_sui_amount;
             nft.claimed_sui_amount = nft.claimed_sui_amount + left_amount;
             let balance = balance::split(&mut global.balance_nft_SUI, left_amount);
             let sui = coin::from_balance(balance, ctx);
