@@ -330,7 +330,7 @@ module MetaGame::market {
 
                 let market_gas = coin::split(&mut merged_coins, price / 1000, ctx);
                 let fee = coin::into_balance(market_gas);
-                market_right::into_gas_pool_SUI(markertRightGlobal, fee);
+                market_right::into_gas_pool_nft_SUI(markertRightGlobal, fee);
                 transfer::public_transfer(payment, owner);
                 break
             };
@@ -395,7 +395,7 @@ module MetaGame::market {
                 let payment = coin::split(&mut merged_coins, price * 995 / 1000, ctx);
                 let market_gas = coin::split(&mut merged_coins, price * 5 / 1000, ctx);
                 let fee = coin::into_balance(market_gas);
-                market_right::into_gas_pool_SHUI(markertRightGlobal, fee);
+                market_right::into_gas_pool_nft_SHUI(markertRightGlobal, fee);
                 transfer::public_transfer(payment, owner);
                 break
             };
@@ -454,7 +454,7 @@ module MetaGame::market {
                 let payment = coin::split<SUI>(&mut merged_coins, price * 999 / 1000, ctx);
                 let market_gas = coin::split<SUI>(&mut merged_coins, price / 1000, ctx);
                 let fee = coin::into_balance<SUI>(market_gas);
-                market_right::into_gas_pool_SUI(markertRightGlobal, fee);
+                market_right::into_gas_pool_game_SUI(markertRightGlobal, fee);
                 transfer::public_transfer(payment, owner);
                 tree_of_life::fill_items(meta, name, num);
                 break
@@ -514,7 +514,7 @@ module MetaGame::market {
                 let payment = coin::split<SHUI>(&mut merged_coins, price * 999 / 1000, ctx);
                 let market_gas = coin::split<SHUI>(&mut merged_coins, price / 1000, ctx);
                 let fee = coin::into_balance<SHUI>(market_gas);
-                market_right::into_gas_pool_SHUI(markertRightGlobal, fee);
+                market_right::into_gas_pool_game_SHUI(markertRightGlobal, fee);
                 transfer::public_transfer(payment, owner);
                 tree_of_life::fill_items(meta, name, num);
                 break

@@ -40,10 +40,14 @@ module MetaGame::market_right {
 
     struct MarketRightGlobal has key {
         id: UID,
-        culmulate_SHUI: u64,
-        culmulate_SUI: u64,
-        balance_SHUI: Balance<SHUI>,
-        balance_SUI: Balance<SUI>,
+        culmulate_game_SHUI: u64,
+        culmulate_game_SUI: u64,
+        culmulate_nft_SHUI: u64,
+        culmulate_nft_SUI: u64,
+        balance_game_SHUI: Balance<SHUI>,
+        balance_game_SUI: Balance<SUI>,
+        balance_nft_SHUI: Balance<SHUI>,
+        balance_nft_SUI: Balance<SUI>,
 
         nft_20_issued: u64,
         nft_15_issued: u64,
@@ -143,10 +147,14 @@ module MetaGame::market_right {
     fun init(otw: MARKET_RIGHT, ctx: &mut TxContext) {
         let global = MarketRightGlobal {
             id: object::new(ctx),
-            culmulate_SHUI: 0,
-            culmulate_SUI: 0,
-            balance_SHUI: balance::zero(),
-            balance_SUI: balance::zero(),
+            culmulate_game_SHUI: 0, 
+            culmulate_game_SUI: 0,
+            culmulate_nft_SHUI: 0,
+            culmulate_nft_SUI: 0,
+            balance_game_SHUI: balance::zero(),
+            balance_game_SUI: balance::zero(),
+            balance_nft_SHUI: balance::zero(),
+            balance_nft_SUI: balance::zero(),
             nft_20_issued:0,
             nft_15_issued:0,
             nft_10_issued:0,
@@ -360,10 +368,14 @@ module MetaGame::market_right {
     public fun init_for_test(ctx: &mut TxContext) {
         let global = MarketRightGlobal {
             id: object::new(ctx),
-            culmulate_SHUI: 0,
-            culmulate_SUI: 0,
-            balance_SHUI: balance::zero(),
-            balance_SUI: balance::zero(),
+            culmulate_game_SHUI: 0, 
+            culmulate_game_SUI: 0,
+            culmulate_nft_SHUI: 0,
+            culmulate_nft_SUI: 0,
+            balance_game_SHUI: balance::zero(),
+            balance_game_SUI: balance::zero(),
+            balance_nft_SHUI: balance::zero(),
+            balance_nft_SUI: balance::zero(),
             nft_20_issued:0,
             nft_15_issued:0,
             nft_10_issued:0,
@@ -383,14 +395,24 @@ module MetaGame::market_right {
         transfer::share_object(global);
     }
 
-    public(friend) fun into_gas_pool_SHUI(global: &mut MarketRightGlobal, gas: balance::Balance<SHUI>) {
-        global.culmulate_SHUI = global.culmulate_SHUI + balance::value(&gas);
-        balance::join(&mut global.balance_SHUI, gas);
+    public(friend) fun into_gas_pool_game_SHUI(global: &mut MarketRightGlobal, gas: balance::Balance<SHUI>) {
+        global.culmulate_game_SHUI = global.culmulate_game_SHUI + balance::value(&gas);
+        balance::join(&mut global.balance_game_SHUI, gas);
     }
 
-    public(friend) fun into_gas_pool_SUI(global: &mut MarketRightGlobal, gas: balance::Balance<SUI>) {
-        global.culmulate_SUI = global.culmulate_SUI + balance::value(&gas);
-        balance::join(&mut global.balance_SUI, gas);
+    public(friend) fun into_gas_pool_nft_SHUI(global: &mut MarketRightGlobal, gas: balance::Balance<SHUI>) {
+        global.culmulate_nft_SHUI = global.culmulate_nft_SHUI + balance::value(&gas);
+        balance::join(&mut global.balance_nft_SHUI, gas);
+    }
+
+    public(friend) fun into_gas_pool_game_SUI(global: &mut MarketRightGlobal, gas: balance::Balance<SUI>) {
+        global.culmulate_game_SUI = global.culmulate_game_SUI + balance::value(&gas);
+        balance::join(&mut global.balance_game_SUI, gas);
+    }
+
+    public(friend) fun into_gas_pool_nft_SUI(global: &mut MarketRightGlobal, gas: balance::Balance<SUI>) {
+        global.culmulate_nft_SUI = global.culmulate_nft_SUI + balance::value(&gas);
+        balance::join(&mut global.balance_nft_SUI, gas);
     }
 
     public fun issue_nft_right_20(global: &mut MarketRightGlobal, receiver:address, ctx:&mut TxContext) {
@@ -541,7 +563,7 @@ module MetaGame::market_right {
         let balance = coin::into_balance<SUI>(
             coin::split<SUI>(&mut merged_coin, price * AMOUNT_DECIMAL, ctx)
         );
-        balance::join(&mut global.balance_SUI, balance);
+        balance::join(&mut global.balance_game_SUI, balance);
         if (coin::value(&merged_coin) > 0) {
             transfer::public_transfer(merged_coin, receiver)
         } else {
@@ -580,7 +602,7 @@ module MetaGame::market_right {
         let balance = coin::into_balance<SUI>(
             coin::split<SUI>(&mut merged_coin, price * AMOUNT_DECIMAL, ctx)
         );
-        balance::join(&mut global.balance_SUI, balance);
+        balance::join(&mut global.balance_game_SUI, balance);
         if (coin::value(&merged_coin) > 0) {
             transfer::public_transfer(merged_coin, receiver)
         } else {
@@ -591,33 +613,252 @@ module MetaGame::market_right {
 
     public fun withdraw_sui(global: &mut MarketRightGlobal, amount:u64, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == @manager, ERR_NO_PERMISSION);
-        let balance = balance::split(&mut global.balance_SUI, amount);
+        let balance = balance::split(&mut global.balance_game_SUI, amount);
         let sui = coin::from_balance(balance, ctx);
         transfer::public_transfer(sui, tx_context::sender(ctx));
     }
 
     public fun withdraw_shui(global: &mut MarketRightGlobal, amount:u64, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == @manager, ERR_NO_PERMISSION);
-        let balance = balance::split(&mut global.balance_SHUI, amount);
+        let balance = balance::split(&mut global.balance_game_SHUI, amount);
         let shui = coin::from_balance(balance, ctx);
         transfer::public_transfer(shui, tx_context::sender(ctx));
     }
 
     public fun claimed_nft_20(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_NFT20, ctx: &mut TxContext) {
-        let total_shui_amount = global.culmulate_SHUI;
-        let total_sui_amount = global.culmulate_SUI;
-        if (total_shui_amount / 5 > nft.claimed_shui_amount) {
-            let left_amount = total_shui_amount / 5 - nft.claimed_shui_amount;
+        let total_shui_amount = global.culmulate_nft_SHUI;
+        let total_sui_amount = global.culmulate_nft_SUI;
+        let prop = 20;
+        if (total_shui_amount * prop/100 > nft.claimed_shui_amount) {
+            let left_amount = total_shui_amount * prop/100 - nft.claimed_shui_amount;
             nft.claimed_shui_amount = nft.claimed_shui_amount + left_amount;
-            let balance = balance::split(&mut global.balance_SHUI, left_amount);
+            let balance = balance::split(&mut global.balance_nft_SHUI, left_amount);
             let shui = coin::from_balance(balance, ctx);
             transfer::public_transfer(shui, tx_context::sender(ctx));
         };
-
-        if (total_sui_amount / 5 > nft.claimed_sui_amount) {
-            let left_amount = total_sui_amount / 5 - nft.claimed_sui_amount;
+        if (total_sui_amount * prop/100 > nft.claimed_sui_amount) {
+            let left_amount = total_sui_amount * prop/100 - nft.claimed_sui_amount;
             nft.claimed_sui_amount = nft.claimed_sui_amount + left_amount;
-            let balance = balance::split(&mut global.balance_SUI, left_amount);
+            let balance = balance::split(&mut global.balance_nft_SUI, left_amount);
+            let sui = coin::from_balance(balance, ctx);
+            transfer::public_transfer(sui, tx_context::sender(ctx));
+        };
+    }
+
+    public fun claimed_nft_15(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_NFT15, ctx: &mut TxContext) {
+        let total_shui_amount = global.culmulate_nft_SHUI;
+        let total_sui_amount = global.culmulate_nft_SUI;
+        let prop = 15;
+        if (total_shui_amount * prop/100  > nft.claimed_shui_amount) {
+            let left_amount = total_shui_amount * prop/100 - nft.claimed_shui_amount;
+            nft.claimed_shui_amount = nft.claimed_shui_amount + left_amount;
+            let balance = balance::split(&mut global.balance_nft_SHUI, left_amount);
+            let shui = coin::from_balance(balance, ctx);
+            transfer::public_transfer(shui, tx_context::sender(ctx));
+        };
+        if (total_sui_amount * prop/100 > nft.claimed_sui_amount) {
+            let left_amount = total_sui_amount * prop/100 - nft.claimed_sui_amount;
+            nft.claimed_sui_amount = nft.claimed_sui_amount + left_amount;
+            let balance = balance::split(&mut global.balance_nft_SUI, left_amount);
+            let sui = coin::from_balance(balance, ctx);
+            transfer::public_transfer(sui, tx_context::sender(ctx));
+        };
+    }
+
+    public fun claimed_nft_10(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_NFT10, ctx: &mut TxContext) {
+        let total_shui_amount = global.culmulate_nft_SHUI;
+        let total_sui_amount = global.culmulate_nft_SUI;
+        let prop = 10;
+        if (total_shui_amount * prop/100  > nft.claimed_shui_amount) {
+            let left_amount = total_shui_amount * prop/100 - nft.claimed_shui_amount;
+            nft.claimed_shui_amount = nft.claimed_shui_amount + left_amount;
+            let balance = balance::split(&mut global.balance_nft_SHUI, left_amount);
+            let shui = coin::from_balance(balance, ctx);
+            transfer::public_transfer(shui, tx_context::sender(ctx));
+        };
+        if (total_sui_amount * prop/100 > nft.claimed_sui_amount) {
+            let left_amount = total_sui_amount * prop/100 - nft.claimed_sui_amount;
+            nft.claimed_sui_amount = nft.claimed_sui_amount + left_amount;
+            let balance = balance::split(&mut global.balance_nft_SUI, left_amount);
+            let sui = coin::from_balance(balance, ctx);
+            transfer::public_transfer(sui, tx_context::sender(ctx));
+        };
+    }
+
+    public fun claimed_nft_5(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_NFT5, ctx: &mut TxContext) {
+        let total_shui_amount = global.culmulate_nft_SHUI;
+        let total_sui_amount = global.culmulate_nft_SUI;
+        let prop = 5;
+        if (total_shui_amount * prop/100  > nft.claimed_shui_amount) {
+            let left_amount = total_shui_amount * prop/100 - nft.claimed_shui_amount;
+            nft.claimed_shui_amount = nft.claimed_shui_amount + left_amount;
+            let balance = balance::split(&mut global.balance_nft_SHUI, left_amount);
+            let shui = coin::from_balance(balance, ctx);
+            transfer::public_transfer(shui, tx_context::sender(ctx));
+        };
+        if (total_sui_amount * prop/100 > nft.claimed_sui_amount) {
+            let left_amount = total_sui_amount * prop/100 - nft.claimed_sui_amount;
+            nft.claimed_sui_amount = nft.claimed_sui_amount + left_amount;
+            let balance = balance::split(&mut global.balance_nft_SUI, left_amount);
+            let sui = coin::from_balance(balance, ctx);
+            transfer::public_transfer(sui, tx_context::sender(ctx));
+        };
+    }
+
+    public fun claimed_game_25(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_GAME25, ctx: &mut TxContext) {
+        let total_shui_amount = global.culmulate_game_SHUI;
+        let total_sui_amount = global.culmulate_game_SUI;
+        let prop = 25;
+        if (total_shui_amount * prop/100  > nft.claimed_shui_amount) {
+            let left_amount = total_shui_amount * prop/100 - nft.claimed_shui_amount;
+            nft.claimed_shui_amount = nft.claimed_shui_amount + left_amount;
+            let balance = balance::split(&mut global.balance_nft_SHUI, left_amount);
+            let shui = coin::from_balance(balance, ctx);
+            transfer::public_transfer(shui, tx_context::sender(ctx));
+        };
+        if (total_sui_amount * prop/100 > nft.claimed_sui_amount) {
+            let left_amount = total_sui_amount * prop/100 - nft.claimed_sui_amount;
+            nft.claimed_sui_amount = nft.claimed_sui_amount + left_amount;
+            let balance = balance::split(&mut global.balance_nft_SUI, left_amount);
+            let sui = coin::from_balance(balance, ctx);
+            transfer::public_transfer(sui, tx_context::sender(ctx));
+        };
+    }
+    
+    public fun claimed_game_20(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_GAME20, ctx: &mut TxContext) {
+        let total_shui_amount = global.culmulate_game_SHUI;
+        let total_sui_amount = global.culmulate_game_SUI;
+        let prop = 20;
+        if (total_shui_amount * prop/100  > nft.claimed_shui_amount) {
+            let left_amount = total_shui_amount * prop/100 - nft.claimed_shui_amount;
+            nft.claimed_shui_amount = nft.claimed_shui_amount + left_amount;
+            let balance = balance::split(&mut global.balance_nft_SHUI, left_amount);
+            let shui = coin::from_balance(balance, ctx);
+            transfer::public_transfer(shui, tx_context::sender(ctx));
+        };
+        if (total_sui_amount * prop/100 > nft.claimed_sui_amount) {
+            let left_amount = total_sui_amount * prop/100 - nft.claimed_sui_amount;
+            nft.claimed_sui_amount = nft.claimed_sui_amount + left_amount;
+            let balance = balance::split(&mut global.balance_nft_SUI, left_amount);
+            let sui = coin::from_balance(balance, ctx);
+            transfer::public_transfer(sui, tx_context::sender(ctx));
+        };
+    }
+
+    public fun claimed_game_10(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_GAME10, ctx: &mut TxContext) {
+        let total_shui_amount = global.culmulate_game_SHUI;
+        let total_sui_amount = global.culmulate_game_SUI;
+        let prop = 10;
+        if (total_shui_amount * prop/100  > nft.claimed_shui_amount) {
+            let left_amount = total_shui_amount * prop/100 - nft.claimed_shui_amount;
+            nft.claimed_shui_amount = nft.claimed_shui_amount + left_amount;
+            let balance = balance::split(&mut global.balance_nft_SHUI, left_amount);
+            let shui = coin::from_balance(balance, ctx);
+            transfer::public_transfer(shui, tx_context::sender(ctx));
+        };
+        if (total_sui_amount * prop/100 > nft.claimed_sui_amount) {
+            let left_amount = total_sui_amount * prop/100 - nft.claimed_sui_amount;
+            nft.claimed_sui_amount = nft.claimed_sui_amount + left_amount;
+            let balance = balance::split(&mut global.balance_nft_SUI, left_amount);
+            let sui = coin::from_balance(balance, ctx);
+            transfer::public_transfer(sui, tx_context::sender(ctx));
+        };
+    }
+    
+    public fun claimed_game_5(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_GAME5, ctx: &mut TxContext) {
+        let total_shui_amount = global.culmulate_game_SHUI;
+        let total_sui_amount = global.culmulate_game_SUI;
+        let prop = 5;
+        if (total_shui_amount * prop/100  > nft.claimed_shui_amount) {
+            let left_amount = total_shui_amount * prop/100 - nft.claimed_shui_amount;
+            nft.claimed_shui_amount = nft.claimed_shui_amount + left_amount;
+            let balance = balance::split(&mut global.balance_nft_SHUI, left_amount);
+            let shui = coin::from_balance(balance, ctx);
+            transfer::public_transfer(shui, tx_context::sender(ctx));
+        };
+        if (total_sui_amount * prop/100 > nft.claimed_sui_amount) {
+            let left_amount = total_sui_amount * prop/100 - nft.claimed_sui_amount;
+            nft.claimed_sui_amount = nft.claimed_sui_amount + left_amount;
+            let balance = balance::split(&mut global.balance_nft_SUI, left_amount);
+            let sui = coin::from_balance(balance, ctx);
+            transfer::public_transfer(sui, tx_context::sender(ctx));
+        };
+    }
+
+        
+    public fun claimed_game_3(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_GAME3, ctx: &mut TxContext) {
+        let total_shui_amount = global.culmulate_game_SHUI;
+        let total_sui_amount = global.culmulate_game_SUI;
+        let prop = 3;
+        if (total_shui_amount * prop/100  > nft.claimed_shui_amount) {
+            let left_amount = total_shui_amount * prop/100 - nft.claimed_shui_amount;
+            nft.claimed_shui_amount = nft.claimed_shui_amount + left_amount;
+            let balance = balance::split(&mut global.balance_nft_SHUI, left_amount);
+            let shui = coin::from_balance(balance, ctx);
+            transfer::public_transfer(shui, tx_context::sender(ctx));
+        };
+        if (total_sui_amount * prop/100 > nft.claimed_sui_amount) {
+            let left_amount = total_sui_amount * prop/100 - nft.claimed_sui_amount;
+            nft.claimed_sui_amount = nft.claimed_sui_amount + left_amount;
+            let balance = balance::split(&mut global.balance_nft_SUI, left_amount);
+            let sui = coin::from_balance(balance, ctx);
+            transfer::public_transfer(sui, tx_context::sender(ctx));
+        };
+    }
+        
+    public fun claimed_game_2(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_GAME2, ctx: &mut TxContext) {
+        let total_shui_amount = global.culmulate_game_SHUI;
+        let total_sui_amount = global.culmulate_game_SUI;
+        let prop = 2;
+        if (total_shui_amount * prop/100  > nft.claimed_shui_amount) {
+            let left_amount = total_shui_amount * prop/100 - nft.claimed_shui_amount;
+            nft.claimed_shui_amount = nft.claimed_shui_amount + left_amount;
+            let balance = balance::split(&mut global.balance_nft_SHUI, left_amount);
+            let shui = coin::from_balance(balance, ctx);
+            transfer::public_transfer(shui, tx_context::sender(ctx));
+        };
+        if (total_sui_amount * prop/100 > nft.claimed_sui_amount) {
+            let left_amount = total_sui_amount * prop/100 - nft.claimed_sui_amount;
+            nft.claimed_sui_amount = nft.claimed_sui_amount + left_amount;
+            let balance = balance::split(&mut global.balance_nft_SUI, left_amount);
+            let sui = coin::from_balance(balance, ctx);
+            transfer::public_transfer(sui, tx_context::sender(ctx));
+        };
+    }
+
+    public entry fun claimed_nft_0(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_NFT0, ctx: &mut TxContext) {
+        let total_shui_amount = global.culmulate_nft_SHUI;
+        let total_sui_amount = global.culmulate_nft_SUI;
+        if (total_shui_amount /1000  > nft.claimed_shui_amount) {
+            let left_amount = total_shui_amount /1000 - nft.claimed_shui_amount;
+            nft.claimed_shui_amount = nft.claimed_shui_amount + left_amount;
+            let balance = balance::split(&mut global.balance_nft_SHUI, left_amount);
+            let shui = coin::from_balance(balance, ctx);
+            transfer::public_transfer(shui, tx_context::sender(ctx));
+        };
+        if (total_sui_amount /1000 > nft.claimed_sui_amount) {
+            let left_amount = total_sui_amount /1000 - nft.claimed_sui_amount;
+            nft.claimed_sui_amount = nft.claimed_sui_amount + left_amount;
+            let balance = balance::split(&mut global.balance_nft_SUI, left_amount);
+            let sui = coin::from_balance(balance, ctx);
+            transfer::public_transfer(sui, tx_context::sender(ctx));
+        };
+    }
+
+    public entry fun claimed_game_0(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_GAME0, ctx: &mut TxContext) {
+        let total_shui_amount = global.culmulate_game_SHUI;
+        let total_sui_amount = global.culmulate_game_SUI;
+        if (total_shui_amount * 7 /10000  > nft.claimed_shui_amount) {
+            let left_amount = total_shui_amount * 7 /10000 - nft.claimed_shui_amount;
+            nft.claimed_shui_amount = nft.claimed_shui_amount + left_amount;
+            let balance = balance::split(&mut global.balance_nft_SHUI, left_amount);
+            let shui = coin::from_balance(balance, ctx);
+            transfer::public_transfer(shui, tx_context::sender(ctx));
+        };
+        if (total_sui_amount * 7 /10000 > nft.claimed_sui_amount) {
+            let left_amount = total_sui_amount * 7 /10000 - nft.claimed_sui_amount;
+            nft.claimed_sui_amount = nft.claimed_sui_amount + left_amount;
+            let balance = balance::split(&mut global.balance_nft_SUI, left_amount);
             let sui = coin::from_balance(balance, ctx);
             transfer::public_transfer(sui, tx_context::sender(ctx));
         };
