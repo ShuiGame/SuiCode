@@ -16,7 +16,8 @@ module MetaGame::market {
     use sui::clock::{Self, Clock};
     use MetaGame::metaIdentity::{Self, MetaIdentity};
     use MetaGame::tree_of_life::Self;
-    use MetaGame::shui;
+    use MetaGame::shui::{Self, SHUI};
+    use MetaGame::market_right;
     use sui::event;
 
     const ERR_SALES_NOT_EXIST: u64 = 0x002;
@@ -279,19 +280,20 @@ module MetaGame::market {
     }
 
     #[lint_allow(self_transfer)]
-    public entry fun purchase_nft_item<T, Nft: key + store> (
+    public entry fun purchase_nft_item_sui<Nft: key + store> (
         global:&mut MarketGlobal, 
+        markertRightGlobal: &mut market_right::MarketRightGlobal,
         meta: &mut MetaIdentity,
         ownerMetaId: u64,
         name: String,
         num: u64,
-        payment:vector<Coin<T>>,
+        payment:vector<Coin<SUI>>,
         clock: &Clock, 
         ctx: &mut TxContext) {
         assert!(global.version == VERSION, ERR_INVALID_VERSION);
         assert!(ownerMetaId != metaIdentity::getMetaId(meta), ERR_CAN_NOT_BUY_YOUR_ITEM);
         let now = clock::timestamp_ms(clock);   
-        let merged_coins = merge_coins<T>(payment, ctx);
+        let merged_coins = merge_coins<SUI>(payment, ctx);
         assert!(linked_table::contains(&global.game_sales, ownerMetaId), ERR_SALES_NOT_EXIST);
         let his_sales = linked_table::borrow_mut(&mut global.game_sales, ownerMetaId);
         let (i, len) = (0u64, vector::length(his_sales));
@@ -314,17 +316,6 @@ module MetaGame::market {
                         time:now
                     }
                 );
-                let obj_type_name = type_name::get<T>();
-                let obj_contract_str = string::utf8(ascii::into_bytes(into_string(obj_type_name)));
-                if (coinType == utf8(b"SUI")) {
-                    let shui_type = type_name::get<SUI>();
-                    let shui_contract_str = string::utf8(ascii::into_bytes(into_string(shui_type)));
-                    assert!(obj_contract_str == shui_contract_str, ERR_INVALID_COIN);
-                } else if (coinType == utf8(b"SHUI")) {
-                    let shui_type = type_name::get<shui::SHUI>();
-                    let shui_contract_str = string::utf8(ascii::into_bytes(into_string(shui_type)));
-                    assert!(obj_contract_str == shui_contract_str, ERR_INVALID_COIN);
-                };
                 if (bag::length(&items) > 0) {
                     let nft = bag::remove<u64, Nft>(&mut items, 0);
                     transfer::public_transfer(nft, tx_context::sender(ctx));
@@ -335,9 +326,76 @@ module MetaGame::market {
                     let vec = linked_table::remove(&mut global.game_sales, ownerMetaId);
                     vector::destroy_empty(vec);
                 };
-                let payment = coin::split<T>(&mut merged_coins, price * 999 / 1000, ctx);
-                let market_gas = coin::split<T>(&mut merged_coins, price / 1000, ctx);
-                transfer::public_transfer(market_gas, global.creator);
+                let payment = coin::split(&mut merged_coins, price * 999 / 1000, ctx);
+
+                let market_gas = coin::split(&mut merged_coins, price / 1000, ctx);
+                let fee = coin::into_balance(market_gas);
+                market_right::into_gas_pool_SUI(markertRightGlobal, fee);
+                transfer::public_transfer(payment, owner);
+                break
+            };
+            i = i + 1
+        };
+        value = value(&merged_coins);
+        if (value > 0) {
+            transfer::public_transfer(merged_coins, tx_context::sender(ctx))
+        } else {
+            destroy_zero(merged_coins);
+        };
+    }
+
+    
+    #[lint_allow(self_transfer)]
+    public entry fun purchase_nft_item_shui<Nft: key + store> (
+        global:&mut MarketGlobal, 
+        markertRightGlobal: &mut market_right::MarketRightGlobal,
+        meta: &mut MetaIdentity,
+        ownerMetaId: u64,
+        name: String,
+        num: u64,
+        payment:vector<Coin<SHUI>>,
+        clock: &Clock, 
+        ctx: &mut TxContext) {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
+        assert!(ownerMetaId != metaIdentity::getMetaId(meta), ERR_CAN_NOT_BUY_YOUR_ITEM);
+        let now = clock::timestamp_ms(clock);   
+        let merged_coins = merge_coins<SHUI>(payment, ctx);
+        assert!(linked_table::contains(&global.game_sales, ownerMetaId), ERR_SALES_NOT_EXIST);
+        let his_sales = linked_table::borrow_mut(&mut global.game_sales, ownerMetaId);
+        let (i, len) = (0u64, vector::length(his_sales));
+        let value = value(&merged_coins);
+        while (i < len) {
+            let onSale:&OnSale = vector::borrow(his_sales, i);
+            if (onSale.name == name && onSale.num == num && onSale.price <= value) {
+                let sale = vector::remove(his_sales, i);
+                let OnSale {id, name:name, num:num, price, coinType:coinType, owner:owner, metaId:_, type:type, onsale_time:_, bag:items, nft_addr:_, nftType:_} = sale;
+                event::emit(
+                    TransactionRecord {
+                        seller:owner,
+                        buyer:tx_context::sender(ctx),
+                        name:name,
+                        num:num,
+                        price:price,
+                        price_gas:price/1000,
+                        type:type,
+                        coinType:coinType,
+                        time:now
+                    }
+                );
+                if (bag::length(&items) > 0) {
+                    let nft = bag::remove<u64, Nft>(&mut items, 0);
+                    transfer::public_transfer(nft, tx_context::sender(ctx));
+                };
+                bag::destroy_empty(items);
+                object::delete(id);
+                if (vector::length(his_sales) == 0) {
+                    let vec = linked_table::remove(&mut global.game_sales, ownerMetaId);
+                    vector::destroy_empty(vec);
+                };
+                let payment = coin::split(&mut merged_coins, price * 995 / 1000, ctx);
+                let market_gas = coin::split(&mut merged_coins, price * 5 / 1000, ctx);
+                let fee = coin::into_balance(market_gas);
+                market_right::into_gas_pool_SHUI(markertRightGlobal, fee);
                 transfer::public_transfer(payment, owner);
                 break
             };
@@ -352,17 +410,18 @@ module MetaGame::market {
     }
 
     #[lint_allow(self_transfer)]
-    public entry fun purchase_game_item<T> (
-        global:&mut MarketGlobal, 
+    public entry fun purchase_game_item_sui (
+        global:&mut MarketGlobal,
+        markertRightGlobal: &mut market_right::MarketRightGlobal,
         meta: &mut MetaIdentity, 
         ownerMetaId: u64,
         name: String,
         num: u64,
-        payment:vector<Coin<T>>,
+        payment:vector<Coin<SUI>>,
         clock: &Clock, 
         ctx: &mut TxContext) {
         assert!(global.version == VERSION, ERR_INVALID_VERSION);
-        let merged_coins = merge_coins<T>(payment, ctx);
+        let merged_coins = merge_coins<SUI>(payment, ctx);
         assert!(linked_table::contains(&global.game_sales, ownerMetaId), ERR_SALES_NOT_EXIST);
         let his_sales = linked_table::borrow_mut(&mut global.game_sales, ownerMetaId);
         let now = clock::timestamp_ms(clock); 
@@ -386,26 +445,76 @@ module MetaGame::market {
                         time:now
                     }
                 );
-                let obj_type_name = type_name::get<T>();
-                let obj_contract_str = string::utf8(ascii::into_bytes(into_string(obj_type_name)));
-                if (coinType == utf8(b"SUI")) {
-                    let shui_type = type_name::get<SUI>();
-                    let shui_contract_str = string::utf8(ascii::into_bytes(into_string(shui_type)));
-                    assert!(obj_contract_str == shui_contract_str, ERR_INVALID_COIN);
-                } else if (coinType == utf8(b"SHUI")) {
-                    let shui_type = type_name::get<shui::SHUI>();
-                    let shui_contract_str = string::utf8(ascii::into_bytes(into_string(shui_type)));
-                    assert!(obj_contract_str == shui_contract_str, ERR_INVALID_COIN);
-                };
                 bag::destroy_empty(items);
                 object::delete(id);
                 if (vector::length(his_sales) == 0) {
                     let vec = linked_table::remove(&mut global.game_sales, metaId);
                     vector::destroy_empty(vec);
                 };
-                let payment = coin::split<T>(&mut merged_coins, price * 999 / 1000, ctx);
-                let market_gas = coin::split<T>(&mut merged_coins, price / 1000, ctx);
-                transfer::public_transfer(market_gas, global.creator);
+                let payment = coin::split<SUI>(&mut merged_coins, price * 999 / 1000, ctx);
+                let market_gas = coin::split<SUI>(&mut merged_coins, price / 1000, ctx);
+                let fee = coin::into_balance<SUI>(market_gas);
+                market_right::into_gas_pool_SUI(markertRightGlobal, fee);
+                transfer::public_transfer(payment, owner);
+                tree_of_life::fill_items(meta, name, num);
+                break
+            };
+            i = i + 1
+        };
+        value = value(&merged_coins);
+        if (value > 0) {
+            transfer::public_transfer(merged_coins, tx_context::sender(ctx))
+        } else {
+            destroy_zero(merged_coins);
+        };
+    }
+
+    #[lint_allow(self_transfer)]
+    public entry fun purchase_game_item_shui (
+        global:&mut MarketGlobal,
+        markertRightGlobal: &mut market_right::MarketRightGlobal,
+        meta: &mut MetaIdentity, 
+        ownerMetaId: u64,
+        name: String,
+        num: u64,
+        payment:vector<Coin<SHUI>>,
+        clock: &Clock, 
+        ctx: &mut TxContext) {
+        assert!(global.version == VERSION, ERR_INVALID_VERSION);
+        let merged_coins = merge_coins<SHUI>(payment, ctx);
+        assert!(linked_table::contains(&global.game_sales, ownerMetaId), ERR_SALES_NOT_EXIST);
+        let his_sales = linked_table::borrow_mut(&mut global.game_sales, ownerMetaId);
+        let now = clock::timestamp_ms(clock); 
+        let (i, len) = (0u64, vector::length(his_sales));
+        let value = value(&merged_coins);
+        while (i < len) {
+            let onSale:&OnSale = vector::borrow(his_sales, i);
+            if (onSale.name == name && onSale.num == num && onSale.price <= value) {
+                let sale = vector::remove(his_sales, i);
+                let OnSale {id, name:name, num:num, price, coinType:coinType, owner:owner, metaId:metaId, type:type, onsale_time:_, bag:items, nft_addr:_, nftType:_} = sale;
+                event::emit(
+                    TransactionRecord {
+                        seller:owner,
+                        buyer:tx_context::sender(ctx),
+                        name:name,
+                        num:num,
+                        price:price,
+                        price_gas: price / 1000,
+                        type:type,
+                        coinType:coinType,
+                        time:now
+                    }
+                );
+                bag::destroy_empty(items);
+                object::delete(id);
+                if (vector::length(his_sales) == 0) {
+                    let vec = linked_table::remove(&mut global.game_sales, metaId);
+                    vector::destroy_empty(vec);
+                };
+                let payment = coin::split<SHUI>(&mut merged_coins, price * 999 / 1000, ctx);
+                let market_gas = coin::split<SHUI>(&mut merged_coins, price / 1000, ctx);
+                let fee = coin::into_balance<SHUI>(market_gas);
+                market_right::into_gas_pool_SHUI(markertRightGlobal, fee);
                 transfer::public_transfer(payment, owner);
                 tree_of_life::fill_items(meta, name, num);
                 break

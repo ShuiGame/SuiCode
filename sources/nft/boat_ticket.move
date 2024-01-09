@@ -165,7 +165,7 @@ module MetaGame::boat_ticket {
 
     #[lint_allow(self_transfer)]
     public entry fun withdraw_sui(global: &mut BoatTicketGlobal, amount:u64, ctx: &mut TxContext) {
-        assert!(tx_context::sender(ctx) == global.creator, ERR_NO_PERMISSION);
+        assert!(tx_context::sender(ctx) == @manager, ERR_NO_PERMISSION);
         let balance = balance::split(&mut global.balance_SUI, amount);
         let sui = coin::from_balance(balance, ctx);
         transfer::public_transfer(sui, tx_context::sender(ctx));

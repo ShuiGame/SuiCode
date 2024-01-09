@@ -24,6 +24,7 @@ module MetaGame::airdrop_test {
     use MetaGame::crypto::{Self};
     use MetaGame::market;
     use MetaGame::boat_ticket::{Self};
+    use MetaGame::market_right;
     use MetaGame::mission;
 
     const DAY_IN_MS: u64 = 86_400_000;
@@ -123,6 +124,7 @@ module MetaGame::airdrop_test {
             items::init_for_test(ctx(test));
             mission::init_for_test(ctx(test));
             market::init_for_test(ctx(test));
+            market_right::init_for_test(ctx(test));
         };
 
         // funds split
@@ -371,6 +373,7 @@ module MetaGame::airdrop_test {
             print(&string::utf8(b"-----------------start purchase test---------------"));
             let market_global =  take_shared<market::MarketGlobal>(test);
             let itemGlobal = take_shared<items::ItemGlobal>(test);
+            let markertRightGlobal = take_shared<market_right::MarketRightGlobal>(test);
             let meta = take_from_sender<metaIdentity::MetaIdentity>(test);
             // let coin = coin::mint_for_testing<SUI>(1, ctx(test));
             // let coins = vector::empty<Coin<SUI>>();
@@ -378,11 +381,12 @@ module MetaGame::airdrop_test {
             let coins2 = vector::empty<Coin<SUI>>();
             // vector::push_back(&mut coins, coin);
             vector::push_back(&mut coins2, coin2);
-            market::purchase_nft_item<SUI, boat_ticket::BoatTicket>(&mut market_global, &mut meta, 20001, utf8(b"boat_ticket"), 1, coins2, &clock, ctx(test));
+            market::purchase_nft_item_sui<boat_ticket::BoatTicket>(&mut market_global, &mut markertRightGlobal, &mut meta, 20001, utf8(b"boat_ticket"), 1, coins2, &clock, ctx(test));
             return_to_sender(test, meta);
             let res = market::get_game_sales(&market_global, &clock);
             print(&res);
             return_shared(market_global);
+            return_shared(markertRightGlobal);
             return_shared(itemGlobal);
         };
 
