@@ -625,7 +625,7 @@ module MetaGame::market_right {
         transfer::public_transfer(shui, tx_context::sender(ctx));
     }
 
-    public fun claimed_nft_20(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_NFT20, ctx: &mut TxContext) {
+    public entry fun claimed_nft_20(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_NFT20, ctx: &mut TxContext) {
         let total_shui_amount = global.culmulate_nft_SHUI;
         let total_sui_amount = global.culmulate_nft_SUI;
         let prop = 20;
@@ -645,7 +645,7 @@ module MetaGame::market_right {
         };
     }
 
-    public fun claimed_nft_15(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_NFT15, ctx: &mut TxContext) {
+    public entry fun claimed_nft_15(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_NFT15, ctx: &mut TxContext) {
         let total_shui_amount = global.culmulate_nft_SHUI;
         let total_sui_amount = global.culmulate_nft_SUI;
         let prop = 15;
@@ -665,7 +665,7 @@ module MetaGame::market_right {
         };
     }
 
-    public fun claimed_nft_10(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_NFT10, ctx: &mut TxContext) {
+    public entry fun claimed_nft_10(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_NFT10, ctx: &mut TxContext) {
         let total_shui_amount = global.culmulate_nft_SHUI;
         let total_sui_amount = global.culmulate_nft_SUI;
         let prop = 10;
@@ -685,7 +685,7 @@ module MetaGame::market_right {
         };
     }
 
-    public fun claimed_nft_5(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_NFT5, ctx: &mut TxContext) {
+    public entry fun claimed_nft_5(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_NFT5, ctx: &mut TxContext) {
         let total_shui_amount = global.culmulate_nft_SHUI;
         let total_sui_amount = global.culmulate_nft_SUI;
         let prop = 5;
@@ -705,7 +705,7 @@ module MetaGame::market_right {
         };
     }
 
-    public fun claimed_game_25(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_GAME25, ctx: &mut TxContext) {
+    public entry fun claimed_game_25(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_GAME25, ctx: &mut TxContext) {
         let total_shui_amount = global.culmulate_game_SHUI;
         let total_sui_amount = global.culmulate_game_SUI;
         let prop = 25;
@@ -725,7 +725,7 @@ module MetaGame::market_right {
         };
     }
     
-    public fun claimed_game_20(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_GAME20, ctx: &mut TxContext) {
+    public entry fun claimed_game_20(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_GAME20, ctx: &mut TxContext) {
         let total_shui_amount = global.culmulate_game_SHUI;
         let total_sui_amount = global.culmulate_game_SUI;
         let prop = 20;
@@ -745,7 +745,7 @@ module MetaGame::market_right {
         };
     }
 
-    public fun claimed_game_10(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_GAME10, ctx: &mut TxContext) {
+    public entry fun claimed_game_10(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_GAME10, ctx: &mut TxContext) {
         let total_shui_amount = global.culmulate_game_SHUI;
         let total_sui_amount = global.culmulate_game_SUI;
         let prop = 10;
@@ -765,7 +765,7 @@ module MetaGame::market_right {
         };
     }
     
-    public fun claimed_game_5(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_GAME5, ctx: &mut TxContext) {
+    public entry fun claimed_game_5(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_GAME5, ctx: &mut TxContext) {
         let total_shui_amount = global.culmulate_game_SHUI;
         let total_sui_amount = global.culmulate_game_SUI;
         let prop = 5;
@@ -786,7 +786,7 @@ module MetaGame::market_right {
     }
 
         
-    public fun claimed_game_3(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_GAME3, ctx: &mut TxContext) {
+    public entry fun claimed_game_3(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_GAME3, ctx: &mut TxContext) {
         let total_shui_amount = global.culmulate_game_SHUI;
         let total_sui_amount = global.culmulate_game_SUI;
         let prop = 3;
@@ -806,7 +806,7 @@ module MetaGame::market_right {
         };
     }
         
-    public fun claimed_game_2(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_GAME2, ctx: &mut TxContext) {
+    public entry fun claimed_game_2(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_GAME2, ctx: &mut TxContext) {
         let total_shui_amount = global.culmulate_game_SHUI;
         let total_sui_amount = global.culmulate_game_SUI;
         let prop = 2;
@@ -862,5 +862,21 @@ module MetaGame::market_right {
             let sui = coin::from_balance(balance, ctx);
             transfer::public_transfer(sui, tx_context::sender(ctx));
         };
+    }
+
+    public fun get_culmulate_game_SHUI(gloabl: &MarketRightGlobal):u64 {
+        gloabl.culmulate_game_SHUI
+    }
+
+    public fun get_culmulate_nft_SHUI(gloabl: &MarketRightGlobal):u64 {
+        gloabl.culmulate_nft_SHUI
+    }
+
+    public fun get_culmulate_game_SUI(gloabl: &MarketRightGlobal):u64 {
+        gloabl.culmulate_game_SUI
+    }
+
+    public fun get_culmulate_nft_SUI(gloabl: &MarketRightGlobal):u64 {
+        gloabl.culmulate_nft_SUI
     }
 }
