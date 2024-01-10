@@ -171,10 +171,10 @@ module MetaGame::tree_of_life {
         let type = get_element_type_by_name(name);
         let item_type = get_item_type_by_name(name);
         if (item_type == string::utf8(b"Fragment")) {
-            let array = create_fragments_by_class(5, type, name, *&get_desc_by_type(type, true));
+            let array = create_fragments_by_class(num, type, name, *&get_desc_by_type(type, true));
             items::store_items<Fragment>(get_items(meta), name, array);
         } else if (item_type == string::utf8(b"Water Element")) {
-            let array = create_water_elements_by_class(5, type, name, *&get_desc_by_type(type, false));
+            let array = create_water_elements_by_class(num, type, name, *&get_desc_by_type(type, false));
             items::store_items<WaterElement>(get_items(meta), name, array);
         } else if (item_type == string::utf8(b"LuckyBox")) {
             let array = create_fruits(num);
