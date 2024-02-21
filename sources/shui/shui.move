@@ -1,4 +1,4 @@
-module shui_module::shui {
+module MetaGame::shui {
     use std::option::{Self};
     use sui::coin::{Self, Coin, TreasuryCap};
     use sui::transfer;
@@ -8,20 +8,20 @@ module shui_module::shui {
     use sui::balance::{Self, Balance};
     use sui::sui::SUI;
     use sui::url;
-    use shui_module::race::{Self};
-    use shui_module::level::{Self};
-    use shui_module::gift::{Self};
-    use shui_module::avatar::{Self};
+    use MetaGame::race::{Self};
+    use MetaGame::level::{Self};
+    use MetaGame::gift::{Self};
+    use MetaGame::avatar::{Self};
 
     #[test_only]
     use sui::test_scenario::{
         Scenario, ctx
     };
 
-    friend shui_module::airdrop;   
-    friend shui_module::swap;
-    friend shui_module::founder_team_reserve;
-    friend shui_module::mission;
+    friend MetaGame::airdrop;   
+    friend MetaGame::swap;
+    friend MetaGame::founder_team_reserve;
+    friend MetaGame::mission;
     const SHUI_ICON_URL:vector<u8> = b"https://nftstorage.link/ipfs/bafybeieqqos2upvmmxzmauv6cf53ddegpjc5zkrvbpriz7iajamcxikv4y";
     const ERR_NO_PERMISSION:u64 = 0x004;
     const TOTAL_SUPPLY: u64 = 2_100_000_000;
@@ -81,8 +81,8 @@ module shui_module::shui {
         balance::join(&mut global.balance_SHUI, balance);
 
         // transfer ther reserve shui to dao and foundation account;
-        transfer_to_reserve(&mut global, @game_reserve_wallet, GAME_RESERVE * AMOUNT_DECIMAL, ctx);
-        transfer_to_reserve(&mut global, @dao_reserve_wallet, DAO_RESERVE * AMOUNT_DECIMAL, ctx);
+        transfer_to_reserve(&mut global, @manager, GAME_RESERVE * AMOUNT_DECIMAL, ctx);
+        transfer_to_reserve(&mut global, @manager, DAO_RESERVE * AMOUNT_DECIMAL, ctx);
         transfer::share_object(global);
     }
 

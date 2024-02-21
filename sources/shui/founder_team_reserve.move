@@ -1,8 +1,7 @@
 module MetaGame::founder_team_reserve {
     use sui::transfer;
     use sui::object::{Self, UID};
-    use MetaGame::shui::{SHUI};
-    use MetaGame::shui::{Self};
+    use MetaGame::shui::{Self, SHUI};
     use sui::tx_context::{Self, TxContext};
     use sui::clock::{Self, Clock};
     use sui::coin::{Self};

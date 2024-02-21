@@ -1,9 +1,9 @@
-module shui_module::swap {
+module MetaGame::swap {
     use sui::transfer;
     use sui::object::{Self, UID};
     use sui::tx_context::{Self, TxContext};
-    use shui_module::shui::{Self};
-    use shui_module::boat_ticket::{Self};
+    use MetaGame::shui::{Self};
+    use MetaGame::boat_ticket;
     use sui::balance::{Self, Balance};
     use sui::sui::SUI;
     use std::vector::{Self};
@@ -21,15 +21,14 @@ module shui_module::swap {
     const ERR_NOT_START:u64 = 0x005;
     const ERR_INVALID_PHASE:u64 = 0x006;
     const ERR_INVALID_MSG:u64 = 0x007;
-    cosnt ERR_TICKET_HAS_BEEN_CLAIMED: u64 = 0x008;
+    const ERR_TICKET_HAS_BEEN_CLAIMED: u64 = 0x008;
     const AMOUNT_DECIMAL:u64 = 1_000_000_000;
-    const WHITELIST_SWAP_LIMIT:u64 = 100;
-    const WHITELIST_MAX_NUM:u64 = 10_000;
+    const WHITELIST_SWAP_LIMIT:u64 = 50_000;
+    const WHITELIST_MAX_NUM:u64 = 5000;
 
     struct SwapGlobal has key {
         id: UID,
         creator: address,
-        crypto: address,
         phase:u64,
         balance_SUI: Balance<SUI>,
         balance_SHUI: Balance<shui::SHUI>,
@@ -38,7 +37,7 @@ module shui_module::swap {
         whitelist_table: Table<address, u64>,
         
         // prevent double join white list
-        ticket_map: Table<address, bool>
+        ticket_map: Table<u64, bool>
     }
 
     #[test_only]
@@ -46,14 +45,13 @@ module shui_module::swap {
         let global = SwapGlobal {
             id: object::new(ctx),
             creator: tx_context::sender(ctx),
-            crypto: @crypto,
             phase:0,
             balance_SUI: balance::zero(),
             balance_SHUI: balance::zero(),
             swaped_shui: 0,
             swaped_sui: 0,
             whitelist_table: table::new<address, u64>(ctx),
-            ticket_map: table<address, u64>(ctx)
+            ticket_map: table::new<u64, bool>(ctx)
         };
         transfer::share_object(global);
     }
@@ -67,14 +65,13 @@ module shui_module::swap {
         let global = SwapGlobal {
             id: object::new(ctx),
             creator: tx_context::sender(ctx),
-            crypto: @crypto,
             phase:0,
             balance_SUI: balance::zero(),
             balance_SHUI: balance::zero(),
             swaped_shui: 0,
             swaped_sui: 0,
             whitelist_table: table::new<address, u64>(ctx),
-            ticket_map: table<address, u64>(ctx)
+            ticket_map:table::new<u64, bool>(ctx)
         };
         transfer::share_object(global);
     }
@@ -88,8 +85,8 @@ module shui_module::swap {
     public fun set_whitelist(swapGlobal: &mut SwapGlobal, ticket: &mut boat_ticket::BoatTicket, ctx:&mut TxContext) {
         let sender = tx_context::sender(ctx);
         table::add(&mut swapGlobal.whitelist_table, sender, WHITELIST_SWAP_LIMIT);
-        assert!(table::contains(swapGlobal.ticket_map, boat_ticket::get_index(&ticket)), ERR_TICKET_HAS_BEEN_CLAIMED);
-        table::add(&mut swapGlobal.ticket_map, boat_ticket::get_index(&ticket), true);
+        assert!(table::contains(&swapGlobal.ticket_map, boat_ticket::get_index(ticket)), ERR_TICKET_HAS_BEEN_CLAIMED);
+        table::add(&mut swapGlobal.ticket_map, boat_ticket::get_index(ticket), true);
         assert!(table::length(&swapGlobal.whitelist_table) <= WHITELIST_MAX_NUM, 1);
     }
 
@@ -142,7 +139,7 @@ module shui_module::swap {
         transfer::public_transfer(shui, recepient);
     }
 
-    public entry fun white_list_swap (global: &mut SwapGlobal, sui_pay_amount:u64, coins:vector<Coin<SUI>>, ctx:&mut TxContext) {
+    public entry fun white_list_swap(global: &mut SwapGlobal, sui_pay_amount:u64, coins:vector<Coin<SUI>>, ctx:&mut TxContext) {
         let ratio = 200;
         let limit = WHITELIST_SWAP_LIMIT;
         let recepient = tx_context::sender(ctx);

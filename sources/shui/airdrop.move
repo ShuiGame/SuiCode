@@ -1,16 +1,16 @@
-module shui_module::airdrop {
+module MetaGame::airdrop {
     use sui::transfer;
     use sui::object::{Self, UID};
     use sui::tx_context::{Self, TxContext};
-    use shui_module::shui::{Self};
-    use shui_module::metaIdentity::{Self};
-    use shui_module::mission::{Self};
+    use MetaGame::shui::{Self};
+    use MetaGame::metaIdentity::{Self};
+    use MetaGame::mission::{Self};
     use std::string::{utf8};
     use sui::clock::{Self, Clock};
     use sui::coin::{Self};
     use sui::balance::{Self, Balance};
     use sui::table::{Self};
-    use shui_module::boat_ticket::{Self, BoatTicket};
+    use MetaGame::boat_ticket::{Self, BoatTicket};
 
     const ERR_INVALID_PHASE:u64 = 0x001;
     const ERR_NO_PERMISSION:u64 = 0x002;
@@ -28,7 +28,6 @@ module shui_module::airdrop {
         start: u64,
         creator: address,
         balance_SHUI: Balance<shui::SHUI>,
-        white_list_claim_num: 0,
 
         // address -> last claim time
         daily_claim_records_list: table::Table<address, u64>,
@@ -124,7 +123,6 @@ module shui_module::airdrop {
         let shui = coin::from_balance(whitelist_airdrop, ctx);
         transfer::public_transfer(shui, tx_context::sender(ctx));
         boat_ticket::record_white_list_clamed(ticket);
-        airdropGlobal.white_list_claim_num = airdropGlobal.white_list_claim_num + 1;
     }
 
     public entry fun claim_airdrop(mission_global:&mut mission::MissionGlobal, info:&mut AirdropGlobal, meta: &metaIdentity::MetaIdentity, clock:&Clock, ctx: &mut TxContext) {
