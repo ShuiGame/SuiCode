@@ -23,9 +23,9 @@ module MetaGame::market_right {
 
     const IMAGE_URL_GAME_25: vector<u8> = b"https://bafybeifnidwalkxnx2y4nmjgeocut7pgys6vsxph7hsucowt3fvxsgynme.ipfs.nftstorage.link/SHUI-GameFi25.jpg";
     const IMAGE_URL_GAME_20: vector<u8> = b"https://bafybeifnidwalkxnx2y4nmjgeocut7pgys6vsxph7hsucowt3fvxsgynme.ipfs.nftstorage.link/SHUI-GameFi20.jpg";
-    const IMAGE_URL_GAME_10: vector<u8> = b"https://bafybeifnidwalkxnx2y4nmjgeocut7pgys6vsxph7hsucowt3fvxsgynme.ipfs.nftstorage.link/SHUI-GameFi5.jpg";
-    const IMAGE_URL_GAME_5: vector<u8> = b"https://bafybeifnidwalkxnx2y4nmjgeocut7pgys6vsxph7hsucowt3fvxsgynme.ipfs.nftstorage.link/SHUI-GameFi3.jpg";
-    const IMAGE_URL_GAME_3: vector<u8> = b"https://bafybeifnidwalkxnx2y4nmjgeocut7pgys6vsxph7hsucowt3fvxsgynme.ipfs.nftstorage.link/SHUI-GameFi2.jpg";
+    const IMAGE_URL_GAME_10: vector<u8> = b"https://bafybeifnidwalkxnx2y4nmjgeocut7pgys6vsxph7hsucowt3fvxsgynme.ipfs.nftstorage.link/SHUI-GameFi10.jpg";
+    const IMAGE_URL_GAME_5: vector<u8> = b"https://bafybeifnidwalkxnx2y4nmjgeocut7pgys6vsxph7hsucowt3fvxsgynme.ipfs.nftstorage.link/SHUI-GameFi5.jpg";
+    const IMAGE_URL_GAME_3: vector<u8> = b"https://bafybeifnidwalkxnx2y4nmjgeocut7pgys6vsxph7hsucowt3fvxsgynme.ipfs.nftstorage.link/SHUI-GameFi3.jpg";
     const IMAGE_URL_GAME_2: vector<u8> = b"https://bafybeifnidwalkxnx2y4nmjgeocut7pgys6vsxph7hsucowt3fvxsgynme.ipfs.nftstorage.link/SHUI-GameFi2.jpg";
     const IMAGE_URL_GAME_0: vector<u8> = b"https://bafybeifnidwalkxnx2y4nmjgeocut7pgys6vsxph7hsucowt3fvxsgynme.ipfs.nftstorage.link/GameFi-TOKEN.jpg";
     const DESCRIPTION: vector<u8> = b"shui metagame market fee rights, owner can gain gas fee from it cyclically";
