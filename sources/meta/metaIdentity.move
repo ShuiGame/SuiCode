@@ -28,11 +28,10 @@ module MetaGame::metaIdentity {
     const VERSION: u64 = 0;
 
     const TYPE_ALPHA:u64 = 0;
-    const TYPE_BETA:u64 = 1;
     const AMOUNT_DECIMAL:u64 = 1_000_000_000;
 
     struct MetaIdentity has key {
-        // preserve 0-20000 for airdrop
+        // preserve 0-10000 for airdrop
         id:UID,
         metaId:u64,
         name:string::String,
@@ -58,17 +57,11 @@ module MetaGame::metaIdentity {
         // 0-9999
         meta_alpha_count:u64,
 
-        // 10000-20000
-        meta_beta_count:u64,
-
-        // 20001+
+        // 10001+
         meta_common_user_count:u64,
 
         // for alpha activity participators
         alpha_whitelist:table::Table<address, u64>,
-
-        // for shui token owners
-        beta_whitelist:table::Table<address,u64>,
 
         // wallet_addr -> meta_addr
         wallet_meta_map:table::Table<address, address>,
@@ -95,10 +88,8 @@ module MetaGame::metaIdentity {
             creator:@manager,
             total_players: 0,
             meta_alpha_count: 0,
-            meta_beta_count:0,
             meta_common_user_count:0,
             alpha_whitelist:table::new<address, u64>(ctx),
-            beta_whitelist:table::new<address,u64>(ctx),
             wallet_meta_map:table::new<address, address>(ctx),
             phone_meta_map:table::new<string::String, address>(ctx),
             wallet_phone_map:table::new<address, string::String>(ctx),
@@ -117,10 +108,8 @@ module MetaGame::metaIdentity {
             creator:@manager,
             total_players: 0,
             meta_alpha_count: 0,
-            meta_beta_count:0,
             meta_common_user_count:0,
             alpha_whitelist:table::new<address, u64>(ctx),
-            beta_whitelist:table::new<address,u64>(ctx),
             wallet_meta_map:table::new<address, address>(ctx),
             phone_meta_map:table::new<string::String, address>(ctx),
             wallet_phone_map:table::new<address, string::String>(ctx),
@@ -254,13 +243,6 @@ module MetaGame::metaIdentity {
             } else {
                 global.meta_alpha_count = global.meta_alpha_count + 1;
             }
-        } else if (table::contains(&global.beta_whitelist, addr)) {
-            metaId = 10000 + global.meta_beta_count;
-            if (metaId > 20000) {
-                metaId = get_common_metaid(global);
-            } else {
-                global.meta_beta_count = global.meta_beta_count + 1;
-            }
         } else {
             metaId = get_common_metaid(global);
         };
@@ -319,13 +301,8 @@ module MetaGame::metaIdentity {
 
     public fun add_whitelists_by_type(global: &mut MetaInfoGlobal, whitelist: vector<address>, type:u64, ctx: &mut TxContext) {
         assert!(@manager == tx_context::sender(ctx), ERR_NO_PERMISSION);
-        assert!(type >= TYPE_ALPHA && type <= TYPE_BETA, ERR_INVALID_TYPE);
-        let whitelist_table;
-        if (type == TYPE_ALPHA) {
-            whitelist_table = &mut global.alpha_whitelist;
-        } else {
-            whitelist_table = &mut global.beta_whitelist;
-        };
+        assert!(type == TYPE_ALPHA, ERR_INVALID_TYPE);
+        let whitelist_table = &mut global.alpha_whitelist;
         let (i, len) = (0u64, vector::length(&whitelist));
         while (i < len) {
             let account = vector::pop_back(&mut whitelist);
@@ -336,13 +313,8 @@ module MetaGame::metaIdentity {
 
     public fun add_whitelist_by_type(global: &mut MetaInfoGlobal, account: address, type:u64, ctx: &mut TxContext) {
         assert!(@manager == tx_context::sender(ctx), ERR_NO_PERMISSION);
-        assert!(type >= TYPE_ALPHA && type <= TYPE_BETA, ERR_INVALID_TYPE);
-        let whitelist_table;
-        if (type == TYPE_ALPHA) {
-            whitelist_table = &mut global.alpha_whitelist;
-        } else {
-            whitelist_table = &mut global.beta_whitelist;
-        };
+        assert!(type == TYPE_ALPHA, ERR_INVALID_TYPE);
+        let whitelist_table= &mut global.alpha_whitelist;
         assert!(table::length(whitelist_table) == 0, 1);
         table::add(whitelist_table, account, 0);
     }
