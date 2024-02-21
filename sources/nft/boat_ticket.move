@@ -12,10 +12,10 @@ module MetaGame::boat_ticket {
     use MetaGame::shui;
     friend MetaGame::airdrop;
 
-    const DEFAULT_LINK: vector<u8> = b"https://shui.one";
+    const DEFAULT_LINK: vector<u8> = b"https://shui.game";
     const DEFAULT_IMAGE_URL: vector<u8> = b"https://bafybeibzoi4kzr4gg75zhso5jespxnwespyfyakemrwibqorjczkn23vpi.ipfs.nftstorage.link/NFT-CARD1.png";
     const DESCRIPTION: vector<u8> = b"AirShip to meta masrs";
-    const PROJECT_URL: vector<u8> = b"https://shui.one/game/#/";
+    const PROJECT_URL: vector<u8> = b"https://shui.game/";
     const CREATOR: vector<u8> = b"metaGame";
     const AMOUNT_DECIMAL:u64 = 1_000_000_000;
     const ERR_SWAP_MIN_ONE_SUI:u64 = 0x004;
