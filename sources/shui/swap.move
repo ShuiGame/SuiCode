@@ -1,8 +1,9 @@
-module MetaGame::swap {
+module shui_module::swap {
     use sui::transfer;
     use sui::object::{Self, UID};
     use sui::tx_context::{Self, TxContext};
-    use MetaGame::shui::{Self};
+    use shui_module::shui::{Self};
+    use shui_module::boat_ticket::{Self};
     use sui::balance::{Self, Balance};
     use sui::sui::SUI;
     use std::vector::{Self};
@@ -12,7 +13,6 @@ module MetaGame::swap {
     use sui::ed25519;
     use std::debug::print;
     use sui::address::{Self};
-    friend MetaGame::boat_ticket;
 
     const ERR_NO_PERMISSION:u64 = 0x001;
     const ERR_EXCEED_SWAP_LIMIT:u64 = 0x002;
@@ -21,11 +21,10 @@ module MetaGame::swap {
     const ERR_NOT_START:u64 = 0x005;
     const ERR_INVALID_PHASE:u64 = 0x006;
     const ERR_INVALID_MSG:u64 = 0x007;
-    const ERR_INVALID_VERSION:u64 = 0x008;
+    cosnt ERR_TICKET_HAS_BEEN_CLAIMED: u64 = 0x008;
     const AMOUNT_DECIMAL:u64 = 1_000_000_000;
     const WHITELIST_SWAP_LIMIT:u64 = 100;
     const WHITELIST_MAX_NUM:u64 = 10_000;
-    const VERSION: u64 = 0;
 
     struct SwapGlobal has key {
         id: UID,
@@ -37,7 +36,9 @@ module MetaGame::swap {
         swaped_shui: u64,
         swaped_sui: u64,
         whitelist_table: Table<address, u64>,
-        version: u64
+        
+        // prevent double join white list
+        ticket_map: Table<address, bool>
     }
 
     #[test_only]
@@ -52,7 +53,7 @@ module MetaGame::swap {
             swaped_shui: 0,
             swaped_sui: 0,
             whitelist_table: table::new<address, u64>(ctx),
-            version: 0
+            ticket_map: table<address, u64>(ctx)
         };
         transfer::share_object(global);
     }
@@ -62,7 +63,6 @@ module MetaGame::swap {
         global.phase = phase;
     }
 
-    #[allow(unused_function)]
     fun init(ctx: &mut TxContext) {
         let global = SwapGlobal {
             id: object::new(ctx),
@@ -74,7 +74,7 @@ module MetaGame::swap {
             swaped_shui: 0,
             swaped_sui: 0,
             whitelist_table: table::new<address, u64>(ctx),
-            version: 0
+            ticket_map: table<address, u64>(ctx)
         };
         transfer::share_object(global);
     }
@@ -85,29 +85,15 @@ module MetaGame::swap {
         balance::join(&mut swapGlobal.balance_SHUI, balance);
     }
 
-    public(friend) fun set_whitelist(swapGlobal: &mut SwapGlobal, ctx:&TxContext) {
+    public fun set_whitelist(swapGlobal: &mut SwapGlobal, ticket: &mut boat_ticket::BoatTicket, ctx:&mut TxContext) {
         let sender = tx_context::sender(ctx);
-        if (!table::contains(&swapGlobal.whitelist_table, sender)) {
-            table::add(&mut swapGlobal.whitelist_table, sender, WHITELIST_SWAP_LIMIT);
-        };
-        assert!(table::length(&swapGlobal.whitelist_table) <= WHITELIST_MAX_NUM, 1);
-    }
-
-    public fun white_list_backup(swapGlobal: &mut SwapGlobal, sig: &vector<u8>, msg: &vector<u8>, ctx:&mut TxContext) {
-        let pk: vector<u8> = address::to_bytes(swapGlobal.crypto);
-        let sender = tx_context::sender(ctx);
-        print(sig);
-        print(msg);
-        print(&pk);
-        assert!(*msg == address::to_bytes(sender), ERR_INVALID_MSG);
-        assert!(ed25519::ed25519_verify(sig, &pk, msg), ERR_NO_PERMISSION);
         table::add(&mut swapGlobal.whitelist_table, sender, WHITELIST_SWAP_LIMIT);
+        assert!(table::contains(swapGlobal.ticket_map, boat_ticket::get_index(&ticket)), ERR_TICKET_HAS_BEEN_CLAIMED);
+        table::add(&mut swapGlobal.ticket_map, boat_ticket::get_index(&ticket), true);
         assert!(table::length(&swapGlobal.whitelist_table) <= WHITELIST_MAX_NUM, 1);
     }
 
-    #[lint_allow(self_transfer)]
     public entry fun gold_reserve_swap(global: &mut SwapGlobal, sui_pay_amount:u64, coins:vector<Coin<SUI>>, ctx:&mut TxContext) {
-        assert!(global.version == VERSION, ERR_INVALID_VERSION);
         let ratio = 1;
         let recepient = tx_context::sender(ctx);
         let shui_to_be_swap:u64 = sui_pay_amount * ratio;
@@ -131,9 +117,7 @@ module MetaGame::swap {
         transfer::public_transfer(shui, recepient);
     }
 
-    #[lint_allow(self_transfer)]
     public entry fun public_swap(global: &mut SwapGlobal, sui_pay_amount:u64, coins:vector<Coin<SUI>>, ctx:&mut TxContext) {
-        assert!(global.version == VERSION, ERR_INVALID_VERSION);
         assert!(global.phase == 1, ERR_NOT_START);
         let ratio = 10;
         let recepient = tx_context::sender(ctx);
@@ -158,10 +142,8 @@ module MetaGame::swap {
         transfer::public_transfer(shui, recepient);
     }
 
-    #[lint_allow(self_transfer)]
-    public entry fun white_list_swap(global: &mut SwapGlobal, sui_pay_amount:u64, coins:vector<Coin<SUI>>, ctx:&mut TxContext) {
-        assert!(global.version == VERSION, ERR_INVALID_VERSION);
-        let ratio = 100;
+    public entry fun white_list_swap (global: &mut SwapGlobal, sui_pay_amount:u64, coins:vector<Coin<SUI>>, ctx:&mut TxContext) {
+        let ratio = 200;
         let limit = WHITELIST_SWAP_LIMIT;
         let recepient = tx_context::sender(ctx);
 
@@ -218,7 +200,6 @@ module MetaGame::swap {
         global.swaped_shui
     }
 
-    #[lint_allow(self_transfer)]
     public entry fun withdraw_sui(global: &mut SwapGlobal, amount:u64, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == global.creator, ERR_NO_PERMISSION);
         let airdrop_balance = balance::split(&mut global.balance_SUI, amount);
@@ -226,21 +207,10 @@ module MetaGame::swap {
         transfer::public_transfer(sui, tx_context::sender(ctx));
     }
 
-    #[lint_allow(self_transfer)]
     public entry fun withdraw_shui(global: &mut SwapGlobal, amount:u64, ctx: &mut TxContext) {
         assert!(tx_context::sender(ctx) == global.creator, ERR_NO_PERMISSION);
         let airdrop_balance = balance::split(&mut global.balance_SHUI, amount);
         let shui = coin::from_balance(airdrop_balance, ctx);
         transfer::public_transfer(shui, tx_context::sender(ctx));
-    }
-
-    public fun change_owner(global:&mut SwapGlobal, account:address, ctx:&mut TxContext) {
-        assert!(global.creator == tx_context::sender(ctx), ERR_NO_PERMISSION);
-        global.creator = account
-    }
-
-    public fun increment(global: &mut SwapGlobal, version: u64) {
-        assert!(global.version == VERSION, ERR_INVALID_VERSION);
-        global.version = version;
     }
 }

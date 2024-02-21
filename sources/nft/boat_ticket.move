@@ -1,32 +1,27 @@
-module MetaGame::boat_ticket {
+module shui_module::boat_ticket {
     use sui::object::{Self, UID};
     use sui::tx_context::{Self, TxContext, sender};
     use sui::transfer;
     use sui::coin::{Self, Coin, destroy_zero};
     use std::string::{String, utf8};
-    use sui::sui::{Self, SUI};
-    use sui::table::{Table, Self};
     use sui::package;
     use sui::balance::{Self, Balance};
     use sui::display;
     use std::vector;
     use sui::pay;
-    use MetaGame::swap::{Self, SwapGlobal};
-    friend MetaGame::airdrop;
+    use shui_module::shui;
+    friend shui_module::airdrop;
 
-    const DEFAULT_LINK: vector<u8> = b"https://shui.game";
+    const DEFAULT_LINK: vector<u8> = b"https://shui.one";
     const DEFAULT_IMAGE_URL: vector<u8> = b"https://bafybeibzoi4kzr4gg75zhso5jespxnwespyfyakemrwibqorjczkn23vpi.ipfs.nftstorage.link/NFT-CARD1.png";
-    const DESCRIPTION: vector<u8> = b"Airship to meta masrs";
-    const PROJECT_URL: vector<u8> = b"https://shui.game/game/#/";
+    const DESCRIPTION: vector<u8> = b"AirShip to meta masrs";
+    const PROJECT_URL: vector<u8> = b"https://shui.one/game/#/";
     const CREATOR: vector<u8> = b"metaGame";
     const AMOUNT_DECIMAL:u64 = 1_000_000_000;
-    const ERR_SWAP_MIN_ONE_SUI:u64 = 0x001;
-    const ERR_NO_PERMISSION:u64 = 0x002;
-    const ERR_ONLY_CAN_BUY_ONCE: u64 = 0x003;
-    const ERR_INVALID_VERSION:u64 = 0x004;
-    const ERR_HAS_BEEN_SOLD_OUT:u64 = 0x005;
-    const MAX_NUM:u64 = 10000;
-    const VERSION: u64 = 0;
+    const ERR_SWAP_MIN_ONE_SUI:u64 = 0x004;
+    const ERR_NO_PERMISSION:u64 = 0x005;
+    const ERR_HAS_REACH_LIMIT: u64 = 0x006;
+    const MAX_TICKET_NUM:u64 = 5000;
 
     struct BOAT_TICKET has drop {}
     struct BoatTicket has key, store {
@@ -38,11 +33,9 @@ module MetaGame::boat_ticket {
 
     struct BoatTicketGlobal has key {
         id: UID,
-        balance_SUI: Balance<sui::SUI>,
-        bought_list: Table<address, bool>,
+        balance_SHUI: Balance<shui::SHUI>,
         creator: address,
-        num:u64,
-        version:u64
+        num:u64
     }
 
     public fun get_index(ticket: &BoatTicket): u64 {
@@ -53,43 +46,37 @@ module MetaGame::boat_ticket {
         ticket.name
     }
 
-    #[lint_allow(self_transfer)]
-    public entry fun buy_ticket(global:&mut BoatTicketGlobal, swapGlobal: &mut SwapGlobal, coins:vector<Coin<SUI>>, ctx:&mut TxContext) {
-        assert!(global.version == VERSION, ERR_INVALID_VERSION);
+    public entry fun buy_ticket(global:&mut BoatTicketGlobal, coins:vector<Coin<shui::SHUI>>, ctx:&mut TxContext) {
         let recepient = tx_context::sender(ctx);
-        let price = 100;
+        let price = 25;
         let merged_coin = vector::pop_back(&mut coins);
+        assert!(global.num < MAX_TICKET_NUM, ERR_HAS_REACH_LIMIT);
         pay::join_vec(&mut merged_coin, coins);
-        assert!(!table::contains(&global.bought_list, recepient), ERR_ONLY_CAN_BUY_ONCE);
         assert!(coin::value(&merged_coin) >= price * AMOUNT_DECIMAL, ERR_SWAP_MIN_ONE_SUI);
-        let balance = coin::into_balance<SUI>(
-            coin::split<SUI>(&mut merged_coin, price * AMOUNT_DECIMAL, ctx)
+        let balance = coin::into_balance<shui::SHUI>(
+            coin::split<shui::SHUI>(&mut merged_coin, price * AMOUNT_DECIMAL, ctx)
         );
-        balance::join(&mut global.balance_SUI, balance);
+        balance::join(&mut global.balance_SHUI, balance);
         if (coin::value(&merged_coin) > 0) {
             transfer::public_transfer(merged_coin, recepient)
         } else {
             destroy_zero(merged_coin)
         };
+        global.num = global.num + 1;
         let ticket = BoatTicket {
             id:object::new(ctx),
-            name:utf8(b"Airship"),
+            name:utf8(b"Shui Meta Ticket"),
             index:global.num,
             whitelist_claimed: false
         };
-        global.num = global.num + 1;
-        assert!(global.num <= MAX_NUM, ERR_HAS_BEEN_SOLD_OUT);
-        table::add(&mut global.bought_list, recepient, true);
         transfer::transfer(ticket, tx_context::sender(ctx));
-        swap::set_whitelist(swapGlobal, ctx);
     }
 
     #[test_only]
-    #[lint_allow(self_transfer)]
     public entry fun claim_ticket(global:&mut BoatTicketGlobal, ctx:&mut TxContext) {
         let ticket = BoatTicket {
             id:object::new(ctx),
-            name:utf8(b"Airship"),
+            name:utf8(b"Shui Meta Ticket"),
             index:global.num,
             whitelist_claimed: false
         };
@@ -97,7 +84,6 @@ module MetaGame::boat_ticket {
         transfer::transfer(ticket, tx_context::sender(ctx));
     }
 
-    #[allow(unused_function)]
     fun init(otw: BOAT_TICKET, ctx: &mut TxContext) {
         // https://docs.sui.io/build/sui-object-display
 
@@ -126,6 +112,8 @@ module MetaGame::boat_ticket {
 
         // Claim the `Publisher` for the package!
         let publisher = package::claim(otw, ctx);
+
+        // Get a new `Display` object for the `SuiCat` type.
         let display = display::new_with_fields<BoatTicket>(
             &publisher, keys, values, ctx
         );
@@ -137,11 +125,9 @@ module MetaGame::boat_ticket {
 
         let global = BoatTicketGlobal {
             id: object::new(ctx),
-            balance_SUI: balance::zero(), 
-            bought_list: table::new<address, bool>(ctx),
+            balance_SHUI: balance::zero(), 
             creator: tx_context::sender(ctx),
-            num:0,
-            version:0
+            num:0
         };
         transfer::share_object(global);
     }
@@ -150,42 +136,29 @@ module MetaGame::boat_ticket {
     public fun init_for_test(ctx: &mut TxContext) {
         let global = BoatTicketGlobal {
             id: object::new(ctx),
-            balance_SUI: balance::zero(), 
-            bought_list: table::new<address, bool>(ctx),
+            balance_SHUI: balance::zero(), 
             creator: tx_context::sender(ctx),
-            num:0,
-            version:0
+            num:0
         };
         transfer::share_object(global);
     }
 
-    public fun get_left_boat_num(global:&BoatTicketGlobal):u64 {
-        MAX_NUM - global.num
+    public fun get_boat_num(global:&BoatTicketGlobal):u64 {
+        global.num
     }
 
-    #[lint_allow(self_transfer)]
-    public entry fun withdraw_sui(global: &mut BoatTicketGlobal, amount:u64, ctx: &mut TxContext) {
-        assert!(tx_context::sender(ctx) == @manager, ERR_NO_PERMISSION);
-        let balance = balance::split(&mut global.balance_SUI, amount);
-        let sui = coin::from_balance(balance, ctx);
-        transfer::public_transfer(sui, tx_context::sender(ctx));
+    public entry fun withdraw_shui(global: &mut BoatTicketGlobal, amount:u64, ctx: &mut TxContext) {
+        assert!(tx_context::sender(ctx) == global.creator, ERR_NO_PERMISSION);
+        let balance = balance::split(&mut global.balance_SHUI, amount);
+        let shui = coin::from_balance(balance, ctx);
+        transfer::public_transfer(shui, tx_context::sender(ctx));
     }
 
     public(friend) fun record_white_list_clamed(ticket:&mut BoatTicket) {
         ticket.whitelist_claimed = true;
     }
 
-    public entry fun is_claimed(ticket:&BoatTicket) : bool{
+    public(friend) fun is_claimed(ticket:&BoatTicket) : bool{
         ticket.whitelist_claimed
-    }
-
-    public fun change_owner(global:&mut BoatTicketGlobal, account:address, ctx:&mut TxContext) {
-        assert!(global.creator == tx_context::sender(ctx), ERR_NO_PERMISSION);
-        global.creator = account
-    }
-
-    public fun increment(global: &mut BoatTicketGlobal, version: u64) {
-        assert!(global.version == VERSION, ERR_INVALID_VERSION);
-        global.version = version;
     }
 }

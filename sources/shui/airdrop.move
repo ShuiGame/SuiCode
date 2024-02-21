@@ -1,43 +1,40 @@
-module MetaGame::airdrop {
+module shui_module::airdrop {
     use sui::transfer;
     use sui::object::{Self, UID};
     use sui::tx_context::{Self, TxContext};
-    use MetaGame::shui::{Self};
-    use MetaGame::metaIdentity::{Self};
-    use MetaGame::mission::{Self};
+    use shui_module::shui::{Self};
+    use shui_module::metaIdentity::{Self};
+    use shui_module::mission::{Self};
     use std::string::{utf8};
     use sui::clock::{Self, Clock};
     use sui::coin::{Self};
     use sui::balance::{Self, Balance};
     use sui::table::{Self};
-    use MetaGame::boat_ticket::{Self, BoatTicket};
+    use shui_module::boat_ticket::{Self, BoatTicket};
 
     const ERR_INVALID_PHASE:u64 = 0x001;
     const ERR_NO_PERMISSION:u64 = 0x002;
-    const ERR_HAS_CLAIMED_IN_24HOUR:u64 = 0x003;
-    const ERR_AIRDROP_NOT_START:u64 = 0x004;
-    const ERR_INACTIVE_META:u64 = 0x005;
-    const ERR_EXCEED_DAILY_LIMIT:u64 = 0x006;
-    const ERR_HAS_BEEN_CLAIMED:u64 = 0x007;
-    const ERR_HAS_REACHED_WHITELIST_CLAIM_LIMIT:u64 = 0x008;
-    const ERR_INVALID_VERSION:u64 = 0x009;
+    const ERR_HAS_CLAIMED_IN_24HOUR:u64 = 0x004;
+    const ERR_AIRDROP_NOT_START:u64 = 0x005;
+    const ERR_INACTIVE_META:u64 = 0x007;
+    const ERR_EXCEED_DAILY_LIMIT:u64 = 0x008;
+    const ERR_HAS_BEEN_CLAIMED:u64 = 0x009;
+    const ERR_NOT_RIGHT_INDEX:u64 = 0x010;
     const DAY_IN_MS: u64 = 86_400_000;
     const AMOUNT_DECIMAL:u64 = 1_000_000_000;
-    const VERSION: u64 = 0;
 
     struct AirdropGlobal has key {
         id: UID,
         start: u64,
         creator: address,
         balance_SHUI: Balance<shui::SHUI>,
+        white_list_claim_num: 0,
 
         // address -> last claim time
         daily_claim_records_list: table::Table<address, u64>,
         total_claim_amount: u64,
         now_days: u64,
         total_daily_claim_amount: u64,
-        white_list_claim_amount: u64,
-        version: u64
     }
 
     struct TimeCap has key {
@@ -45,7 +42,6 @@ module MetaGame::airdrop {
     }
 
     #[test_only]
-    #[lint_allow(self_transfer)]
     public fun init_for_test(ctx: &mut TxContext) {
         let global = AirdropGlobal {
             id: object::new(ctx),
@@ -56,8 +52,6 @@ module MetaGame::airdrop {
             total_claim_amount: 0,
             now_days: 0,
             total_daily_claim_amount: 0,
-            white_list_claim_amount: 0,
-            version: 0
         };
         transfer::share_object(global);
         let time_cap = TimeCap {
@@ -66,7 +60,6 @@ module MetaGame::airdrop {
         transfer::transfer(time_cap, tx_context::sender(ctx));
     }
 
-    #[allow(unused_function)]
     fun init(ctx: &mut TxContext) {
         let global = AirdropGlobal {
             id: object::new(ctx),
@@ -77,8 +70,6 @@ module MetaGame::airdrop {
             total_claim_amount: 0,
             now_days: 0,
             total_daily_claim_amount: 0,
-            white_list_claim_amount: 0,
-            version: 0
         };
         transfer::share_object(global);
         let time_cap = TimeCap {
@@ -123,27 +114,20 @@ module MetaGame::airdrop {
         table::add(table, recepient, time);
     }
 
-    #[lint_allow(self_transfer)]
     public entry fun claim_boat_whitelist_airdrop(info:&mut AirdropGlobal, ticket:&mut BoatTicket, meta: &metaIdentity::MetaIdentity, ctx: &mut TxContext) {
-        assert!(info.version == VERSION, ERR_INVALID_VERSION);
         assert!(metaIdentity::is_active(meta), ERR_INACTIVE_META);
         assert!(!boat_ticket::is_claimed(ticket), ERR_HAS_BEEN_CLAIMED);
-        assert!(info.white_list_claim_amount <= 20000, ERR_HAS_REACHED_WHITELIST_CLAIM_LIMIT);
+        assert!(boat_ticket::get_index(ticket) <= 1000, ERR_NOT_RIGHT_INDEX);
+        let user = tx_context::sender(ctx);
         let amount = 10_000 * AMOUNT_DECIMAL;
         let whitelist_airdrop = balance::split(&mut info.balance_SHUI, amount);
         let shui = coin::from_balance(whitelist_airdrop, ctx);
         transfer::public_transfer(shui, tx_context::sender(ctx));
         boat_ticket::record_white_list_clamed(ticket);
-        info.white_list_claim_amount = info.white_list_claim_amount + 1;
+        airdropGlobal.white_list_claim_num = airdropGlobal.white_list_claim_num + 1;
     }
 
-    public entry fun get_white_list_claim_amount(airdropGlobal: &AirdropGlobal) : u64 {
-        airdropGlobal.white_list_claim_amount
-    }
-
-    #[lint_allow(self_transfer)]
     public entry fun claim_airdrop(mission_global:&mut mission::MissionGlobal, info:&mut AirdropGlobal, meta: &metaIdentity::MetaIdentity, clock:&Clock, ctx: &mut TxContext) {
-        assert!(info.version == VERSION, ERR_INVALID_VERSION);
         assert!(metaIdentity::is_active(meta), ERR_INACTIVE_META);
         assert!(info.start > 0, ERR_AIRDROP_NOT_START);
         let now = clock::timestamp_ms(clock);
@@ -163,7 +147,7 @@ module MetaGame::airdrop {
         if (table::contains(&info.daily_claim_records_list, user)) {
             last_claim_time = *table::borrow(&info.daily_claim_records_list, user);
         };
-        assert!((now - last_claim_time) > 60_000, ERR_HAS_CLAIMED_IN_24HOUR);
+        assert!((now - last_claim_time) > 86_400_000, ERR_HAS_CLAIMED_IN_24HOUR);
         let airdrop_balance = balance::split(&mut info.balance_SHUI, amount);
         let shui = coin::from_balance(airdrop_balance, ctx);
         transfer::public_transfer(shui, tx_context::sender(ctx));
@@ -237,15 +221,5 @@ module MetaGame::airdrop {
         } else {
             (450 + days) * 1_000_000 * AMOUNT_DECIMAL - info.total_claim_amount
         }
-    }
-    
-    public fun change_owner(global:&mut AirdropGlobal, account:address, ctx:&mut TxContext) {
-        assert!(global.creator == tx_context::sender(ctx), ERR_NO_PERMISSION);
-        global.creator = account
-    }
-
-    public fun increment(global: &mut AirdropGlobal, version: u64) {
-        assert!(global.version == VERSION, ERR_INVALID_VERSION);
-        global.version = version;
     }
 }
