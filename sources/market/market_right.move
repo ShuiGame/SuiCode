@@ -29,7 +29,7 @@ module MetaGame::market_right {
     const IMAGE_URL_GAME_2: vector<u8> = b"https://bafybeifnidwalkxnx2y4nmjgeocut7pgys6vsxph7hsucowt3fvxsgynme.ipfs.nftstorage.link/SHUI-GameFi2.jpg";
     const IMAGE_URL_GAME_0: vector<u8> = b"https://bafybeifnidwalkxnx2y4nmjgeocut7pgys6vsxph7hsucowt3fvxsgynme.ipfs.nftstorage.link/GameFi-TOKEN.jpg";
     const DESCRIPTION: vector<u8> = b"shui metagame market fee rights, owner can gain gas fee from it cyclically";
-    const PROJECT_URL: vector<u8> = b"https://shui.game/game/#/";
+    const PROJECT_URL: vector<u8> = b"https://shui.game/";
     const CREATOR: vector<u8> = b"metaGame";
 
     const ERR_NO_PERMISSION: u64 = 0x001;
