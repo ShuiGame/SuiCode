@@ -15,19 +15,19 @@ module MetaGame::market_right {
     friend MetaGame::market;
     
     const DEFAULT_LINK: vector<u8> = b"https://shui.game";
-    const IMAGE_URL_NFT_20: vector<u8> = b"https://bafybeicis764zsykvopcqtcqytsfz74ai3mwna33xi7qqh74z2f2osyyba.ipfs.nftstorage.link/st50.png";
-    const IMAGE_URL_NFT_15: vector<u8> = b"https://bafybeicis764zsykvopcqtcqytsfz74ai3mwna33xi7qqh74z2f2osyyba.ipfs.nftstorage.link/st100.png";
-    const IMAGE_URL_NFT_10: vector<u8> = b"https://bafybeicis764zsykvopcqtcqytsfz74ai3mwna33xi7qqh74z2f2osyyba.ipfs.nftstorage.link/st500.png";
-    const IMAGE_URL_NFT_5: vector<u8> = b"https://bafybeicis764zsykvopcqtcqytsfz74ai3mwna33xi7qqh74z2f2osyyba.ipfs.nftstorage.link/st1000.png";
-    const IMAGE_URL_NFT_0: vector<u8> = b"https://bafybeicis764zsykvopcqtcqytsfz74ai3mwna33xi7qqh74z2f2osyyba.ipfs.nftstorage.link/st5000.png";
+    const IMAGE_URL_NFT_20: vector<u8> = b"https://bafybeifnidwalkxnx2y4nmjgeocut7pgys6vsxph7hsucowt3fvxsgynme.ipfs.nftstorage.link/SHUI-NFT20.jpg";
+    const IMAGE_URL_NFT_15: vector<u8> = b"https://bafybeifnidwalkxnx2y4nmjgeocut7pgys6vsxph7hsucowt3fvxsgynme.ipfs.nftstorage.link/SHUI-NFT15.jpg";
+    const IMAGE_URL_NFT_10: vector<u8> = b"https://bafybeifnidwalkxnx2y4nmjgeocut7pgys6vsxph7hsucowt3fvxsgynme.ipfs.nftstorage.link/SHUI-NFT10.jpg";
+    const IMAGE_URL_NFT_5: vector<u8> = b"https://bafybeifnidwalkxnx2y4nmjgeocut7pgys6vsxph7hsucowt3fvxsgynme.ipfs.nftstorage.link/SHUI-NFT5.jpg";
+    const IMAGE_URL_NFT_0: vector<u8> = b"https://bafybeifnidwalkxnx2y4nmjgeocut7pgys6vsxph7hsucowt3fvxsgynme.ipfs.nftstorage.link/NFT-TOKEN.jpg";
 
-    const IMAGE_URL_GAME_25: vector<u8> = b"https://bafybeicis764zsykvopcqtcqytsfz74ai3mwna33xi7qqh74z2f2osyyba.ipfs.nftstorage.link/st50.png";
-    const IMAGE_URL_GAME_20: vector<u8> = b"https://bafybeicis764zsykvopcqtcqytsfz74ai3mwna33xi7qqh74z2f2osyyba.ipfs.nftstorage.link/st100.png";
-    const IMAGE_URL_GAME_10: vector<u8> = b"https://bafybeicis764zsykvopcqtcqytsfz74ai3mwna33xi7qqh74z2f2osyyba.ipfs.nftstorage.link/st500.png";
-    const IMAGE_URL_GAME_5: vector<u8> = b"https://bafybeicis764zsykvopcqtcqytsfz74ai3mwna33xi7qqh74z2f2osyyba.ipfs.nftstorage.link/st1000.png";
-    const IMAGE_URL_GAME_3: vector<u8> = b"https://bafybeicis764zsykvopcqtcqytsfz74ai3mwna33xi7qqh74z2f2osyyba.ipfs.nftstorage.link/st5000.png";
-    const IMAGE_URL_GAME_2: vector<u8> = b"https://bafybeicis764zsykvopcqtcqytsfz74ai3mwna33xi7qqh74z2f2osyyba.ipfs.nftstorage.link/st1000.png";
-    const IMAGE_URL_GAME_0: vector<u8> = b"https://bafybeicis764zsykvopcqtcqytsfz74ai3mwna33xi7qqh74z2f2osyyba.ipfs.nftstorage.link/st5000.png";
+    const IMAGE_URL_GAME_25: vector<u8> = b"https://bafybeifnidwalkxnx2y4nmjgeocut7pgys6vsxph7hsucowt3fvxsgynme.ipfs.nftstorage.link/SHUI-GameFi25.jpg";
+    const IMAGE_URL_GAME_20: vector<u8> = b"https://bafybeifnidwalkxnx2y4nmjgeocut7pgys6vsxph7hsucowt3fvxsgynme.ipfs.nftstorage.link/SHUI-GameFi20.jpg";
+    const IMAGE_URL_GAME_10: vector<u8> = b"https://bafybeifnidwalkxnx2y4nmjgeocut7pgys6vsxph7hsucowt3fvxsgynme.ipfs.nftstorage.link/SHUI-GameFi5.jpg";
+    const IMAGE_URL_GAME_5: vector<u8> = b"https://bafybeifnidwalkxnx2y4nmjgeocut7pgys6vsxph7hsucowt3fvxsgynme.ipfs.nftstorage.link/SHUI-GameFi3.jpg";
+    const IMAGE_URL_GAME_3: vector<u8> = b"https://bafybeifnidwalkxnx2y4nmjgeocut7pgys6vsxph7hsucowt3fvxsgynme.ipfs.nftstorage.link/SHUI-GameFi2.jpg";
+    const IMAGE_URL_GAME_2: vector<u8> = b"https://bafybeifnidwalkxnx2y4nmjgeocut7pgys6vsxph7hsucowt3fvxsgynme.ipfs.nftstorage.link/SHUI-GameFi2.jpg";
+    const IMAGE_URL_GAME_0: vector<u8> = b"https://bafybeifnidwalkxnx2y4nmjgeocut7pgys6vsxph7hsucowt3fvxsgynme.ipfs.nftstorage.link/GameFi-TOKEN.jpg";
     const DESCRIPTION: vector<u8> = b"shui metagame market fee rights, owner can gain gas fee from it cyclically";
     const PROJECT_URL: vector<u8> = b"https://shui.game/game/#/";
     const CREATOR: vector<u8> = b"metaGame";
