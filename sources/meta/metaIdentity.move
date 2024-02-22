@@ -250,7 +250,7 @@ module MetaGame::metaIdentity {
     }
 
     fun get_common_metaid(global: &mut MetaInfoGlobal):u64 {
-        let metaId = 20000 + global.meta_common_user_count;
+        let metaId = 10000 + global.meta_common_user_count;
         global.meta_common_user_count = global.meta_common_user_count + 1;
         metaId
     }
