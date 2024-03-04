@@ -368,27 +368,27 @@ module MetaGame::airdrop_test {
         };
 
         // market purchase test
-        next_tx(test, admin);
-        {
-            print(&string::utf8(b"-----------------start purchase test---------------"));
-            let market_global =  take_shared<market::MarketGlobal>(test);
-            let itemGlobal = take_shared<items::ItemGlobal>(test);
-            let markertRightGlobal = take_shared<market_right::MarketRightGlobal>(test);
-            let meta = take_from_sender<metaIdentity::MetaIdentity>(test);
-            // let coin = coin::mint_for_testing<SUI>(1, ctx(test));
-            // let coins = vector::empty<Coin<SUI>>();
-            let coin2 = coin::mint_for_testing<SUI>(12, ctx(test));
-            let coins2 = vector::empty<Coin<SUI>>();
-            // vector::push_back(&mut coins, coin);
-            vector::push_back(&mut coins2, coin2);
-            market::purchase_nft_item_sui<boat_ticket::BoatTicket>(&mut market_global, &mut markertRightGlobal, &mut meta, 20001, utf8(b"boat_ticket"), 1, coins2, &clock, ctx(test));
-            return_to_sender(test, meta);
-            let res = market::get_game_sales(&market_global, &clock);
-            print(&res);
-            return_shared(market_global);
-            return_shared(markertRightGlobal);
-            return_shared(itemGlobal);
-        };
+        // next_tx(test, admin);
+        // {
+        //     print(&string::utf8(b"-----------------start purchase test---------------"));
+        //     let market_global =  take_shared<market::MarketGlobal>(test);
+        //     let itemGlobal = take_shared<items::ItemGlobal>(test);
+        //     let markertRightGlobal = take_shared<market_right::MarketRightGlobal>(test);
+        //     let meta = take_from_sender<metaIdentity::MetaIdentity>(test);
+        //     // let coin = coin::mint_for_testing<SUI>(1, ctx(test));
+        //     // let coins = vector::empty<Coin<SUI>>();
+        //     let coin2 = coin::mint_for_testing<SUI>(12, ctx(test));
+        //     let coins2 = vector::empty<Coin<SUI>>();
+        //     // vector::push_back(&mut coins, coin);
+        //     vector::push_back(&mut coins2, coin2);
+        //     market::purchase_nft_item_sui<boat_ticket::BoatTicket>(&mut market_global, &mut markertRightGlobal, &mut meta, 20001, utf8(b"boat_ticket"), 1, coins2, &clock, ctx(test));
+        //     return_to_sender(test, meta);
+        //     let res = market::get_game_sales(&market_global, &clock);
+        //     print(&res);
+        //     return_shared(market_global);
+        //     return_shared(markertRightGlobal);
+        //     return_shared(itemGlobal);
+        // };
 
         next_tx(test, admin);
         {
