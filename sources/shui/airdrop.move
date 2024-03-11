@@ -20,6 +20,7 @@ module MetaGame::airdrop {
     const ERR_EXCEED_DAILY_LIMIT:u64 = 0x008;
     const ERR_HAS_BEEN_CLAIMED:u64 = 0x009;
     const ERR_NOT_RIGHT_INDEX:u64 = 0x010;
+    const ERR_NOT_IN_WHITELIST:u64 = 0x011;
     const DAY_IN_MS: u64 = 86_400_000;
     const AMOUNT_DECIMAL:u64 = 1_000_000_000;
 
@@ -120,18 +121,20 @@ module MetaGame::airdrop {
         assert!(metaIdentity::is_active(meta), ERR_INACTIVE_META);
         assert!(!boat_ticket::is_claimed(ticket), ERR_HAS_BEEN_CLAIMED);
         assert!(boat_ticket::get_index(ticket) <= 1000, ERR_NOT_RIGHT_INDEX);
-        assert!(!table::contains(airdropGlobal.whitelist_claimed_records_list, user), ERR_NOT_IN_WHITELIST);
         let user = tx_context::sender(ctx);
+        assert!(!table::contains(&info.whitelist_claimed_records_list, user), ERR_NOT_IN_WHITELIST);
+
         let amount = 10_000 * AMOUNT_DECIMAL;
         let whitelist_airdrop = balance::split(&mut info.balance_SHUI, amount);
         let shui = coin::from_balance(whitelist_airdrop, ctx);
         transfer::public_transfer(shui, tx_context::sender(ctx));
         boat_ticket::record_white_list_clamed(ticket);
-        table::add(&mut airdropGlobal.whitelist_claimed_records_list, user, 1);
+        table::add(&mut info.whitelist_claimed_records_list, user, 1);
     }
 
     public fun is_airdrop_claimed(info:&AirdropGlobal, ctx: &mut TxContext) : bool {
-        table::contains(&airdropGlobal.whitelist_claimed_records_list, user)
+        let user = tx_context::sender(ctx);
+        table::contains(&info.whitelist_claimed_records_list, user)
     }
 
     public entry fun claim_airdrop(mission_global:&mut mission::MissionGlobal, info:&mut AirdropGlobal, meta: &metaIdentity::MetaIdentity, clock:&Clock, ctx: &mut TxContext) {
