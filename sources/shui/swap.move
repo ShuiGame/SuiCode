@@ -85,7 +85,7 @@ module MetaGame::swap {
     public fun set_whitelist(swapGlobal: &mut SwapGlobal, ticket: &mut boat_ticket::BoatTicket, ctx:&mut TxContext) {
         let sender = tx_context::sender(ctx);
         table::add(&mut swapGlobal.whitelist_table, sender, WHITELIST_SWAP_LIMIT);
-        assert!(table::contains(&swapGlobal.ticket_map, boat_ticket::get_index(ticket)), ERR_TICKET_HAS_BEEN_CLAIMED);
+        assert!(!table::contains(&swapGlobal.ticket_map, boat_ticket::get_index(ticket)), ERR_TICKET_HAS_BEEN_CLAIMED);
         table::add(&mut swapGlobal.ticket_map, boat_ticket::get_index(ticket), true);
         assert!(table::length(&swapGlobal.whitelist_table) <= WHITELIST_MAX_NUM, 1);
     }
