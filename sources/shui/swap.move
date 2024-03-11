@@ -90,6 +90,11 @@ module MetaGame::swap {
         assert!(table::length(&swapGlobal.whitelist_table) <= WHITELIST_MAX_NUM, 1);
     }
 
+    public fun is_in_whitelist(swapGlobal : &SwapGlobal, ctx:&mut TxContext) : bool {
+        let sender = tx_context::sender(ctx);
+        table::contains(&swapGlobal.whitelist_table, sender)
+    }
+
     public entry fun public_swap(global: &mut SwapGlobal, sui_pay_amount:u64, coins:vector<Coin<SUI>>, ctx:&mut TxContext) {
         assert!(global.phase == 1, ERR_NOT_START);
         let ratio = 10;
