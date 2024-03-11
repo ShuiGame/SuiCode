@@ -1,9 +1,11 @@
 [package]
 name = 'MetaGame'
-version = '1.0.0'
+version = '1.0.3'
+published-at = "0x8bde2b16cbafa456c625ab690bb8230ea2904d79276dccb34d52611757195bb2"
 
 [dependencies]
-Sui = { git = "https://github.com/MystenLabs/sui.git",  rev = "framework/testnet", subdir = "crates/sui-framework/packages/sui-framework"}
+Sui = { local = "G:/autoChess/move_split/sui-framework" }
+MoveStdlib = { local ="G:/autoChess/move_split/move-stdlib" }
 
 [addresses]
 MetaGame = "0x0"

@@ -29,7 +29,6 @@ module MetaGame::airdrop {
         start: u64,
         creator: address,
         balance_SHUI: Balance<shui::SHUI>,
-        whitelist_claimed_records_list: table::Table<address, u64>,
 
         // address -> last claim time
         daily_claim_records_list: table::Table<address, u64>,
@@ -50,7 +49,6 @@ module MetaGame::airdrop {
             creator: tx_context::sender(ctx),
             balance_SHUI: balance::zero(),
             daily_claim_records_list: table::new<address, u64>(ctx),
-            whitelist_claimed_records_list: table::new<address, u64>(ctx),
             total_claim_amount: 0,
             now_days: 0,
             total_daily_claim_amount: 0,
@@ -69,7 +67,6 @@ module MetaGame::airdrop {
             creator: tx_context::sender(ctx),
             balance_SHUI: balance::zero(),
             daily_claim_records_list: table::new<address, u64>(ctx),
-            whitelist_claimed_records_list: table::new<address, u64>(ctx),
             total_claim_amount: 0,
             now_days: 0,
             total_daily_claim_amount: 0,
@@ -122,19 +119,15 @@ module MetaGame::airdrop {
         assert!(!boat_ticket::is_claimed(ticket), ERR_HAS_BEEN_CLAIMED);
         assert!(boat_ticket::get_index(ticket) <= 1000, ERR_NOT_RIGHT_INDEX);
         let user = tx_context::sender(ctx);
-        assert!(!table::contains(&info.whitelist_claimed_records_list, user), ERR_NOT_IN_WHITELIST);
-
         let amount = 10_000 * AMOUNT_DECIMAL;
         let whitelist_airdrop = balance::split(&mut info.balance_SHUI, amount);
         let shui = coin::from_balance(whitelist_airdrop, ctx);
         transfer::public_transfer(shui, tx_context::sender(ctx));
         boat_ticket::record_white_list_clamed(ticket);
-        table::add(&mut info.whitelist_claimed_records_list, user, 1);
     }
 
-    public fun is_airdrop_claimed(info:&AirdropGlobal, ctx: &mut TxContext) : bool {
-        let user = tx_context::sender(ctx);
-        table::contains(&info.whitelist_claimed_records_list, user)
+    public fun is_airdrop_claimed(info:&AirdropGlobal, ticket:&BoatTicket, ctx: &mut TxContext) : bool {
+        boat_ticket::is_claimed(ticket)
     }
 
     public entry fun claim_airdrop(mission_global:&mut mission::MissionGlobal, info:&mut AirdropGlobal, meta: &metaIdentity::MetaIdentity, clock:&Clock, ctx: &mut TxContext) {
