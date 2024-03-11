@@ -28,7 +28,6 @@ module MetaGame::airdrop {
         start: u64,
         creator: address,
         balance_SHUI: Balance<shui::SHUI>,
-
         whitelist_claimed_records_list: table::Table<address, u64>,
 
         // address -> last claim time
