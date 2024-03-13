@@ -96,6 +96,7 @@ module MetaGame::swap {
     }
 
     public fun get_is_whitelist(swapGlobal : &SwapGlobal, ctx:&mut TxContext) : u64 {
+        let sender = tx_context::sender(ctx);
         if (table::contains(&swapGlobal.whitelist_table, sender)) {
             1
         } else {
