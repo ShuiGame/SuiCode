@@ -163,7 +163,7 @@ module MetaGame::boat_ticket {
         ticket.whitelist_claimed
     }
 
-    public fun is_ticket_claimed(ticket:&BoatTicket) : u64 {
+    public fun get_is_ticket_claimed(ticket:&BoatTicket) : u64 {
         if (ticket.whitelist_claimed) {
             1
         } else {
