@@ -126,7 +126,11 @@ module MetaGame::airdrop {
         boat_ticket::record_white_list_clamed(ticket);
     }
 
-    public fun is_airdrop_claimed(info:&AirdropGlobal, ticket:&BoatTicket, ctx: &mut TxContext) : u64 {
+    public fun is_airdrop_claimed(info:&AirdropGlobal, ticket:&BoatTicket, ctx: &mut TxContext) : bool {
+        boat_ticket::is_claimed(ticket)
+    }
+
+    public fun get_airdrop_claimed(info:&AirdropGlobal, ticket:&BoatTicket, ctx: &mut TxContext) : u64 {
         if (boat_ticket::is_claimed(ticket)) {
             1
         } else {
