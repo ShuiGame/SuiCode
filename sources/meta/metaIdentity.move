@@ -154,7 +154,6 @@ module MetaGame::metaIdentity {
     public entry fun mintInviteMeta(global: &mut MetaInfoGlobal, inviteMetaId:u64, name:string::String, phone:string::String,
         email:string::String, user_addr:address, ctx:&mut TxContext) {
         assert!(global.version == VERSION, ERR_INVALID_VERSION);
-        let sender = tx_context::sender(ctx);
         assert!(!table::contains(&global.wallet_meta_map, user_addr), ERR_ALREADY_BIND);
         let uid = object::new(ctx);
         let meta_addr = object::uid_to_address(&uid);
@@ -166,7 +165,7 @@ module MetaGame::metaIdentity {
             email: email,
             bind_status: true,
             items:items::new(ctx),
-            wallet:sender
+            wallet:user_addr
         };
         assert!(linked_table::contains(&global.inviteMap, inviteMetaId), ERR_HE_NOT_INVITE_ANYONE);
         let inviteVec = linked_table::borrow(&global.inviteMap, inviteMetaId);
