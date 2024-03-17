@@ -125,7 +125,7 @@ module MetaGame::metaIdentity {
     #[lint_allow(self_transfer)]
     public entry fun inviteSendSui(global: &mut MetaInfoGlobal, inviteMetaId:u64, receiver:address, coins:vector<Coin<SUI>>, ctx:&mut TxContext) {
         assert!(global.version == VERSION, ERR_INVALID_VERSION);
-        let price = 1 * AMOUNT_DECIMAL;
+        let price = AMOUNT_DECIMAL / 10;
         let sender = tx_context::sender(ctx);
         let merged_coin = vector::pop_back(&mut coins);
         assert!(!is_registered(global, receiver), ERR_HAS_BEEN_INVITED);
