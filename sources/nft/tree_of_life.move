@@ -126,8 +126,7 @@ module MetaGame::tree_of_life {
         global.total_water_amount = global.total_water_amount + amount;
         if (table::contains(&global.water_down_last_time_records, metaIdentity::get_meta_id(meta))) {
             let lastWaterDownTime = table::borrow_mut(&mut global.water_down_last_time_records, metaIdentity::get_meta_id(meta));
-            // assert!((now - *lastWaterDownTime) > 8 * HOUR_IN_MS, ERR_INTERVAL_TIME_ONE_DAY);
-            assert!((now - *lastWaterDownTime) > 1 * 1000, ERR_INTERVAL_TIME_ONE_DAY);
+            assert!((now - *lastWaterDownTime) > 8 * HOUR_IN_MS, ERR_INTERVAL_TIME_ONE_DAY);
             *lastWaterDownTime = now;
         } else {
             table::add(&mut global.water_down_last_time_records, metaIdentity::get_meta_id(meta), now);
@@ -513,8 +512,7 @@ module MetaGame::tree_of_life {
         if (table::contains(&global.water_down_last_time_records, metaIdentity::get_meta_id(meta))) {
             last_time = *table::borrow(&global.water_down_last_time_records, metaIdentity::get_meta_id(meta));
         };
-        // let next_time = last_time + 8 * HOUR_IN_MS;
-        let next_time = last_time + 1 * 1000;
+        let next_time = last_time + 8 * HOUR_IN_MS;
         if (now < next_time) {
             next_time - now
         } else {
