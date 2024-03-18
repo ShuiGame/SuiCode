@@ -805,7 +805,7 @@ module MetaGame::market_right {
             transfer::public_transfer(sui, tx_context::sender(ctx));
         };
     }
-        
+
     public entry fun claimed_game_2(global: &mut MarketRightGlobal, nft: &mut MARKET_RIGHT_GAME2, ctx: &mut TxContext) {
         let total_shui_amount = global.culmulate_game_SHUI;
         let total_sui_amount = global.culmulate_game_SUI;
