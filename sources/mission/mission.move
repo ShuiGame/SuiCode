@@ -426,106 +426,6 @@ module MetaGame::mission {
     }
 
     public fun init_missions(global: &mut MissionGlobal, clock:&clock::Clock, ctx:&mut TxContext) {
-        // init all missions here, update with latest version
-        // mission1: invite 2 players
-        // let now = clock::timestamp_ms(clock);
-        // let mission1_name = utf8(b"invite players2");
-        // let mission1 = MissionInfo {
-        //     name:mission1_name,
-        //     desc:utf8(b"invite 2 players"),
-        //     goal_process:2,
-        //     missions: table::new<u64, UserRecord>(ctx),
-        //     deadline:now + 365 * DAY_IN_MS,
-        //     reward:utf8(b"SUI:100")
-        // };
-        // assert!(!linked_table::contains(&global.mission_records, mission1_name), ERR_MISSION_EXIST);
-        // linked_table::push_back(&mut global.mission_records, mission1_name, mission1);
-
-        // // mission2: invite 5 players
-        // let now = clock::timestamp_ms(clock);
-        // let mission2_name = utf8(b"invite players5");
-        // let mission2 = MissionInfo {
-        //     name:mission2_name,
-        //     desc:utf8(b"invite 5 players"),
-        //     goal_process:5,
-        //     missions: table::new<u64, UserRecord>(ctx),
-        //     deadline:now + 365 * DAY_IN_MS,
-        //     reward:utf8(b"SUI:500")
-        // };
-        // assert!(!linked_table::contains(&global.mission_records, mission2_name), ERR_MISSION_EXIST);
-        // linked_table::push_back(&mut global.mission_records, mission2_name, mission2);
-
-        // // mission3: invite 10 players
-        // let now = clock::timestamp_ms(clock);
-        // let mission3_name = utf8(b"invite players10");
-        // let mission3 = MissionInfo {
-        //     name:mission3_name,
-        //     desc:utf8(b"invite 10 players"),
-        //     goal_process:10,
-        //     missions: table::new<u64, UserRecord>(ctx),
-        //     deadline:now + 365 * DAY_IN_MS,
-        //     reward:utf8(b"SUI:1000")
-        // };
-        // assert!(!linked_table::contains(&global.mission_records, mission3_name), ERR_MISSION_EXIST);
-        // linked_table::push_back(&mut global.mission_records, mission3_name, mission3);
-
-        // // mission4: invite 20 players
-        // let now = clock::timestamp_ms(clock);
-        // let mission4_name = utf8(b"invite players20");
-        // let mission4 = MissionInfo {
-        //     name:mission4_name,
-        //     desc:utf8(b"invite 20 players"),
-        //     goal_process:20,
-        //     missions: table::new<u64, UserRecord>(ctx),
-        //     deadline:now + 365 * DAY_IN_MS,
-        //     reward:utf8(b"SUI:3000")
-        // };
-        // assert!(!linked_table::contains(&global.mission_records, mission4_name), ERR_MISSION_EXIST);
-        // linked_table::push_back(&mut global.mission_records, mission4_name, mission4);
-
-        // // mission5: invite 50 players
-        // let now = clock::timestamp_ms(clock);
-        // let mission5_name = utf8(b"invite players50");
-        // let mission5 = MissionInfo {
-        //     name:mission5_name,
-        //     desc:utf8(b"invite 50 players"),
-        //     goal_process:50,
-        //     missions: table::new<u64, UserRecord>(ctx),
-        //     deadline:now + 365 * DAY_IN_MS,
-        //     reward:utf8(b"SUI:10000")
-        // };
-        // assert!(!linked_table::contains(&global.mission_records, mission5_name), ERR_MISSION_EXIST);
-        // linked_table::push_back(&mut global.mission_records, mission5_name, mission5);
-        
-        
-        // // mission6: invite 75 players
-        // let now = clock::timestamp_ms(clock);
-        // let mission6_name = utf8(b"invite players75");
-        // let mission6 = MissionInfo {
-        //     name:mission6_name,
-        //     desc:utf8(b"invite 75 players"),
-        //     goal_process:75,
-        //     missions: table::new<u64, UserRecord>(ctx),
-        //     deadline:now + 365 * DAY_IN_MS,
-        //     reward:utf8(b"SUI:25000")
-        // };
-        // assert!(!linked_table::contains(&global.mission_records, mission6_name), ERR_MISSION_EXIST);
-        // linked_table::push_back(&mut global.mission_records, mission6_name, mission6);
-
-        // // mission7: invite 99 players
-        // let now = clock::timestamp_ms(clock);
-        // let mission7_name = utf8(b"invite players99");
-        // let mission7 = MissionInfo {
-        //     name:mission7_name,
-        //     desc:utf8(b"invite 99 players"),
-        //     goal_process:99,
-        //     missions: table::new<u64, UserRecord>(ctx),
-        //     deadline:now + 365 * DAY_IN_MS,
-        //     reward:utf8(b"SUI:25000")
-        // };
-        // assert!(!linked_table::contains(&global.mission_records, mission7_name), ERR_MISSION_EXIST);
-        // linked_table::push_back(&mut global.mission_records, mission7_name, mission7);
-
         // mission2: finish 3 water down
         let now = clock::timestamp_ms(clock);
         let mission1_name = utf8(b"water down");
@@ -539,32 +439,6 @@ module MetaGame::mission {
         };
         assert!(!linked_table::contains(&global.mission_records, mission1_name), ERR_MISSION_EXIST);
         linked_table::push_back(&mut global.mission_records, mission1_name, mission1);
-
-        // mission3: swap any water element
-        // let mission2_name = utf8(b"swap water element");
-        // let mission2 = MissionInfo {
-        //     name:mission2_name,
-        //     desc:utf8(b"swap fragments into any water element"),
-        //     goal_process:1,
-        //     missions: table::new<u64, UserRecord>(ctx),
-        //     deadline:now + 4 * DAY_IN_MS,
-        //     reward:utf8(b"anything")
-        // };
-        // assert!(!linked_table::contains(&global.mission_records, mission2_name), ERR_MISSION_EXIST);
-        // linked_table::push_back(&mut global.mission_records, mission2_name, mission2);
-
-        // mission4: claim airdrop
-        // let mission3_name = utf8(b"claim airdrop");
-        // let mission3 = MissionInfo {
-        //     name:mission2_name,
-        //     desc:utf8(b"claim airdrop once"),
-        //     goal_process:1,
-        //     missions: table::new<u64, UserRecord>(ctx),
-        //     deadline:now + 5 * DAY_IN_MS,
-        //     reward:utf8(b"anything")
-        // };
-        // assert!(!linked_table::contains(&global.mission_records, mission3_name), ERR_MISSION_EXIST);
-        // linked_table::push_back(&mut global.mission_records, mission3_name, mission3);
     }
 
     public entry fun delete_mission(global: &mut MissionGlobal, mission:String, _clock:&Clock, ctx:&mut TxContext) {
