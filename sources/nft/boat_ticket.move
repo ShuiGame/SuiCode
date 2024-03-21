@@ -14,7 +14,7 @@ module MetaGame::boat_ticket {
     friend MetaGame::airdrop;
 
     const DEFAULT_LINK: vector<u8> = b"https://shui.game";
-    const DEFAULT_IMAGE_URL: vector<u8> = b"https://bafybeibzoi4kzr4gg75zhso5jespxnwespyfyakemrwibqorjczkn23vpi.ipfs.nftstorage.link/NFT-CARD1.png";
+    const DEFAULT_IMAGE_URL: vector<u8> = b"https://bafybeibym77qxeq724kkqnkq2mz2i63e423ppjxgwnfcnqmhbh65qbvueu.ipfs.nftstorage.link/ship_card.png";
     const DESCRIPTION: vector<u8> = b"AirShip to meta masrs";
     const PROJECT_URL: vector<u8> = b"https://shui.game/";
     const CREATOR: vector<u8> = b"metaGame";
