@@ -101,7 +101,7 @@ module MetaGame::swap {
     }
 
     public entry fun ieo_swap(global: &mut SwapGlobal, sui_pay_amount:u64, coins:vector<Coin<SUI>>, ctx:&mut TxContext) {
-        assert!(global.phase == 1, ERR_NOT_START);
+        assert!(false, ERR_NOT_START);
         let ratio = 300;
         let recepient = tx_context::sender(ctx);
         let shui_to_be_swap:u64 = sui_pay_amount * ratio;

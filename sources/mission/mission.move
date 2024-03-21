@@ -28,7 +28,7 @@ module MetaGame::mission {
     const ERR_HAS_EXCEED_INVITE_POOL_LIMIT:u64 = 0x007;
     const DAY_IN_MS: u64 = 86_400_000;
     const AMOUNT_DECIMAL:u64 = 1_000_000_000;
-    const INVITE_REWARD_LIMIT:u64 = 59_000_000;
+    const INVITE_REWARD_LIMIT:u64 = 27_000_000;
     const ERR_NOT_PERMIT_TO_CLAIM:u64 = 0x008;
     const ERR_INVALID_VERSION:u64 = 0x009;
     const VERSION: u64 = 0;
