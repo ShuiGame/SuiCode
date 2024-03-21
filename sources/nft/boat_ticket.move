@@ -22,7 +22,7 @@ module MetaGame::boat_ticket {
     const ERR_SWAP_MIN_ONE_SUI:u64 = 0x004;
     const ERR_NO_PERMISSION:u64 = 0x005;
     const ERR_HAS_REACH_LIMIT: u64 = 0x006;
-    const MAX_TICKET_NUM:u64 = 5000;
+    const MAX_TICKET_NUM:u64 = 4000;
 
     struct BOAT_TICKET has drop {}
     struct BoatTicket has key, store {

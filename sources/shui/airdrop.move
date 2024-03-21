@@ -23,6 +23,7 @@ module MetaGame::airdrop {
     const ERR_NOT_IN_WHITELIST:u64 = 0x011;
     const DAY_IN_MS: u64 = 86_400_000;
     const AMOUNT_DECIMAL:u64 = 1_000_000_000;
+    const MAX_AIRDROP_INDEX:u64 = 500;
 
     struct AirdropGlobal has key {
         id: UID,
@@ -117,7 +118,7 @@ module MetaGame::airdrop {
     public entry fun claim_boat_whitelist_airdrop(info:&mut AirdropGlobal, ticket:&mut BoatTicket, meta: &metaIdentity::MetaIdentity, ctx: &mut TxContext) {
         assert!(metaIdentity::is_active(meta), ERR_INACTIVE_META);
         assert!(!boat_ticket::is_claimed(ticket), ERR_HAS_BEEN_CLAIMED);
-        assert!(boat_ticket::get_index(ticket) <= 1000, ERR_NOT_RIGHT_INDEX);
+        assert!(boat_ticket::get_index(ticket) <= MAX_AIRDROP_INDEX, ERR_NOT_RIGHT_INDEX);
         let user = tx_context::sender(ctx);
         let amount = 10_000 * AMOUNT_DECIMAL;
         let whitelist_airdrop = balance::split(&mut info.balance_SHUI, amount);

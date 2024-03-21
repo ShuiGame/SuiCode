@@ -22,14 +22,17 @@ module MetaGame::shui {
     friend MetaGame::swap;
     friend MetaGame::founder_team_reserve;
     friend MetaGame::mission;
+
     const SHUI_ICON_URL:vector<u8> = b"https://nftstorage.link/ipfs/bafybeieqqos2upvmmxzmauv6cf53ddegpjc5zkrvbpriz7iajamcxikv4y";
     const ERR_NO_PERMISSION:u64 = 0x004;
     const TOTAL_SUPPLY: u64 = 2_100_000_000;
     const GAME_RESERVE:u64 = 1_000_000_000;
-    const AIRDROP_AMOUNT:u64 = 450_000_000;
-    const WHITE_LIST_RESERVE:u64 = 250_000_000;
-    const MISSION_RESERVE:u64 = 229_000_000;
-    const SWAP_AMOUNT:u64 = 100_000_000;
+    const AIRDROP_AMOUNT:u64 = 207_000_000;
+    const WHITE_LIST_RESERVE:u64 = 240_000_000;
+    const IEO_AMOUNT:u64 = 200_000_000;
+    const MISSION_RESERVE:u64 = 82_000_000;
+    const PUBLIC_SELL:u64 = 200_000_000;
+    const GOLDEN_RESERVE:u64 = 100_000_000;
     const DAO_RESERVE:u64 = 50_000_000;
     const FOUNDER_TEAM_RESERVE:u64 = 21_000_000;
 
@@ -144,7 +147,7 @@ module MetaGame::shui {
     // todo: only once call
     public(friend) fun extract_swap_balance(global: &mut Global, ctx: &mut TxContext) : balance::Balance<SHUI> {
         assert!(tx_context::sender(ctx) == global.creator, ERR_NO_PERMISSION);
-        balance::split(&mut global.balance_SHUI, SWAP_AMOUNT * AMOUNT_DECIMAL)
+        balance::split(&mut global.balance_SHUI, (GOLDEN_RESERVE + PUBLIC_SELL + IEO_AMOUNT) * AMOUNT_DECIMAL)
     }
 
     public(friend) fun extract_founder_reserve_balance(global: &mut Global, ctx: &mut TxContext) : balance::Balance<SHUI> {

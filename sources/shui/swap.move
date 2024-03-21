@@ -10,9 +10,6 @@ module MetaGame::swap {
     use sui::table::{Self, Table};
     use sui::coin::{Self, Coin, destroy_zero};
     use sui::pay;
-    use sui::ed25519;
-    use std::debug::print;
-    use sui::address::{Self};
 
     const ERR_NO_PERMISSION:u64 = 0x001;
     const ERR_EXCEED_SWAP_LIMIT:u64 = 0x002;
@@ -20,10 +17,9 @@ module MetaGame::swap {
     const ERR_SWAP_MIN_ONE_SUI:u64 = 0x004;
     const ERR_NOT_START:u64 = 0x005;
     const ERR_INVALID_PHASE:u64 = 0x006;
-    const ERR_INVALID_MSG:u64 = 0x007;
     const ERR_TICKET_HAS_BEEN_CLAIMED: u64 = 0x008;
     const AMOUNT_DECIMAL:u64 = 1_000_000_000;
-    const WHITELIST_SWAP_LIMIT:u64 = 50_000;
+    const WHITELIST_SWAP_LIMIT:u64 = 60_000;
     const WHITELIST_MAX_NUM:u64 = 5000;
 
     struct SwapGlobal has key {
@@ -104,9 +100,34 @@ module MetaGame::swap {
         }
     }
 
+    public entry fun ieo_swap(global: &mut SwapGlobal, sui_pay_amount:u64, coins:vector<Coin<SUI>>, ctx:&mut TxContext) {
+        assert!(global.phase == 1, ERR_NOT_START);
+        let ratio = 300;
+        let recepient = tx_context::sender(ctx);
+        let shui_to_be_swap:u64 = sui_pay_amount * ratio;
+        global.swaped_shui = global.swaped_shui + shui_to_be_swap * AMOUNT_DECIMAL;
+        global.swaped_sui = global.swaped_sui + sui_pay_amount * AMOUNT_DECIMAL;
+
+        let merged_coin = vector::pop_back(&mut coins);
+        pay::join_vec(&mut merged_coin, coins);
+        assert!(coin::value(&merged_coin) >= 1_000_000_000, ERR_SWAP_MIN_ONE_SUI);
+        let balance = coin::into_balance<SUI>(
+            coin::split<SUI>(&mut merged_coin, sui_pay_amount * AMOUNT_DECIMAL, ctx)
+        );
+        balance::join(&mut global.balance_SUI, balance);
+        if (coin::value(&merged_coin) > 0) {
+            transfer::public_transfer(merged_coin, recepient)
+        } else {
+            destroy_zero(merged_coin)
+        };
+        let shui_balance = balance::split(&mut global.balance_SHUI, shui_to_be_swap * AMOUNT_DECIMAL);
+        let shui = coin::from_balance(shui_balance, ctx);
+        transfer::public_transfer(shui, recepient);
+    }
+
     public entry fun public_swap(global: &mut SwapGlobal, sui_pay_amount:u64, coins:vector<Coin<SUI>>, ctx:&mut TxContext) {
         assert!(global.phase == 1, ERR_NOT_START);
-        let ratio = 10;
+        let ratio = 150;
         let recepient = tx_context::sender(ctx);
         let shui_to_be_swap:u64 = sui_pay_amount * ratio;
         global.swaped_shui = global.swaped_shui + shui_to_be_swap * AMOUNT_DECIMAL;
@@ -130,7 +151,7 @@ module MetaGame::swap {
     }
 
     public entry fun white_list_swap(global: &mut SwapGlobal, sui_pay_amount:u64, coins:vector<Coin<SUI>>, ctx:&mut TxContext) {
-        let ratio = 200;
+        let ratio = 800;
         let limit = WHITELIST_SWAP_LIMIT;
         let recepient = tx_context::sender(ctx);
         let shui_to_be_swap:u64 = sui_pay_amount * ratio;
