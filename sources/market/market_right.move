@@ -280,7 +280,7 @@ module MetaGame::market_right {
             utf8(b"{name}"),
             utf8(DESCRIPTION),
             utf8(DEFAULT_LINK),
-            utf8(IMAGE_URL_NFT_0),
+            utf8(IMAGE_URL_GAME_0),
             utf8(PROJECT_URL),
             utf8(CREATOR)
         ];
