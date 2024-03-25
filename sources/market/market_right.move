@@ -232,7 +232,7 @@ module MetaGame::market_right {
             utf8(b"{name}"),
             utf8(DESCRIPTION),
             utf8(DEFAULT_LINK),
-            utf8(IMAGE_URL_NFT_20),
+            utf8(IMAGE_URL_GAME_25),
             utf8(PROJECT_URL),
             utf8(CREATOR)
         ];
@@ -240,7 +240,7 @@ module MetaGame::market_right {
             utf8(b"{name}"),
             utf8(DESCRIPTION),
             utf8(DEFAULT_LINK),
-            utf8(IMAGE_URL_NFT_15),
+            utf8(IMAGE_URL_GAME_20),
             utf8(PROJECT_URL),
             utf8(CREATOR)
         ];
@@ -248,7 +248,7 @@ module MetaGame::market_right {
             utf8(b"{name}"),
             utf8(DESCRIPTION),
             utf8(DEFAULT_LINK),
-            utf8(IMAGE_URL_NFT_10),
+            utf8(IMAGE_URL_GAME_10),
             utf8(PROJECT_URL),
             utf8(CREATOR)
         ];
@@ -256,7 +256,7 @@ module MetaGame::market_right {
             utf8(b"{name}"),
             utf8(DESCRIPTION),
             utf8(DEFAULT_LINK),
-            utf8(IMAGE_URL_NFT_5),
+            utf8(IMAGE_URL_GAME_5),
             utf8(PROJECT_URL),
             utf8(CREATOR)
         ];
@@ -264,7 +264,7 @@ module MetaGame::market_right {
             utf8(b"{name}"),
             utf8(DESCRIPTION),
             utf8(DEFAULT_LINK),
-            utf8(IMAGE_URL_NFT_5),
+            utf8(IMAGE_URL_GAME_3),
             utf8(PROJECT_URL),
             utf8(CREATOR)
         ];
@@ -272,7 +272,7 @@ module MetaGame::market_right {
             utf8(b"{name}"),
             utf8(DESCRIPTION),
             utf8(DEFAULT_LINK),
-            utf8(IMAGE_URL_NFT_5),
+            utf8(IMAGE_URL_GAME_2),
             utf8(PROJECT_URL),
             utf8(CREATOR)
         ];
@@ -280,7 +280,7 @@ module MetaGame::market_right {
             utf8(b"{name}"),
             utf8(DESCRIPTION),
             utf8(DEFAULT_LINK),
-            utf8(IMAGE_URL_NFT_0),
+            utf8(IMAGE_URL_GAME_0),
             utf8(PROJECT_URL),
             utf8(CREATOR)
         ];

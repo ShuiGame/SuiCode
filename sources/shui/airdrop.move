@@ -92,10 +92,16 @@ module MetaGame::airdrop {
     fun get_per_amount_by_time(global: &AirdropGlobal, clock: &Clock):u64 {
         let phase = get_phase_by_time(global, clock);
         assert!(phase >= 1 && phase <= 6, ERR_INVALID_PHASE);
-        if (phase == 6) {
-            return 10
+        if (phase < 4) {
+            return (40 - 10 * phase) * AMOUNT_DECIMAL
+        } else if (phase == 4) {
+            return 5 * AMOUNT_DECIMAL
+        } else if (phase > 4) {
+            return AMOUNT_DECIMAL
+        } else {
+            return 0
         };
-        (60 - phase * 10) * AMOUNT_DECIMAL
+        return 0
     }
 
     public fun get_phase_by_time(info:&AirdropGlobal, clock: &Clock) : u64 {
@@ -207,10 +213,17 @@ module MetaGame::airdrop {
     }
 
     public entry fun get_daily_limit(days:u64) :u64 {
-        if (days >= 150) {
-            1_000_000 * AMOUNT_DECIMAL
+        let month = (days / 30) + 1;
+        if (month == 1) {
+            return 900_000 * AMOUNT_DECIMAL
+        } else if (month == 2) {
+            return 1_500_000 * AMOUNT_DECIMAL
+        } else if (month == 3) {
+            return 2_000_000 * AMOUNT_DECIMAL
+        } else if (month == 4) {
+            return 2_500_000 * AMOUNT_DECIMAL
         } else {
-            (days / 30 + 1) * 1_000_000 * AMOUNT_DECIMAL
+            return 1_000_000 * AMOUNT_DECIMAL
         }
     }
 
